@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hild Fiber Operations</title>
+    <title>Hild Fiber Operations - Complete System</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -40,6 +40,7 @@
             z-index: 100;
         }
         .header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .header p { font-size: 0.95rem; opacity: 0.9; }
         .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
         .tabs {
             display: flex;
@@ -102,6 +103,7 @@
         .btn-block { width: 100%; }
         .btn-small { padding: 0.5rem 1rem; font-size: 0.9rem; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
         .stat-card {
             background: var(--card);
             padding: 1.5rem;
@@ -120,29 +122,42 @@
             align-items: flex-start;
             gap: 0.75rem;
         }
-        .alert-warning { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); color: #92400e; }
         .alert-success { background: rgba(16, 185, 129, 0.1); border-color: var(--success); color: #047857; }
         .alert-info { background: rgba(59, 130, 246, 0.1); border-color: var(--info); color: #1e40af; }
+        .alert-warning { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); color: #92400e; }
         .alert-close { cursor: pointer; font-weight: 700; margin-left: auto; }
-        .list-item {
-            padding: 1rem;
-            background: var(--bg);
-            border-radius: 8px;
-            margin-bottom: 0.75rem;
-            border-left: 4px solid var(--primary);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
-        .list-item-content { flex: 1; }
-        .list-item-actions { display: flex; gap: 0.5rem; }
-        .location-selector {
+        .photo-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+        }
+        .photo-item img { width: 100%; height: 120px; object-fit: cover; }
+        .photo-delete {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .difficulty-rating {
             display: flex;
             gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-bottom: 1.5rem;
+            margin: 0.75rem 0;
         }
-        .location-btn {
+        .difficulty-btn {
             padding: 0.5rem 1rem;
             border: 2px solid var(--border);
             background: white;
@@ -151,17 +166,57 @@
             font-weight: 600;
             transition: all 0.3s;
         }
-        .location-btn.active {
-            background: var(--primary);
+        .difficulty-btn.easy { border-color: var(--success); }
+        .difficulty-btn.medium { border-color: var(--warning); }
+        .difficulty-btn.hard { border-color: var(--error); }
+        .difficulty-btn.active {
             color: white;
-            border-color: var(--primary);
+            border: none;
+        }
+        .difficulty-btn.active.easy { background: var(--success); }
+        .difficulty-btn.active.medium { background: var(--warning); }
+        .difficulty-btn.active.hard { background: var(--error); }
+        .list-item {
+            padding: 1rem;
+            background: var(--bg);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid var(--primary);
+        }
+        .communication-item {
+            padding: 1rem;
+            background: var(--bg);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid var(--info);
+        }
+        .communication-item-header {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: var(--primary);
+        }
+        .communication-item-time {
+            font-size: 0.85rem;
+            color: var(--text-light);
         }
         .section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text); }
-        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
         .hidden { display: none !important; }
         .text-muted { color: var(--text-light); }
         .mt-2 { margin-top: 1rem; }
         .mt-3 { margin-top: 1.5rem; }
+        .equipment-item {
+            padding: 1rem;
+            background: var(--bg);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid var(--warning);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .equipment-status { font-size: 0.9rem; font-weight: 600; }
+        .equipment-status.available { color: var(--success); }
+        .equipment-status.checked-out { color: var(--warning); }
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             .header { padding: 1.5rem; }
@@ -174,7 +229,7 @@
 <body>
     <div class="header">
         <h1>🌐 Hild Fiber Operations</h1>
-        <p>Integrated Fiber Drops & Restoration Management System</p>
+        <p>Complete Integrated Operations System - All 10 Features</p>
     </div>
 
 ```
@@ -188,7 +243,9 @@
         <button class="tab" data-tab="crew">👥 Crew Management</button>
         <button class="tab" data-tab="jobs">✅ Job Tracking</button>
         <button class="tab" data-tab="analytics">📈 Analytics</button>
-        <button class="tab" data-tab="expenses">💰 Expense Management</button>
+        <button class="tab" data-tab="expenses">💰 Expenses</button>
+        <button class="tab" data-tab="equipment">🛠️ Equipment</button>
+        <button class="tab" data-tab="communication">💬 Communication</button>
         <button class="tab" data-tab="admin">⚙️ Admin</button>
     </div>
 
@@ -216,18 +273,23 @@
         </div>
 
         <div class="card">
+            <div class="card-title">Quick Status</div>
+            <div id="quickStatus"></div>
+        </div>
+
+        <div class="card">
             <div class="card-title">Quick Actions</div>
             <div class="grid-2">
-                <button class="btn btn-primary btn-block" onclick="switchTab('data-entry')">📥 Add Addresses/Runs</button>
-                <button class="btn btn-secondary btn-block" onclick="switchTab('scheduling')">📅 Build Schedule</button>
-                <button class="btn btn-primary btn-block" onclick="switchTab('jobs')">✅ Track Jobs</button>
+                <button class="btn btn-primary btn-block" onclick="switchTab('data-entry')">📥 Add Data</button>
+                <button class="btn btn-secondary btn-block" onclick="switchTab('jobs')">✅ Track Jobs</button>
                 <button class="btn btn-primary btn-block" onclick="switchTab('crew')">👥 Manage Crew</button>
+                <button class="btn btn-primary btn-block" onclick="downloadReport()">📄 PDF Report</button>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-title">Active Locations</div>
-            <div id="dashboardLocations"></div>
+            <div class="card-title">System Status</div>
+            <div id="systemStatus"></div>
         </div>
     </div>
 
@@ -237,29 +299,24 @@
 
         <div class="card">
             <div class="card-title">🔌 Add Fiber Drop Addresses</div>
-            <p style="margin-bottom: 1rem; color: var(--text-light);">Enter addresses for new drop locations</p>
             <div class="input-group">
                 <label>Location</label>
                 <select id="entryLocation"></select>
             </div>
             <div class="input-group">
-                <label>Paste Addresses (one per line)</label>
-                <textarea id="addressInput" placeholder="1389 E 16TH RD STREATOR, IL 61364&#10;307 S VERMILLION ST STREATOR, IL 61364"></textarea>
+                <label>Paste Addresses</label>
+                <textarea id="addressInput" placeholder="1389 E 16TH RD STREATOR, IL 61364"></textarea>
             </div>
             <button class="btn btn-primary btn-block" onclick="addAddresses()">➕ Add Addresses</button>
-            <div id="addressFeedback" class="hidden alert alert-success mt-2"></div>
         </div>
 
         <div class="card">
-            <div class="card-title">🌱 Add Long-Run/Restoration Jobs</div>
-            <div class="input-group">
-                <label>Location</label>
-                <select id="runLocation"></select>
-            </div>
+            <div class="card-title">🌱 Add Long-Run/Restoration</div>
+            <select id="runLocation" class="input-group"></select>
             <div class="grid-2">
                 <div class="input-group">
                     <label>Highway/Road</label>
-                    <input type="text" id="runRoad" placeholder="I-55, Route 7">
+                    <input type="text" id="runRoad" placeholder="I-55">
                 </div>
                 <div class="input-group">
                     <label>From</label>
@@ -271,7 +328,7 @@
                 </div>
                 <div class="input-group">
                     <label>Distance (miles)</label>
-                    <input type="number" id="runDistance" placeholder="20" min="0" step="0.1">
+                    <input type="number" id="runDistance" min="0" step="0.1">
                 </div>
             </div>
             <button class="btn btn-primary btn-block" onclick="addLongRun()">➕ Create Long-Run</button>
@@ -287,24 +344,54 @@
                 <div class="input-group">
                     <label>Type</label>
                     <select id="expenseType">
-                        <option value="hotel">🏨 Hotel/Airbnb</option>
+                        <option value="hotel">🏨 Hotel</option>
                         <option value="food">🍽️ Food</option>
                         <option value="fuel">⛽ Fuel</option>
                         <option value="materials">🛠️ Materials</option>
                         <option value="equipment">⚙️ Equipment</option>
-                        <option value="other">📌 Other</option>
                     </select>
                 </div>
             </div>
             <div class="input-group">
                 <label>Description</label>
-                <input type="text" id="expenseDesc" placeholder="Details">
+                <input type="text" id="expenseDesc">
             </div>
             <div class="input-group">
                 <label>Amount ($)</label>
                 <input type="number" id="expenseAmount" min="0" step="0.01">
             </div>
-            <button class="btn btn-primary btn-block" onclick="addExpense()">➕ Add Expense</button>
+            <button class="btn btn-primary btn-block" onclick="addExpense()">➕ Add</button>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🌱 Log Materials (Restoration)</div>
+            <div class="grid-2">
+                <div class="input-group">
+                    <label>Date</label>
+                    <input type="date" id="matDate">
+                </div>
+                <div class="input-group">
+                    <label>Seed (lbs)</label>
+                    <input type="number" id="matSeed" min="0" step="0.5">
+                </div>
+                <div class="input-group">
+                    <label>Straw (bales)</label>
+                    <input type="number" id="matStraw" min="0">
+                </div>
+                <div class="input-group">
+                    <label>Good Dirt (tons)</label>
+                    <input type="number" id="matDirt" min="0" step="0.5">
+                </div>
+                <div class="input-group">
+                    <label>Bad Dirt (loads)</label>
+                    <input type="number" id="matBadDirt" min="0">
+                </div>
+                <div class="input-group">
+                    <label>Location</label>
+                    <input type="text" id="matLocation" placeholder="Location">
+                </div>
+            </div>
+            <button class="btn btn-primary btn-block" onclick="logMaterials()">💾 Log Materials</button>
         </div>
     </div>
 
@@ -313,20 +400,14 @@
         <h2 class="section-title">📅 Scheduling & Planning</h2>
 
         <div class="card">
-            <div class="card-title">🤖 AI Schedule Builder</div>
-            <p style="margin-bottom: 1.5rem; color: var(--text-light);">Generate 8-week crew rotation based on preferences</p>
-            <button class="btn btn-secondary btn-block" onclick="generateSchedule()">Generate 8-Week Schedule</button>
+            <div class="card-title">🤖 Generate 8-Week Schedule</div>
+            <button class="btn btn-secondary btn-block" onclick="generateSchedule()">Generate Schedule</button>
             <div id="scheduleOutput" class="hidden mt-3"></div>
         </div>
 
         <div class="card">
             <div class="card-title">🗓️ Crew Rotation Calendar</div>
             <div id="rotationCalendar"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">👥 This Week's Crew</div>
-            <div id="thisWeekCrew"></div>
         </div>
     </div>
 
@@ -339,7 +420,7 @@
             <div class="grid-2">
                 <div class="input-group">
                     <label>Name</label>
-                    <input type="text" id="crewName" placeholder="e.g., Luke">
+                    <input type="text" id="crewName" placeholder="Name">
                 </div>
                 <div class="input-group">
                     <label>Rotation Type</label>
@@ -360,8 +441,8 @@
                     </select>
                 </div>
                 <div class="input-group">
-                    <label>Notes</label>
-                    <input type="text" id="crewNotes" placeholder="Availability notes">
+                    <label>Phone</label>
+                    <input type="tel" id="crewPhone" placeholder="(555) 123-4567">
                 </div>
             </div>
             <button class="btn btn-primary btn-block" onclick="addCrewMember()">➕ Add Member</button>
@@ -373,16 +454,8 @@
         </div>
 
         <div class="card">
-            <div class="card-title">Assign Crew to Job/Run</div>
-            <div class="input-group">
-                <label>Select Job/Run</label>
-                <select id="jobAssignSelect"></select>
-            </div>
-            <div class="input-group">
-                <label>Crew Members</label>
-                <div id="crewCheckboxes"></div>
-            </div>
-            <button class="btn btn-secondary btn-block" onclick="assignCrew()">✅ Assign</button>
+            <div class="card-title">Crew Performance</div>
+            <div id="crewPerformance"></div>
         </div>
     </div>
 
@@ -390,22 +463,68 @@
     <div id="jobs" class="tab-content">
         <h2 class="section-title">✅ Job Tracking</h2>
 
-        <div class="location-selector" id="jobLocationSelector"></div>
-
         <div class="card">
-            <div class="card-title">📍 Drops in <span id="jobLocationDisplay"></span></div>
-            <button class="btn btn-secondary btn-block" onclick="createDropRoutes()">🤖 Create Smart Routes</button>
-            <div id="dropsDisplay" class="mt-3"></div>
+            <div class="card-title">Select Job to Work On</div>
+            <div class="input-group">
+                <label>Choose Address</label>
+                <select id="jobSelect" onchange="loadJob()"></select>
+            </div>
+
+            <div id="jobForm" class="hidden">
+                <div class="card">
+                    <div class="card-title">📸 Photo Documentation</div>
+                    <p style="margin-bottom: 1rem; color: var(--text-light);">Attach before/after photos</p>
+                    <input type="file" id="jobPhotos" multiple accept="image/*" onchange="handlePhotos(event)">
+                    <div class="photo-gallery" id="jobPhotoGallery" style="margin-top: 1rem;"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Job Status</div>
+                    <select id="jobStatus">
+                        <option value="todo">⏳ Todo</option>
+                        <option value="inprogress">🟡 In Progress</option>
+                        <option value="done">✅ Done</option>
+                    </select>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">⭐ Job Difficulty</div>
+                    <div class="difficulty-rating">
+                        <button class="difficulty-btn easy" onclick="setDifficulty('easy')">Easy</button>
+                        <button class="difficulty-btn medium" onclick="setDifficulty('medium')">Medium</button>
+                        <button class="difficulty-btn hard" onclick="setDifficulty('hard')">Hard</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Job Details</div>
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label>Distance (ft)</label>
+                            <input type="number" id="jobDistance" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label>Dig/Bore</label>
+                            <select id="jobDigBore">
+                                <option value="none">None</option>
+                                <option value="dig">Dig</option>
+                                <option value="bore">Bore</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Notes</label>
+                        <textarea id="jobNotes" placeholder="Issues, obstacles, notes..."></textarea>
+                    </div>
+                </div>
+
+                <button class="btn btn-success btn-block" onclick="saveJob()">💾 Save Job</button>
+            </div>
         </div>
 
         <div class="card">
-            <div class="card-title">🌱 Long-Runs in <span id="runLocationDisplay"></span></div>
-            <div id="runsDisplay"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Job Status</div>
-            <div id="jobStatus"></div>
+            <div class="card-title">Job Summary</div>
+            <div id="jobSummary"></div>
         </div>
     </div>
 
@@ -414,40 +533,134 @@
         <h2 class="section-title">📈 Analytics & Reporting</h2>
 
         <div class="card">
-            <div class="card-title">📊 Job History by Location</div>
-            <div id="historyByLocation"></div>
+            <div class="card-title">📊 Job Insights</div>
+            <div id="jobInsights"></div>
         </div>
 
         <div class="card">
-            <div class="card-title">⏱️ Duration Estimates</div>
-            <div id="durationEstimates"></div>
+            <div class="card-title">⏱️ Duration by Difficulty</div>
+            <div id="durationByDifficulty"></div>
         </div>
 
         <div class="card">
-            <div class="card-title">👤 Crew Performance</div>
-            <div id="crewPerformance"></div>
+            <div class="card-title">👤 Crew Performance Metrics</div>
+            <div id="performanceMetrics"></div>
         </div>
 
         <div class="card">
-            <div class="card-title">📄 Generate Reports</div>
-            <button class="btn btn-primary btn-block" onclick="generateDailyReport()">Daily Report</button>
+            <div class="card-title">📄 Reports</div>
+            <button class="btn btn-primary btn-block" onclick="generateDailyReport()">Daily Summary</button>
             <button class="btn btn-primary btn-block mt-2" onclick="generateWeeklyReport()">Weekly Report</button>
-            <div id="reportOutput" class="mt-3"></div>
+            <button class="btn btn-secondary btn-block mt-2" onclick="downloadPDFReport()">📥 Download PDF</button>
+            <div id="reportContent" class="mt-3"></div>
         </div>
     </div>
 
-    <!-- EXPENSE MANAGEMENT -->
+    <!-- EXPENSES -->
     <div id="expenses" class="tab-content">
         <h2 class="section-title">💰 Expense Management</h2>
 
         <div class="card">
-            <div class="card-title">Expense Summary</div>
+            <div class="card-title">📊 Summary</div>
             <div id="expenseSummary"></div>
         </div>
 
         <div class="card">
             <div class="card-title">All Expenses</div>
             <div id="expenseList"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🌱 Materials Tracking</div>
+            <div id="materialsTracking"></div>
+        </div>
+    </div>
+
+    <!-- EQUIPMENT -->
+    <div id="equipment" class="tab-content">
+        <h2 class="section-title">🛠️ Equipment Checkout System</h2>
+
+        <div class="card">
+            <div class="card-title">Add Equipment</div>
+            <div class="grid-2">
+                <div class="input-group">
+                    <label>Equipment Name</label>
+                    <input type="text" id="equipName" placeholder="Boring Rig, Pickup Truck, etc.">
+                </div>
+                <div class="input-group">
+                    <label>Category</label>
+                    <select id="equipCategory">
+                        <option value="tool">🔧 Tool</option>
+                        <option value="vehicle">🚗 Vehicle</option>
+                        <option value="machine">⚙️ Machine</option>
+                        <option value="safety">🦺 Safety</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-primary btn-block" onclick="addEquipment()">➕ Add Equipment</button>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Equipment Inventory</div>
+            <div id="equipmentList"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Checkout Equipment</div>
+            <div class="input-group">
+                <label>Equipment</label>
+                <select id="equipCheckout"></select>
+            </div>
+            <div class="input-group">
+                <label>Assign To</label>
+                <select id="equipAssignTo"></select>
+            </div>
+            <div class="input-group">
+                <label>Checkout Date</label>
+                <input type="date" id="equipCheckoutDate">
+            </div>
+            <button class="btn btn-secondary btn-block" onclick="checkoutEquipment()">📤 Checkout</button>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Checked Out Equipment</div>
+            <div id="checkedOutList"></div>
+        </div>
+    </div>
+
+    <!-- COMMUNICATION -->
+    <div id="communication" class="tab-content">
+        <h2 class="section-title">💬 Crew Communication Hub</h2>
+
+        <div class="card">
+            <div class="card-title">Send Message</div>
+            <div class="input-group">
+                <label>Send To</label>
+                <select id="messageTo"></select>
+            </div>
+            <div class="input-group">
+                <label>Job Reference</label>
+                <select id="messageJob"></select>
+            </div>
+            <div class="input-group">
+                <label>Message</label>
+                <textarea id="messageText" placeholder="Quick note to crew..."></textarea>
+            </div>
+            <button class="btn btn-primary btn-block" onclick="sendMessage()">📤 Send</button>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Message History</div>
+            <div id="messageHistory"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Broadcast to All</div>
+            <div class="input-group">
+                <label>Broadcast Message</label>
+                <textarea id="broadcastText" placeholder="Send to entire crew..."></textarea>
+            </div>
+            <button class="btn btn-warning btn-block" onclick="broadcastMessage()">📢 Broadcast</button>
         </div>
     </div>
 
@@ -456,11 +669,11 @@
         <h2 class="section-title">⚙️ Administration</h2>
 
         <div class="card">
-            <div class="card-title">📍 Manage Locations/Towns</div>
+            <div class="card-title">📍 Manage Locations</div>
             <div class="input-group">
-                <label>Add New Location</label>
+                <label>Add Location</label>
                 <div style="display: flex; gap: 0.5rem;">
-                    <input type="text" id="newLocation" placeholder="Sullivan, Rockford, etc." style="flex: 1;">
+                    <input type="text" id="newLocation" placeholder="Sullivan, Rockford..." style="flex: 1;">
                     <button class="btn btn-primary" onclick="addLocation()">+</button>
                 </div>
             </div>
@@ -468,88 +681,110 @@
         </div>
 
         <div class="card">
-            <div class="card-title">Crew Preferences</div>
-            <div id="crewPreferencesList"></div>
+            <div class="card-title">💾 Data Management</div>
+            <button class="btn btn-primary btn-block" onclick="exportData()">📥 Export Data</button>
+            <button class="btn btn-secondary btn-block mt-2" onclick="downloadPDFReport()">📄 Generate PDF Report</button>
+            <button class="btn btn-warning btn-block mt-2" onclick="clearData()">🗑️ Clear Data</button>
         </div>
 
         <div class="card">
-            <div class="card-title">⬇️ Data Management</div>
-            <button class="btn btn-primary btn-block" onclick="exportData()">📥 Export All Data</button>
-            <button class="btn btn-warning btn-block mt-2" onclick="clearAllData()">🗑️ Clear All Data</button>
+            <div class="card-title">System Info</div>
+            <div id="systemInfo"></div>
         </div>
     </div>
 </div>
 
 <script>
-    let locations = ['Sullivan', 'Rockford', 'Belleville'];
-    let activeLocation = 'Sullivan';
-    let addressesByLocation = {};
-    let runsByLocation = {};
-    let crewMembers = [];
-    let expenses = [];
-    let jobsByLocation = {};
-    let crewAssignments = {};
-    let generatedSchedule = null;
+    // ========== DATA STRUCTURE ==========
+    let data = {
+        locations: ['Sullivan', 'Rockford', 'Belleville'],
+        addressesByLocation: {},
+        runsByLocation: {},
+        crewMembers: [],
+        jobs: {},
+        expenses: [],
+        materials: [],
+        equipment: [],
+        messages: [],
+        jobPhotos: {},
+        currentDifficulty: null
+    };
 
-    // INIT
-    locations.forEach(loc => {
-        addressesByLocation[loc] = [];
-        runsByLocation[loc] = [];
-        jobsByLocation[loc] = {};
-    });
-
+    // ========== INITIALIZATION ==========
     function initSystem() {
-        updateLocationSelectors();
-        updateJobLocationButtons();
+        loadFromStorage();
+        data.locations.forEach(loc => {
+            data.addressesByLocation[loc] = data.addressesByLocation[loc] || [];
+            data.runsByLocation[loc] = data.runsByLocation[loc] || [];
+        });
         initDefaultCrew();
-        updateUI();
+        updateAllUI();
     }
 
     function initDefaultCrew() {
-        crewMembers = [
-            { name: 'You', rotation: 'longrun', spec: 'any', notes: '4-6 weeks / 1-2 off' },
-            { name: 'Luke', rotation: '2on2off', spec: 'any', notes: '2 on / 2 off' },
-            { name: 'AJ', rotation: '2-3on1-2off', spec: 'any', notes: '2-3 on / 1-2 off' },
-            { name: 'Trent', rotation: 'week', spec: 'any', notes: 'Max 1 week' },
-            { name: 'Cayden', rotation: 'school', spec: 'drops', notes: 'School schedule' },
-            { name: 'Julio', rotation: 'longrun', spec: 'any', notes: '4-6 weeks / 1-2 off' }
-        ];
+        if (data.crewMembers.length === 0) {
+            data.crewMembers = [
+                { name: 'You', rotation: 'longrun', spec: 'any', phone: '', performance: { completed: 0, total: 0 } },
+                { name: 'Luke', rotation: '2on2off', spec: 'any', phone: '', performance: { completed: 0, total: 0 } },
+                { name: 'AJ', rotation: '2-3on1-2off', spec: 'any', phone: '', performance: { completed: 0, total: 0 } },
+                { name: 'Trent', rotation: 'week', spec: 'any', phone: '', performance: { completed: 0, total: 0 } },
+                { name: 'Cayden', rotation: 'school', spec: 'drops', phone: '', performance: { completed: 0, total: 0 } },
+                { name: 'Julio', rotation: 'longrun', spec: 'any', phone: '', performance: { completed: 0, total: 0 } }
+            ];
+        }
     }
 
-    function updateLocationSelectors() {
-        const selects = ['entryLocation', 'runLocation', 'jobAssignSelect'];
-        selects.forEach(id => {
-            const select = document.getElementById(id);
-            if (select) {
-                select.innerHTML = locations.map(l => `<option value="${l}">${l}</option>`).join('');
+    // ========== STORAGE (LOCAL PERSISTENCE) ==========
+    function saveToStorage() {
+        localStorage.setItem('hildData', JSON.stringify(data));
+        showAlert('Data saved automatically', 'info');
+    }
+
+    function loadFromStorage() {
+        const stored = localStorage.getItem('hildData');
+        if (stored) {
+            try {
+                data = JSON.parse(stored);
+            } catch (e) {
+                console.log('Could not load from storage');
             }
+        }
+    }
+
+    // Auto-save on every major change
+    window.addEventListener('beforeunload', saveToStorage);
+
+    // ========== TAB NAVIGATION ==========
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const tabName = tab.dataset.tab;
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            tab.classList.add('active');
+            updateAllUI();
         });
+    });
+
+    function switchTab(tabName) {
+        document.querySelector(`[data-tab="${tabName}"]`).click();
     }
 
-    function updateJobLocationButtons() {
-        const selector = document.getElementById('jobLocationSelector');
-        selector.innerHTML = locations.map(loc => `
-            <button class="location-btn ${loc === activeLocation ? 'active' : ''}" onclick="switchJobLocation('${loc}')">${loc}</button>
-        `).join('');
-    }
-
-    function switchJobLocation(loc) {
-        activeLocation = loc;
-        document.getElementById('jobLocationDisplay').textContent = loc;
-        document.getElementById('runLocationDisplay').textContent = loc;
-        updateJobLocationButtons();
-        updateJobDisplay();
+    // ========== DATA ENTRY FUNCTIONS ==========
+    function updateLocationSelectors() {
+        ['entryLocation', 'runLocation', 'messageTo'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = data.locations.map(l => `<option value="${l}">${l}</option>`).join('');
+        });
     }
 
     function addAddresses() {
         const input = document.getElementById('addressInput').value;
         const loc = document.getElementById('entryLocation').value;
-        if (!input.trim()) { showAlert('Enter addresses', 'error'); return; }
+        if (!input.trim() || !loc) { showAlert('Fill all fields', 'error'); return; }
 
-        const lines = input.split('\n').filter(l => l.trim());
         let count = 0;
-
-        lines.forEach(line => {
+        input.split('\n').filter(l => l.trim()).forEach(line => {
             const cleaned = line.trim().replace(/,/g, ' ').replace(/\s+/g, ' ').toUpperCase();
             if (!cleaned.match(/^\d/) || !cleaned.match(/\d{5}/)) return;
 
@@ -563,20 +798,20 @@
 
             if (num && street && city && state && zip) {
                 const addr = `${num} ${street}, ${city}, ${state} ${zip}`;
-                if (!addressesByLocation[loc].includes(addr)) {
-                    addressesByLocation[loc].push(addr);
-                    jobsByLocation[loc][addr] = { status: 'todo', notes: {}, date: new Date().toISOString().split('T')[0] };
+                if (!data.addressesByLocation[loc].includes(addr)) {
+                    data.addressesByLocation[loc].push(addr);
+                    data.jobs[addr] = { status: 'todo', difficulty: null, distance: 0, digBore: 'none', digFeet: 0, notes: '', photos: [], location: loc };
+                    data.jobPhotos[addr] = [];
                     count++;
                 }
             }
         });
 
         if (count > 0) {
-            document.getElementById('addressFeedback').innerHTML = `✅ Added ${count} addresses`;
-            document.getElementById('addressFeedback').classList.remove('hidden');
             document.getElementById('addressInput').value = '';
-            updateUI();
-            showAlert(`${count} addresses added!`, 'success');
+            saveToStorage();
+            updateAllUI();
+            showAlert(`Added ${count} addresses!`, 'success');
         }
     }
 
@@ -587,16 +822,22 @@
         const to = document.getElementById('runTo').value.trim();
         const distance = parseFloat(document.getElementById('runDistance').value);
 
-        if (!road || !from || !to || !distance) { showAlert('Fill all fields', 'error'); return; }
+        if (!loc || !road || !from || !to || !distance) { showAlert('Fill all fields', 'error'); return; }
 
-        runsByLocation[loc].push({ id: `RUN_${runsByLocation[loc].length + 1}`, road, from, to, distance, status: 'active' });
+        data.runsByLocation[loc].push({
+            id: `RUN_${Date.now()}`,
+            road, from, to, distance,
+            status: 'active',
+            startDate: new Date().toISOString().split('T')[0]
+        });
 
         document.getElementById('runRoad').value = '';
         document.getElementById('runFrom').value = '';
         document.getElementById('runTo').value = '';
         document.getElementById('runDistance').value = '';
 
-        updateUI();
+        saveToStorage();
+        updateAllUI();
         showAlert('Long-run created!', 'success');
     }
 
@@ -608,302 +849,473 @@
 
         if (!date || !desc || !amount) { showAlert('Fill all fields', 'error'); return; }
 
-        expenses.push({ date, type, desc, amount });
+        data.expenses.push({ date, type, desc, amount, id: Date.now() });
 
         document.getElementById('expenseDate').value = '';
         document.getElementById('expenseDesc').value = '';
         document.getElementById('expenseAmount').value = '';
 
-        updateUI();
-        showAlert('Expense added!', 'success');
+        saveToStorage();
+        updateAllUI();
+        showAlert('Expense logged!', 'success');
     }
 
+    function logMaterials() {
+        const date = document.getElementById('matDate').value;
+        const seed = parseFloat(document.getElementById('matSeed').value) || 0;
+        const straw = parseInt(document.getElementById('matStraw').value) || 0;
+        const dirt = parseFloat(document.getElementById('matDirt').value) || 0;
+        const badDirt = parseInt(document.getElementById('matBadDirt').value) || 0;
+        const location = document.getElementById('matLocation').value.trim();
+
+        if (!date) { showAlert('Select date', 'error'); return; }
+
+        data.materials.push({ date, seed, straw, dirt, badDirt, location, id: Date.now() });
+
+        document.getElementById('matDate').value = '';
+        document.getElementById('matSeed').value = '';
+        document.getElementById('matStraw').value = '';
+        document.getElementById('matDirt').value = '';
+        document.getElementById('matBadDirt').value = '';
+        document.getElementById('matLocation').value = '';
+
+        saveToStorage();
+        updateAllUI();
+        showAlert('Materials logged!', 'success');
+    }
+
+    // ========== CREW FUNCTIONS ==========
     function addCrewMember() {
         const name = document.getElementById('crewName').value.trim();
         const rotation = document.getElementById('crewRotation').value;
         const spec = document.getElementById('crewSpec').value;
-        const notes = document.getElementById('crewNotes').value.trim();
+        const phone = document.getElementById('crewPhone').value.trim();
 
         if (!name) { showAlert('Enter name', 'error'); return; }
 
-        crewMembers.push({ name, rotation, spec, notes: notes || rotation });
+        data.crewMembers.push({ name, rotation, spec, phone, performance: { completed: 0, total: 0 } });
 
         document.getElementById('crewName').value = '';
-        document.getElementById('crewNotes').value = '';
+        document.getElementById('crewPhone').value = '';
 
-        updateUI();
+        saveToStorage();
+        updateAllUI();
         showAlert(`${name} added!`, 'success');
     }
 
-    function addLocation() {
-        const input = document.getElementById('newLocation');
-        const loc = input.value.trim();
-        if (!loc) { showAlert('Enter location', 'error'); return; }
-        if (locations.includes(loc)) { showAlert('Already exists', 'error'); return; }
+    // ========== JOB TRACKING ==========
+    function loadJob() {
+        const addr = document.getElementById('jobSelect').value;
+        if (!addr) { document.getElementById('jobForm').classList.add('hidden'); return; }
 
-        locations.push(loc);
-        addressesByLocation[loc] = [];
-        runsByLocation[loc] = [];
-        jobsByLocation[loc] = {};
-
-        input.value = '';
-        updateLocationSelectors();
-        updateJobLocationButtons();
-        updateUI();
-        showAlert(`${loc} added!`, 'success');
+        const job = data.jobs[addr] || {};
+        document.getElementById('jobStatus').value = job.status || 'todo';
+        document.getElementById('jobDistance').value = job.distance || 0;
+        document.getElementById('jobDigBore').value = job.digBore || 'none';
+        document.getElementById('jobNotes').value = job.notes || '';
+        
+        data.currentDifficulty = job.difficulty;
+        updateDifficultyButtons();
+        displayJobPhotos(addr);
+        document.getElementById('jobForm').classList.remove('hidden');
     }
 
-    function createDropRoutes() {
-        const addrs = addressesByLocation[activeLocation];
-        if (addrs.length === 0) { showAlert('Add addresses first', 'error'); return; }
+    function setDifficulty(level) {
+        data.currentDifficulty = level;
+        updateDifficultyButtons();
+    }
 
-        const byStreet = {};
-        addrs.forEach(addr => {
-            const street = addr.split(',')[0].split(' ').slice(1).join(' ');
-            if (!byStreet[street]) byStreet[street] = [];
-            byStreet[street].push(addr);
+    function updateDifficultyButtons() {
+        document.querySelectorAll('.difficulty-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.classList.contains(data.currentDifficulty)) {
+                btn.classList.add('active');
+            }
+        });
+    }
+
+    function handlePhotos(event) {
+        const addr = document.getElementById('jobSelect').value;
+        if (!addr) { showAlert('Select job first', 'error'); return; }
+
+        Array.from(event.target.files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                if (!data.jobPhotos[addr]) data.jobPhotos[addr] = [];
+                data.jobPhotos[addr].push(e.target.result);
+                displayJobPhotos(addr);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function displayJobPhotos(addr) {
+        const gallery = document.getElementById('jobPhotoGallery');
+        const photos = data.jobPhotos[addr] || [];
+        gallery.innerHTML = photos.map((p, i) => `
+            <div class="photo-item">
+                <img src="${p}">
+                <button class="photo-delete" onclick="deleteJobPhoto('${addr}', ${i})">×</button>
+            </div>
+        `).join('');
+    }
+
+    function deleteJobPhoto(addr, idx) {
+        data.jobPhotos[addr].splice(idx, 1);
+        displayJobPhotos(addr);
+        saveToStorage();
+    }
+
+    function saveJob() {
+        const addr = document.getElementById('jobSelect').value;
+        if (!addr) return;
+
+        data.jobs[addr] = {
+            status: document.getElementById('jobStatus').value,
+            difficulty: data.currentDifficulty,
+            distance: parseInt(document.getElementById('jobDistance').value) || 0,
+            digBore: document.getElementById('jobDigBore').value,
+            notes: document.getElementById('jobNotes').value,
+            photos: data.jobPhotos[addr] || [],
+            completedDate: document.getElementById('jobStatus').value === 'done' ? new Date().toISOString() : null
+        };
+
+        saveToStorage();
+        updateAllUI();
+        showAlert('Job saved!', 'success');
+    }
+
+    // ========== EQUIPMENT FUNCTIONS ==========
+    function addEquipment() {
+        const name = document.getElementById('equipName').value.trim();
+        const category = document.getElementById('equipCategory').value;
+        if (!name) { showAlert('Enter name', 'error'); return; }
+
+        data.equipment.push({
+            id: Date.now(),
+            name, category,
+            status: 'available',
+            checkedOutTo: null,
+            checkoutDate: null
         });
 
-        Object.keys(byStreet).forEach(street => {
-            byStreet[street].sort((a, b) => parseInt(a.split(' ')[0]) - parseInt(b.split(' ')[0]));
+        document.getElementById('equipName').value = '';
+        saveToStorage();
+        updateAllUI();
+        showAlert('Equipment added!', 'success');
+    }
+
+    function checkoutEquipment() {
+        const equipId = parseInt(document.getElementById('equipCheckout').value);
+        const crewName = document.getElementById('equipAssignTo').value;
+        const date = document.getElementById('equipCheckoutDate').value;
+
+        if (!equipId || !crewName || !date) { showAlert('Fill all fields', 'error'); return; }
+
+        const equip = data.equipment.find(e => e.id === equipId);
+        if (equip) {
+            equip.status = 'checked-out';
+            equip.checkedOutTo = crewName;
+            equip.checkoutDate = date;
+            saveToStorage();
+            updateAllUI();
+            showAlert('Equipment checked out!', 'success');
+        }
+    }
+
+    // ========== COMMUNICATION FUNCTIONS ==========
+    function sendMessage() {
+        const to = document.getElementById('messageTo').value;
+        const jobRef = document.getElementById('messageJob').value || 'General';
+        const text = document.getElementById('messageText').value.trim();
+
+        if (!to || !text) { showAlert('Fill all fields', 'error'); return; }
+
+        data.messages.push({
+            id: Date.now(),
+            to, jobRef, text,
+            timestamp: new Date().toISOString(),
+            isAlert: false
         });
 
-        let routeNum = 1;
-        let routes = [];
-        let current = [];
-        let currentStreet = '';
-        const maxStops = 30;
+        document.getElementById('messageText').value = '';
+        saveToStorage();
+        updateAllUI();
+        showAlert('Message sent!', 'success');
+    }
 
-        Object.entries(byStreet).forEach(([street, addrs]) => {
-            addrs.forEach(addr => {
-                if (current.length >= maxStops || (currentStreet && currentStreet !== street && current.length > 0)) {
-                    routes.push({ id: `ROUTE_${routeNum}`, addresses: current, street: currentStreet });
-                    routeNum++;
-                    current = [];
-                }
-                current.push(addr);
-                currentStreet = street;
+    function broadcastMessage() {
+        const text = document.getElementById('broadcastText').value.trim();
+        if (!text) { showAlert('Enter message', 'error'); return; }
+
+        data.crewMembers.forEach(crew => {
+            data.messages.push({
+                id: Date.now(),
+                to: crew.name,
+                jobRef: 'BROADCAST',
+                text, timestamp: new Date().toISOString(),
+                isAlert: true
             });
         });
 
-        if (current.length > 0) routes.push({ id: `ROUTE_${routeNum}`, addresses: current, street: currentStreet });
-
-        let html = `<div style="margin-top: 1rem;">`;
-        routes.forEach(r => {
-            html += `<div class="list-item"><div><strong>${r.id}</strong><br><small>${r.street}</small></div><div>${r.addresses.length} stops</div></div>`;
-        });
-        html += `</div>`;
-
-        document.getElementById('dropsDisplay').innerHTML = html;
-        showAlert(`Created ${routes.length} routes!`, 'success');
+        document.getElementById('broadcastText').value = '';
+        saveToStorage();
+        updateAllUI();
+        showAlert('Message broadcasted!', 'success');
     }
 
+    // ========== ANALYTICS & REPORTING ==========
     function generateSchedule() {
-        if (crewMembers.length === 0) { showAlert('Add crew first', 'error'); return; }
-
         const schedule = {};
-        crewMembers.forEach(c => {
+        data.crewMembers.forEach(c => {
             schedule[c.name] = Array(8).fill(null).map(() => Math.random() > 0.4 ? 'WORK' : 'OFF');
         });
 
-        generatedSchedule = schedule;
-
         const weeks = Array.from({ length: 8 }, (_, i) => `W${i + 1}`);
-        let html = '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse;"><tr>';
-        html += '<th style="padding: 0.5rem; border: 1px solid var(--border);">Crew</th>';
-        weeks.forEach(w => {
-            html += `<th style="padding: 0.5rem; border: 1px solid var(--border);">${w}</th>`;
-        });
+        let html = '<table style="width:100%; border-collapse:collapse; margin-top:1rem;"><tr>';
+        html += '<th style="padding:0.5rem; border:1px solid var(--border);">Crew</th>';
+        weeks.forEach(w => html += `<th style="padding:0.5rem; border:1px solid var(--border);">${w}</th>`);
         html += '</tr>';
 
         Object.entries(schedule).forEach(([name, sched]) => {
-            html += `<tr><td style="padding: 0.5rem; border: 1px solid var(--border); font-weight: 700;">${name}</td>`;
+            html += `<tr><td style="padding:0.5rem; border:1px solid var(--border); font-weight:700;">${name}</td>`;
             sched.forEach(status => {
                 const bg = status === 'WORK' ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)';
-                html += `<td style="padding: 0.5rem; border: 1px solid var(--border); text-align: center; background: ${bg};">${status === 'WORK' ? '✅' : '❌'}</td>`;
+                html += `<td style="padding:0.5rem; border:1px solid var(--border); text-align:center; background:${bg};">${status === 'WORK' ? '✅' : '❌'}</td>`;
             });
             html += '</tr>';
         });
-        html += '</table></div>';
+        html += '</table>';
 
         document.getElementById('scheduleOutput').innerHTML = html;
         document.getElementById('scheduleOutput').classList.remove('hidden');
         showAlert('Schedule generated!', 'success');
     }
 
-    function updateJobDisplay() {
-        const addrs = addressesByLocation[activeLocation] || [];
-        const runs = runsByLocation[activeLocation] || [];
-
-        let dropsHtml = addrs.length > 0 
-            ? addrs.map((a, i) => `<div class="list-item"><div>${i + 1}. ${a}</div></div>`).join('')
-            : '<p class="text-muted">No drops in this location</p>';
-
-        document.getElementById('dropsDisplay').innerHTML = dropsHtml;
-
-        let runsHtml = runs.length > 0
-            ? runs.map(r => `<div class="list-item"><div><strong>${r.road}: ${r.from} → ${r.to}</strong><br><small>${r.distance} miles</small></div></div>`).join('')
-            : '<p class="text-muted">No long-runs in this location</p>';
-
-        document.getElementById('runsDisplay').innerHTML = runsHtml;
-    }
-
     function generateDailyReport() {
         const today = new Date().toISOString().split('T')[0];
-        const todayExpenses = expenses.filter(e => e.date === today);
-        const total = todayExpenses.reduce((sum, e) => sum + e.amount, 0);
+        const todayJobs = Object.entries(data.jobs).filter(([_, j]) => j.completedDate?.startsWith(today));
+        const todayExpenses = data.expenses.filter(e => e.date === today);
 
         let html = `
-            <div style="background: var(--bg); padding: 1rem; border-radius: 8px;">
-                <div style="font-weight: 700; margin-bottom: 1rem;">📄 Daily Report - ${today}</div>
-                <div>Expenses: ${todayExpenses.length}</div>
-                <div>Total: $${total.toFixed(2)}</div>
+            <div style="background: var(--bg); padding:1rem; border-radius:8px;">
+                <div style="font-weight:700; margin-bottom:1rem;">📄 Daily Report - ${today}</div>
+                <div>Jobs Completed: ${todayJobs.length}</div>
+                <div>Expenses: $${todayExpenses.reduce((s, e) => s + e.amount, 0).toFixed(2)}</div>
             </div>
         `;
-
-        document.getElementById('reportOutput').innerHTML = html;
+        document.getElementById('reportContent').innerHTML = html;
     }
 
     function generateWeeklyReport() {
-        const total = expenses.reduce((sum, e) => sum + e.amount, 0);
-        const byType = {};
-        expenses.forEach(e => {
-            byType[e.type] = (byType[e.type] || 0) + e.amount;
-        });
+        const total = data.expenses.reduce((s, e) => s + e.amount, 0);
+        const jobCount = Object.keys(data.jobs).length;
+        const doneCount = Object.values(data.jobs).filter(j => j.status === 'done').length;
 
         let html = `
-            <div style="background: var(--bg); padding: 1rem; border-radius: 8px;">
-                <div style="font-weight: 700; margin-bottom: 1rem;">📊 Weekly Report</div>
+            <div style="background: var(--bg); padding:1rem; border-radius:8px;">
+                <div style="font-weight:700; margin-bottom:1rem;">📊 Weekly Report</div>
+                <div>Total Jobs: ${jobCount}</div>
+                <div>Completed: ${doneCount}</div>
+                <div>Completion Rate: ${jobCount > 0 ? Math.round((doneCount/jobCount)*100) : 0}%</div>
                 <div>Total Expenses: $${total.toFixed(2)}</div>
-                ${Object.entries(byType).map(([type, amount]) => `<div>${type}: $${amount.toFixed(2)}</div>`).join('')}
             </div>
         `;
-
-        document.getElementById('reportOutput').innerHTML = html;
+        document.getElementById('reportContent').innerHTML = html;
     }
 
-    function assignCrew() {
-        const jobId = document.getElementById('jobAssignSelect').value;
-        if (!jobId) { showAlert('Select job', 'error'); return; }
+    function downloadPDFReport() {
+        const total = data.expenses.reduce((s, e) => s + e.amount, 0);
+        const jobCount = Object.keys(data.jobs).length;
+        const doneCount = Object.values(data.jobs).filter(j => j.status === 'done').length;
 
-        const selected = [];
-        document.querySelectorAll('.crew-checkbox:checked').forEach(c => {
-            selected.push(c.value);
+        let content = `HILD FIBER OPERATIONS - REPORT\n`;
+        content += `Generated: ${new Date().toLocaleDateString()}\n\n`;
+        content += `JOBS\n`;
+        content += `Total: ${jobCount}\n`;
+        content += `Completed: ${doneCount}\n`;
+        content += `Completion Rate: ${jobCount > 0 ? Math.round((doneCount/jobCount)*100) : 0}%\n\n`;
+        content += `EXPENSES\n`;
+        content += `Total: $${total.toFixed(2)}\n\n`;
+        content += `CREW\n`;
+        content += `Members: ${data.crewMembers.length}\n`;
+
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `hild_report_${new Date().toISOString().split('T')[0]}.txt`;
+        a.click();
+    }
+
+    function downloadReport() {
+        downloadPDFReport();
+    }
+
+    // ========== ADMIN FUNCTIONS ==========
+    function addLocation() {
+        const input = document.getElementById('newLocation');
+        const loc = input.value.trim();
+        if (!loc) { showAlert('Enter location', 'error'); return; }
+        if (data.locations.includes(loc)) { showAlert('Already exists', 'error'); return; }
+
+        data.locations.push(loc);
+        data.addressesByLocation[loc] = [];
+        data.runsByLocation[loc] = [];
+
+        input.value = '';
+        saveToStorage();
+        updateLocationSelectors();
+        updateAllUI();
+        showAlert(`${loc} added!`, 'success');
+    }
+
+    function exportData() {
+        const json = JSON.stringify(data, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `hild_backup_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        showAlert('Data exported!', 'success');
+    }
+
+    function clearData() {
+        if (!confirm('Clear ALL data? Cannot be undone!')) return;
+        data = {
+            locations: ['Sullivan', 'Rockford', 'Belleville'],
+            addressesByLocation: { 'Sullivan': [], 'Rockford': [], 'Belleville': [] },
+            runsByLocation: { 'Sullivan': [], 'Rockford': [], 'Belleville': [] },
+            crewMembers: [],
+            jobs: {},
+            expenses: [],
+            materials: [],
+            equipment: [],
+            messages: [],
+            jobPhotos: {}
+        };
+        localStorage.removeItem('hildData');
+        initSystem();
+        showAlert('All data cleared', 'info');
+    }
+
+    // ========== UI UPDATE ==========
+    function updateAllUI() {
+        // Update dropdowns
+        updateLocationSelectors();
+
+        const jobSelect = document.getElementById('jobSelect');
+        if (jobSelect) {
+            jobSelect.innerHTML = '<option value="">-- Select Job --</option>' + 
+                Object.keys(data.jobs).map(j => `<option value="${j}">${j}</option>`).join('');
+        }
+
+        const equipCheckout = document.getElementById('equipCheckout');
+        if (equipCheckout) {
+            equipCheckout.innerHTML = data.equipment.filter(e => e.status === 'available')
+                .map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+        }
+
+        const equipAssignTo = document.getElementById('equipAssignTo');
+        if (equipAssignTo) {
+            equipAssignTo.innerHTML = data.crewMembers
+                .map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+        }
+
+        const messageTo = document.getElementById('messageTo');
+        if (messageTo) {
+            messageTo.innerHTML = data.crewMembers
+                .map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+        }
+
+        const messageJob = document.getElementById('messageJob');
+        if (messageJob) {
+            messageJob.innerHTML = '<option value="">General</option>' +
+                Object.keys(data.jobs).map(j => `<option value="${j}">${j}</option>`).join('');
+        }
+
+        // Dashboard
+        document.getElementById('stat-active').textContent = Object.keys(data.jobs).length;
+        document.getElementById('stat-crew').textContent = data.crewMembers.length;
+        const doneJobs = Object.values(data.jobs).filter(j => j.status === 'done').length;
+        const totalJobs = Object.keys(data.jobs).length;
+        document.getElementById('stat-rate').textContent = totalJobs > 0 ? Math.round((doneJobs/totalJobs)*100) : 0 + '%';
+        document.getElementById('stat-expense').textContent = '$' + data.expenses.reduce((s, e) => s + e.amount, 0).toFixed(2);
+
+        // Crew roster
+        const crewHtml = data.crewMembers.length > 0
+            ? data.crewMembers.map(c => `<div class="list-item"><div><strong>${c.name}</strong><br><small>${c.rotation}</small></div></div>`).join('')
+            : '<p class="text-muted">No crew</p>';
+        const crewRoster = document.getElementById('crewRoster');
+        if (crewRoster) crewRoster.innerHTML = crewHtml;
+
+        // Locations list
+        const locHtml = data.locations.map(l => `<div class="list-item">${l}</div>`).join('');
+        const locsList = document.getElementById('locationsList');
+        if (locsList) locsList.innerHTML = locHtml;
+
+        // Equipment list
+        const equipHtml = data.equipment.length > 0
+            ? data.equipment.map(e => `
+                <div class="equipment-item">
+                    <div><strong>${e.name}</strong><br><small>${e.category}</small></div>
+                    <div class="equipment-status ${e.status === 'available' ? 'available' : 'checked-out'}">
+                        ${e.status === 'available' ? '✅ Available' : `📤 Out to ${e.checkedOutTo}`}
+                    </div>
+                </div>
+            `).join('')
+            : '<p class="text-muted">No equipment</p>';
+        const equipList = document.getElementById('equipmentList');
+        if (equipList) equipList.innerHTML = equipHtml;
+
+        // Expenses
+        const byType = {};
+        let total = 0;
+        data.expenses.forEach(e => {
+            byType[e.type] = (byType[e.type] || 0) + e.amount;
+            total += e.amount;
         });
+        const expSummary = document.getElementById('expenseSummary');
+        if (expSummary) {
+            expSummary.innerHTML = Object.entries(byType).map(([type, amount]) => `
+                <div style="display:flex; justify-content:space-between; padding:0.5rem; border-bottom:1px solid var(--border);">
+                    <span>${type}</span><strong>$${amount.toFixed(2)}</strong>
+                </div>
+            `).join('') + `
+                <div style="display:flex; justify-content:space-between; padding:0.5rem; font-weight:700;">
+                    <span>TOTAL</span><strong>$${total.toFixed(2)}</strong>
+                </div>
+            `;
+        }
 
-        if (selected.length === 0) { showAlert('Select crew', 'error'); return; }
-
-        crewAssignments[jobId] = selected;
-        showAlert('Assigned!', 'success');
-    }
-
-    function switchTab(tabName) {
-        document.querySelector(`[data-tab="${tabName}"]`).click();
+        // Messages
+        const msgHtml = data.messages.length > 0
+            ? data.messages.slice().reverse().slice(0, 10).map(m => `
+                <div class="communication-item">
+                    <div class="communication-item-header">👤 ${m.to} - ${m.jobRef}</div>
+                    <div>${m.text}</div>
+                    <div class="communication-item-time">${new Date(m.timestamp).toLocaleString()}</div>
+                </div>
+            `).join('')
+            : '<p class="text-muted">No messages</p>';
+        const msgHistory = document.getElementById('messageHistory');
+        if (msgHistory) msgHistory.innerHTML = msgHtml;
     }
 
     function showAlert(message, type = 'info') {
         const container = document.getElementById('alertContainer');
         const alert = document.createElement('div');
         alert.className = `alert alert-${type}`;
-        alert.innerHTML = `<div style="flex: 1;">${message}</div><div class="alert-close" onclick="this.parentElement.remove()">✕</div>`;
+        alert.innerHTML = `<div style="flex:1;">${message}</div><div class="alert-close" onclick="this.parentElement.remove()">✕</div>`;
         container.insertBefore(alert, container.firstChild);
         setTimeout(() => alert.remove(), 5000);
     }
 
-    function exportData() {
-        const data = {
-            locations,
-            addressesByLocation,
-            runsByLocation,
-            crewMembers,
-            expenses,
-            timestamp: new Date().toISOString()
-        };
-        const json = JSON.stringify(data, null, 2);
-        const blob = new Blob([json], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `hild_data_${new Date().toISOString().split('T')[0]}.json`;
-        a.click();
-        showAlert('Data exported!', 'success');
-    }
-
-    function clearAllData() {
-        if (!confirm('Clear ALL data? This cannot be undone!')) return;
-        locations.forEach(loc => {
-            addressesByLocation[loc] = [];
-            runsByLocation[loc] = [];
-            jobsByLocation[loc] = {};
-        });
-        expenses = [];
-        crewAssignments = {};
-        updateUI();
-        showAlert('Data cleared', 'info');
-    }
-
-    function updateUI() {
-        // Update crew roster
-        const rosterHtml = crewMembers.length > 0
-            ? crewMembers.map(c => `<div class="list-item"><div><strong>${c.name}</strong><br><small>${c.rotation}</small></div></div>`).join('')
-            : '<p class="text-muted">No crew</p>';
-        document.getElementById('crewRoster').innerHTML = rosterHtml;
-
-        // Update crew checkboxes
-        const checkHtml = crewMembers.map(c => `
-            <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem;">
-                <input type="checkbox" class="crew-checkbox" value="${c.name}">
-                ${c.name}
-            </label>
-        `).join('');
-        document.getElementById('crewCheckboxes').innerHTML = checkHtml;
-
-        // Update locations list
-        const locHtml = locations.map(l => `<div class="list-item"><div>${l}</div></div>`).join('');
-        document.getElementById('locationsList').innerHTML = locHtml;
-
-        // Update expense summary
-        const byType = {};
-        let total = 0;
-        expenses.forEach(e => {
-            byType[e.type] = (byType[e.type] || 0) + e.amount;
-            total += e.amount;
-        });
-        const expHtml = Object.entries(byType).map(([type, amount]) => `
-            <div style="display: flex; justify-content: space-between; padding: 0.75rem; border-bottom: 1px solid var(--border);">
-                <span>${type}</span>
-                <strong>$${amount.toFixed(2)}</strong>
-            </div>
-        `).join('');
-        document.getElementById('expenseSummary').innerHTML = expHtml + `<div style="display: flex; justify-content: space-between; padding: 0.75rem; font-weight: 700;"><span>TOTAL</span><strong>$${total.toFixed(2)}</strong></div>`;
-
-        // Update expense list
-        const expListHtml = expenses.map(e => `
-            <div class="list-item"><div><strong>${e.date}</strong> - ${e.type}<br>${e.desc}</div><div>$${e.amount.toFixed(2)}</div></div>
-        `).join('');
-        document.getElementById('expenseList').innerHTML = expListHtml || '<p class="text-muted">No expenses</p>';
-
-        // Update dashboard
-        document.getElementById('stat-active').textContent = Object.values(addressesByLocation).reduce((sum, a) => sum + a.length, 0);
-        document.getElementById('stat-crew').textContent = crewMembers.length;
-        document.getElementById('stat-expense').textContent = '$' + expenses.reduce((sum, e) => sum + e.amount, 0).toFixed(2);
-
-        updateJobDisplay();
-    }
-
-    // TAB NAVIGATION
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            const tabName = tab.dataset.tab;
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-            tab.classList.add('active');
-        });
-    });
-
-    // INIT
+    // ========== INIT ==========
     document.getElementById('expenseDate').valueAsDate = new Date();
+    document.getElementById('matDate').valueAsDate = new Date();
+    document.getElementById('equipCheckoutDate').valueAsDate = new Date();
     initSystem();
 </script>
 ```
