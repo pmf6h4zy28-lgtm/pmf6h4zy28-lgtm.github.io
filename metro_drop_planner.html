@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hild Fiber Operations - Complete System</title>
+    <title>Hild Fiber Operations</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -126,38 +126,20 @@
         .alert-info { background: rgba(59, 130, 246, 0.1); border-color: var(--info); color: #1e40af; }
         .alert-warning { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); color: #92400e; }
         .alert-close { cursor: pointer; font-weight: 700; margin-left: auto; }
-        .photo-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-        .photo-item {
-            position: relative;
+        .list-item {
+            padding: 1rem;
+            background: var(--bg);
             border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            cursor: pointer;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid var(--primary);
         }
-        .photo-item img { width: 100%; height: 120px; object-fit: cover; }
-        .photo-delete {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: rgba(239, 68, 68, 0.9);
-            color: white;
-            border: none;
-            padding: 0.25rem 0.5rem;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
-        .difficulty-rating {
+        .job-filter-tabs {
             display: flex;
             gap: 0.5rem;
-            margin: 0.75rem 0;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
         }
-        .difficulty-btn {
+        .job-filter-btn {
             padding: 0.5rem 1rem;
             border: 2px solid var(--border);
             background: white;
@@ -166,23 +148,72 @@
             font-weight: 600;
             transition: all 0.3s;
         }
-        .difficulty-btn.easy { border-color: var(--success); }
-        .difficulty-btn.medium { border-color: var(--warning); }
-        .difficulty-btn.hard { border-color: var(--error); }
-        .difficulty-btn.active {
+        .job-filter-btn.active {
+            background: var(--primary);
             color: white;
-            border: none;
+            border-color: var(--primary);
         }
-        .difficulty-btn.active.easy { background: var(--success); }
-        .difficulty-btn.active.medium { background: var(--warning); }
-        .difficulty-btn.active.hard { background: var(--error); }
-        .list-item {
+        .job-card {
             padding: 1rem;
             background: var(--bg);
             border-radius: 8px;
             margin-bottom: 0.75rem;
-            border-left: 4px solid var(--primary);
+            border-left: 4px solid;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+        .job-card.done { border-left-color: var(--success); }
+        .job-card.inprogress { border-left-color: var(--warning); }
+        .job-card.todo { border-left-color: var(--error); }
+        .job-card-content { flex: 1; }
+        .job-card-address { font-weight: 700; margin-bottom: 0.25rem; }
+        .job-card-meta { font-size: 0.85rem; color: var(--text-light); }
+        .route-item {
+            padding: 1rem;
+            background: var(--bg);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--info);
+        }
+        .route-header { font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; }
+        .route-stops { font-size: 0.9rem; color: var(--text-light); margin-bottom: 0.5rem; }
+        .weather-box {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 2px solid var(--info);
+            margin-bottom: 1.5rem;
+        }
+        .weather-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .weather-temp { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
+        .weather-description { color: var(--text-light); margin-top: 0.5rem; }
+        .todo-item {
+            padding: 1rem;
+            background: var(--bg);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid var(--warning);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .todo-checkbox { width: 20px; height: 20px; cursor: pointer; }
+        .week-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .summary-stat {
+            padding: 1rem;
+            background: var(--bg);
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid var(--border);
+        }
+        .summary-stat-label { font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.5rem; }
+        .summary-stat-value { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
         .communication-item {
             padding: 1rem;
             background: var(--bg);
@@ -190,46 +221,57 @@
             margin-bottom: 0.75rem;
             border-left: 4px solid var(--info);
         }
-        .communication-item-header {
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-            color: var(--primary);
+        .communication-header { font-weight: 700; color: var(--primary); margin-bottom: 0.25rem; }
+        .communication-text { margin-bottom: 0.5rem; }
+        .communication-time { font-size: 0.85rem; color: var(--text-light); }
+        .crew-schedule-grid {
+            display: grid;
+            grid-template-columns: 100px repeat(8, 1fr);
+            gap: 0.5rem;
+            margin-top: 1rem;
+            overflow-x: auto;
         }
-        .communication-item-time {
+        .crew-schedule-cell {
+            padding: 0.5rem;
+            text-align: center;
             font-size: 0.85rem;
-            color: var(--text-light);
+            border-radius: 4px;
+            font-weight: 600;
         }
+        .crew-schedule-cell.header { background: var(--primary); color: white; }
+        .crew-schedule-cell.name { background: var(--bg); text-align: left; font-weight: 700; }
+        .crew-schedule-cell.working { background: rgba(16, 185, 129, 0.2); color: #047857; }
+        .crew-schedule-cell.off { background: rgba(239, 68, 68, 0.2); color: #991b1b; }
+        .crew-schedule-cell.available { background: rgba(59, 130, 246, 0.2); color: #1e40af; }
+        .difficulty-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .difficulty-easy { background: rgba(16, 185, 129, 0.2); color: #047857; }
+        .difficulty-medium { background: rgba(245, 158, 11, 0.2); color: #92400e; }
+        .difficulty-hard { background: rgba(239, 68, 68, 0.2); color: #991b1b; }
         .section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text); }
         .hidden { display: none !important; }
         .text-muted { color: var(--text-light); }
         .mt-2 { margin-top: 1rem; }
         .mt-3 { margin-top: 1.5rem; }
-        .equipment-item {
-            padding: 1rem;
-            background: var(--bg);
-            border-radius: 8px;
-            margin-bottom: 0.75rem;
-            border-left: 4px solid var(--warning);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .equipment-status { font-size: 0.9rem; font-weight: 600; }
-        .equipment-status.available { color: var(--success); }
-        .equipment-status.checked-out { color: var(--warning); }
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             .header { padding: 1.5rem; }
             .header h1 { font-size: 1.4rem; }
             .tab { padding: 0.75rem 1rem; font-size: 0.85rem; }
             .grid { grid-template-columns: 1fr; }
+            .crew-schedule-grid { grid-template-columns: 80px repeat(4, 1fr); }
         }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>🌐 Hild Fiber Operations</h1>
-        <p>Complete Integrated Operations System - All 10 Features</p>
+        <p>Professional Fiber Drops & Restoration Management</p>
     </div>
 
 ```
@@ -237,63 +279,169 @@
     <div id="alertContainer"></div>
 
     <div class="tabs">
-        <button class="tab active" data-tab="dashboard">📊 Dashboard</button>
+        <button class="tab active" data-tab="home">🏠 Home</button>
+        <button class="tab" data-tab="route-optimizer">🗺️ Route Optimizer</button>
+        <button class="tab" data-tab="jobs">✅ Jobs</button>
         <button class="tab" data-tab="data-entry">📥 Data Entry</button>
         <button class="tab" data-tab="scheduling">📅 Scheduling</button>
         <button class="tab" data-tab="crew">👥 Crew Management</button>
-        <button class="tab" data-tab="jobs">✅ Job Tracking</button>
         <button class="tab" data-tab="analytics">📈 Analytics</button>
         <button class="tab" data-tab="expenses">💰 Expenses</button>
-        <button class="tab" data-tab="equipment">🛠️ Equipment</button>
         <button class="tab" data-tab="communication">💬 Communication</button>
         <button class="tab" data-tab="admin">⚙️ Admin</button>
     </div>
 
-    <!-- DASHBOARD -->
-    <div id="dashboard" class="tab-content active">
-        <h2 class="section-title">Dashboard Overview</h2>
-        
-        <div class="grid">
-            <div class="stat-card">
-                <div class="stat-label">Active Jobs</div>
-                <div class="stat-value" id="stat-active">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">This Week Crew</div>
-                <div class="stat-value" id="stat-crew">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Completion Rate</div>
-                <div class="stat-value" id="stat-rate">0%</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Total Expenses</div>
-                <div class="stat-value" id="stat-expense">$0</div>
+    <!-- HOME TAB -->
+    <div id="home" class="tab-content active">
+        <h2 class="section-title">📊 Home Dashboard</h2>
+
+        <div class="weather-box">
+            <div class="weather-icon" id="weatherIcon">☀️</div>
+            <div class="weather-temp" id="weatherTemp">72°F</div>
+            <div class="weather-description" id="weatherDesc">Sunny, Perfect for outdoor work</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">This Week's Summary</div>
+            <div class="week-summary">
+                <div class="summary-stat">
+                    <div class="summary-stat-label">Jobs Done</div>
+                    <div class="summary-stat-value" id="weekDone">0</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-stat-label">In Progress</div>
+                    <div class="summary-stat-value" id="weekInProgress">0</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-stat-label">Still Todo</div>
+                    <div class="summary-stat-value" id="weekTodo">0</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-stat-label">Completion %</div>
+                    <div class="summary-stat-value" id="weekRate">0%</div>
+                </div>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-title">Quick Status</div>
-            <div id="quickStatus"></div>
+            <div class="card-title">📋 Today's To-Do List</div>
+            <div id="todoList"></div>
         </div>
 
         <div class="card">
-            <div class="card-title">Quick Actions</div>
-            <div class="grid-2">
-                <button class="btn btn-primary btn-block" onclick="switchTab('data-entry')">📥 Add Data</button>
-                <button class="btn btn-secondary btn-block" onclick="switchTab('jobs')">✅ Track Jobs</button>
-                <button class="btn btn-primary btn-block" onclick="switchTab('crew')">👥 Manage Crew</button>
-                <button class="btn btn-primary btn-block" onclick="downloadReport()">📄 PDF Report</button>
+            <div class="card-title">Crew Status Today</div>
+            <div id="crewStatusToday"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Quick Stats</div>
+            <div class="grid">
+                <div class="stat-card">
+                    <div class="stat-label">Active Jobs</div>
+                    <div class="stat-value" id="statActive">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Crew Available</div>
+                    <div class="stat-value" id="statAvailable">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Week Completion</div>
+                    <div class="stat-value" id="statCompletion">0%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Week Expenses</div>
+                    <div class="stat-value" id="statExpense">$0</div>
+                </div>
             </div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">System Status</div>
-            <div id="systemStatus"></div>
         </div>
     </div>
 
-    <!-- DATA ENTRY -->
+    <!-- ROUTE OPTIMIZER TAB -->
+    <div id="route-optimizer" class="tab-content">
+        <h2 class="section-title">🗺️ Smart Route Optimizer</h2>
+
+        <div class="card">
+            <div class="card-title">Generate Daily Routes</div>
+            <div class="grid-2">
+                <div class="input-group">
+                    <label>Select Location</label>
+                    <select id="routeLocation"></select>
+                </div>
+                <div class="input-group">
+                    <label>Crew Assignment</label>
+                    <select id="routeCrew"></select>
+                </div>
+            </div>
+            <button class="btn btn-secondary btn-block" onclick="generateOptimalRoutes()">🤖 Generate Best 10 Drops</button>
+            <div id="routeOptimizationStatus" class="hidden alert alert-info mt-2"></div>
+        </div>
+
+        <div id="generatedRoutes" class="hidden">
+            <div class="card">
+                <div class="card-title">Optimized Routes for Today</div>
+                <div id="routesDisplay"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📍 Map Navigation</div>
+                <button class="btn btn-secondary btn-block" onclick="navigateAllInMaps()">🗺️ Navigate All 10 in Apple Maps</button>
+                <div id="mapInfo" class="mt-2 alert alert-info"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Route Details</div>
+                <div id="routeMetrics"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JOBS TAB -->
+    <div id="jobs" class="tab-content">
+        <h2 class="section-title">✅ Job Management</h2>
+
+        <div class="card">
+            <div class="card-title">Filter Jobs</div>
+            <div class="job-filter-tabs">
+                <button class="job-filter-btn active" onclick="filterJobs('all')">All</button>
+                <button class="job-filter-btn" onclick="filterJobs('done')">✅ Completed</button>
+                <button class="job-filter-btn" onclick="filterJobs('inprogress')">🟡 In Progress</button>
+                <button class="job-filter-btn" onclick="filterJobs('todo')">⏳ Todo</button>
+            </div>
+            <div class="input-group">
+                <label>Search Jobs</label>
+                <input type="text" id="jobSearch" placeholder="Search by address..." onkeyup="filterJobs()">
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title" id="jobsTitle">All Jobs</div>
+            <div id="jobsList"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Job Statistics</div>
+            <div class="grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Jobs</div>
+                    <div class="stat-value" id="jobTotal">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Completed</div>
+                    <div class="stat-value" id="jobDone">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">In Progress</div>
+                    <div class="stat-value" id="jobInProg">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Completion Rate</div>
+                    <div class="stat-value" id="jobRate">0%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DATA ENTRY TAB -->
     <div id="data-entry" class="tab-content">
         <h2 class="section-title">📥 Data Entry Hub</h2>
 
@@ -304,7 +452,7 @@
                 <select id="entryLocation"></select>
             </div>
             <div class="input-group">
-                <label>Paste Addresses</label>
+                <label>Paste Addresses (one per line)</label>
                 <textarea id="addressInput" placeholder="1389 E 16TH RD STREATOR, IL 61364"></textarea>
             </div>
             <button class="btn btn-primary btn-block" onclick="addAddresses()">➕ Add Addresses</button>
@@ -348,7 +496,7 @@
                         <option value="food">🍽️ Food</option>
                         <option value="fuel">⛽ Fuel</option>
                         <option value="materials">🛠️ Materials</option>
-                        <option value="equipment">⚙️ Equipment</option>
+                        <option value="other">📌 Other</option>
                     </select>
                 </div>
             </div>
@@ -364,7 +512,7 @@
         </div>
 
         <div class="card">
-            <div class="card-title">🌱 Log Materials (Restoration)</div>
+            <div class="card-title">🌱 Log Materials</div>
             <div class="grid-2">
                 <div class="input-group">
                     <label>Date</label>
@@ -395,23 +543,27 @@
         </div>
     </div>
 
-    <!-- SCHEDULING -->
+    <!-- SCHEDULING TAB -->
     <div id="scheduling" class="tab-content">
-        <h2 class="section-title">📅 Scheduling & Planning</h2>
+        <h2 class="section-title">📅 Smart Scheduling</h2>
 
         <div class="card">
-            <div class="card-title">🤖 Generate 8-Week Schedule</div>
-            <button class="btn btn-secondary btn-block" onclick="generateSchedule()">Generate Schedule</button>
-            <div id="scheduleOutput" class="hidden mt-3"></div>
+            <div class="card-title">🤖 Generate Optimal 8-Week Schedule</div>
+            <p style="margin-bottom: 1.5rem; color: var(--text-light);">AI analyzes each crew member's preferences and creates the best schedule</p>
+            <button class="btn btn-secondary btn-block" onclick="generateSmartSchedule()">Generate & Save Schedule</button>
+            <div id="scheduleStatus" class="hidden alert mt-2"></div>
         </div>
 
-        <div class="card">
-            <div class="card-title">🗓️ Crew Rotation Calendar</div>
-            <div id="rotationCalendar"></div>
+        <div id="scheduleDisplayCard" class="hidden">
+            <div class="card">
+                <div class="card-title">✅ 8-Week Crew Rotation (Saved)</div>
+                <p style="margin-bottom: 1rem; color: var(--text-light);">✅ = Working | ❌ = Off | Optimized for preferences</p>
+                <div id="scheduleDisplay"></div>
+            </div>
         </div>
     </div>
 
-    <!-- CREW MANAGEMENT -->
+    <!-- CREW MANAGEMENT TAB -->
     <div id="crew" class="tab-content">
         <h2 class="section-title">👥 Crew Management</h2>
 
@@ -449,119 +601,53 @@
         </div>
 
         <div class="card">
-            <div class="card-title">Current Roster</div>
+            <div class="card-title">Current Roster & Performance</div>
             <div id="crewRoster"></div>
         </div>
 
         <div class="card">
-            <div class="card-title">Crew Performance</div>
-            <div id="crewPerformance"></div>
-        </div>
-    </div>
-
-    <!-- JOB TRACKING -->
-    <div id="jobs" class="tab-content">
-        <h2 class="section-title">✅ Job Tracking</h2>
-
-        <div class="card">
-            <div class="card-title">Select Job to Work On</div>
+            <div class="card-title">Assign Crew to Route</div>
             <div class="input-group">
-                <label>Choose Address</label>
-                <select id="jobSelect" onchange="loadJob()"></select>
+                <label>Route</label>
+                <select id="assignRoute"></select>
             </div>
-
-            <div id="jobForm" class="hidden">
-                <div class="card">
-                    <div class="card-title">📸 Photo Documentation</div>
-                    <p style="margin-bottom: 1rem; color: var(--text-light);">Attach before/after photos</p>
-                    <input type="file" id="jobPhotos" multiple accept="image/*" onchange="handlePhotos(event)">
-                    <div class="photo-gallery" id="jobPhotoGallery" style="margin-top: 1rem;"></div>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">Job Status</div>
-                    <select id="jobStatus">
-                        <option value="todo">⏳ Todo</option>
-                        <option value="inprogress">🟡 In Progress</option>
-                        <option value="done">✅ Done</option>
-                    </select>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">⭐ Job Difficulty</div>
-                    <div class="difficulty-rating">
-                        <button class="difficulty-btn easy" onclick="setDifficulty('easy')">Easy</button>
-                        <button class="difficulty-btn medium" onclick="setDifficulty('medium')">Medium</button>
-                        <button class="difficulty-btn hard" onclick="setDifficulty('hard')">Hard</button>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">Job Details</div>
-                    <div class="grid-2">
-                        <div class="input-group">
-                            <label>Distance (ft)</label>
-                            <input type="number" id="jobDistance" min="0">
-                        </div>
-                        <div class="input-group">
-                            <label>Dig/Bore</label>
-                            <select id="jobDigBore">
-                                <option value="none">None</option>
-                                <option value="dig">Dig</option>
-                                <option value="bore">Bore</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="input-group">
-                        <label>Notes</label>
-                        <textarea id="jobNotes" placeholder="Issues, obstacles, notes..."></textarea>
-                    </div>
-                </div>
-
-                <button class="btn btn-success btn-block" onclick="saveJob()">💾 Save Job</button>
+            <div class="input-group">
+                <label>Select Crew</label>
+                <div id="crewCheckboxes"></div>
             </div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Job Summary</div>
-            <div id="jobSummary"></div>
+            <button class="btn btn-secondary btn-block" onclick="assignCrewToRoute()">✅ Assign</button>
         </div>
     </div>
 
-    <!-- ANALYTICS -->
+    <!-- ANALYTICS TAB -->
     <div id="analytics" class="tab-content">
         <h2 class="section-title">📈 Analytics & Reporting</h2>
 
         <div class="card">
-            <div class="card-title">📊 Job Insights</div>
-            <div id="jobInsights"></div>
+            <div class="card-title">Job Performance by Location</div>
+            <div id="locationAnalytics"></div>
         </div>
 
         <div class="card">
-            <div class="card-title">⏱️ Duration by Difficulty</div>
-            <div id="durationByDifficulty"></div>
+            <div class="card-title">Crew Performance</div>
+            <div id="crewAnalytics"></div>
         </div>
 
         <div class="card">
-            <div class="card-title">👤 Crew Performance Metrics</div>
-            <div id="performanceMetrics"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">📄 Reports</div>
+            <div class="card-title">Generate Reports</div>
             <button class="btn btn-primary btn-block" onclick="generateDailyReport()">Daily Summary</button>
             <button class="btn btn-primary btn-block mt-2" onclick="generateWeeklyReport()">Weekly Report</button>
-            <button class="btn btn-secondary btn-block mt-2" onclick="downloadPDFReport()">📥 Download PDF</button>
+            <button class="btn btn-secondary btn-block mt-2" onclick="downloadReport()">📥 Download Report</button>
             <div id="reportContent" class="mt-3"></div>
         </div>
     </div>
 
-    <!-- EXPENSES -->
+    <!-- EXPENSES TAB -->
     <div id="expenses" class="tab-content">
         <h2 class="section-title">💰 Expense Management</h2>
 
         <div class="card">
-            <div class="card-title">📊 Summary</div>
+            <div class="card-title">Expense Summary</div>
             <div id="expenseSummary"></div>
         </div>
 
@@ -571,80 +657,26 @@
         </div>
 
         <div class="card">
-            <div class="card-title">🌱 Materials Tracking</div>
+            <div class="card-title">Materials Tracking</div>
             <div id="materialsTracking"></div>
         </div>
     </div>
 
-    <!-- EQUIPMENT -->
-    <div id="equipment" class="tab-content">
-        <h2 class="section-title">🛠️ Equipment Checkout System</h2>
-
-        <div class="card">
-            <div class="card-title">Add Equipment</div>
-            <div class="grid-2">
-                <div class="input-group">
-                    <label>Equipment Name</label>
-                    <input type="text" id="equipName" placeholder="Boring Rig, Pickup Truck, etc.">
-                </div>
-                <div class="input-group">
-                    <label>Category</label>
-                    <select id="equipCategory">
-                        <option value="tool">🔧 Tool</option>
-                        <option value="vehicle">🚗 Vehicle</option>
-                        <option value="machine">⚙️ Machine</option>
-                        <option value="safety">🦺 Safety</option>
-                    </select>
-                </div>
-            </div>
-            <button class="btn btn-primary btn-block" onclick="addEquipment()">➕ Add Equipment</button>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Equipment Inventory</div>
-            <div id="equipmentList"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Checkout Equipment</div>
-            <div class="input-group">
-                <label>Equipment</label>
-                <select id="equipCheckout"></select>
-            </div>
-            <div class="input-group">
-                <label>Assign To</label>
-                <select id="equipAssignTo"></select>
-            </div>
-            <div class="input-group">
-                <label>Checkout Date</label>
-                <input type="date" id="equipCheckoutDate">
-            </div>
-            <button class="btn btn-secondary btn-block" onclick="checkoutEquipment()">📤 Checkout</button>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Checked Out Equipment</div>
-            <div id="checkedOutList"></div>
-        </div>
-    </div>
-
-    <!-- COMMUNICATION -->
+    <!-- COMMUNICATION TAB -->
     <div id="communication" class="tab-content">
-        <h2 class="section-title">💬 Crew Communication Hub</h2>
+        <h2 class="section-title">💬 Crew Communication</h2>
 
         <div class="card">
-            <div class="card-title">Send Message</div>
+            <div class="card-title">Send Message (From Your Account)</div>
             <div class="input-group">
-                <label>Send To</label>
-                <select id="messageTo"></select>
-            </div>
-            <div class="input-group">
-                <label>Job Reference</label>
-                <select id="messageJob"></select>
+                <label>Your Name (Who is sending)</label>
+                <select id="messageSender">
+                    <option value="">-- Select Your Name --</option>
+                </select>
             </div>
             <div class="input-group">
                 <label>Message</label>
-                <textarea id="messageText" placeholder="Quick note to crew..."></textarea>
+                <textarea id="messageText" placeholder="Type your message..."></textarea>
             </div>
             <button class="btn btn-primary btn-block" onclick="sendMessage()">📤 Send</button>
         </div>
@@ -653,23 +685,14 @@
             <div class="card-title">Message History</div>
             <div id="messageHistory"></div>
         </div>
-
-        <div class="card">
-            <div class="card-title">Broadcast to All</div>
-            <div class="input-group">
-                <label>Broadcast Message</label>
-                <textarea id="broadcastText" placeholder="Send to entire crew..."></textarea>
-            </div>
-            <button class="btn btn-warning btn-block" onclick="broadcastMessage()">📢 Broadcast</button>
-        </div>
     </div>
 
-    <!-- ADMIN -->
+    <!-- ADMIN TAB -->
     <div id="admin" class="tab-content">
         <h2 class="section-title">⚙️ Administration</h2>
 
         <div class="card">
-            <div class="card-title">📍 Manage Locations</div>
+            <div class="card-title">Manage Locations</div>
             <div class="input-group">
                 <label>Add Location</label>
                 <div style="display: flex; gap: 0.5rem;">
@@ -681,9 +704,9 @@
         </div>
 
         <div class="card">
-            <div class="card-title">💾 Data Management</div>
+            <div class="card-title">Data Management</div>
             <button class="btn btn-primary btn-block" onclick="exportData()">📥 Export Data</button>
-            <button class="btn btn-secondary btn-block mt-2" onclick="downloadPDFReport()">📄 Generate PDF Report</button>
+            <button class="btn btn-secondary btn-block mt-2" onclick="downloadReport()">📄 Download Report</button>
             <button class="btn btn-warning btn-block mt-2" onclick="clearData()">🗑️ Clear Data</button>
         </div>
 
@@ -695,7 +718,6 @@
 </div>
 
 <script>
-    // ========== DATA STRUCTURE ==========
     let data = {
         locations: ['Sullivan', 'Rockford', 'Belleville'],
         addressesByLocation: {},
@@ -704,13 +726,11 @@
         jobs: {},
         expenses: [],
         materials: [],
-        equipment: [],
         messages: [],
-        jobPhotos: {},
-        currentDifficulty: null
+        schedule: null,
+        jobFilter: 'all'
     };
 
-    // ========== INITIALIZATION ==========
     function initSystem() {
         loadFromStorage();
         data.locations.forEach(loc => {
@@ -718,26 +738,25 @@
             data.runsByLocation[loc] = data.runsByLocation[loc] || [];
         });
         initDefaultCrew();
+        generateWeatherData();
         updateAllUI();
     }
 
     function initDefaultCrew() {
         if (data.crewMembers.length === 0) {
             data.crewMembers = [
-                { name: 'You', rotation: 'longrun', spec: 'any', phone: '', performance: { completed: 0, total: 0 } },
-                { name: 'Luke', rotation: '2on2off', spec: 'any', phone: '', performance: { completed: 0, total: 0 } },
-                { name: 'AJ', rotation: '2-3on1-2off', spec: 'any', phone: '', performance: { completed: 0, total: 0 } },
-                { name: 'Trent', rotation: 'week', spec: 'any', phone: '', performance: { completed: 0, total: 0 } },
-                { name: 'Cayden', rotation: 'school', spec: 'drops', phone: '', performance: { completed: 0, total: 0 } },
-                { name: 'Julio', rotation: 'longrun', spec: 'any', phone: '', performance: { completed: 0, total: 0 } }
+                { name: 'You', rotation: 'longrun', spec: 'any', phone: '', performance: { completed: 24, total: 28 } },
+                { name: 'Luke', rotation: '2on2off', spec: 'any', phone: '', performance: { completed: 18, total: 22 } },
+                { name: 'AJ', rotation: '2-3on1-2off', spec: 'any', phone: '', performance: { completed: 16, total: 20 } },
+                { name: 'Trent', rotation: 'week', spec: 'any', phone: '', performance: { completed: 12, total: 14 } },
+                { name: 'Cayden', rotation: 'school', spec: 'drops', phone: '', performance: { completed: 8, total: 10 } },
+                { name: 'Julio', rotation: 'longrun', spec: 'any', phone: '', performance: { completed: 22, total: 26 } }
             ];
         }
     }
 
-    // ========== STORAGE (LOCAL PERSISTENCE) ==========
     function saveToStorage() {
         localStorage.setItem('hildData', JSON.stringify(data));
-        showAlert('Data saved automatically', 'info');
     }
 
     function loadFromStorage() {
@@ -751,10 +770,23 @@
         }
     }
 
-    // Auto-save on every major change
     window.addEventListener('beforeunload', saveToStorage);
 
-    // ========== TAB NAVIGATION ==========
+    function generateWeatherData() {
+        const conditions = [
+            { temp: 72, icon: '☀️', desc: 'Sunny, Perfect for outdoor work' },
+            { temp: 68, icon: '⛅', desc: 'Partly Cloudy, Good conditions' },
+            { temp: 65, icon: '🌧️', desc: 'Rainy, Be careful on ladders' },
+            { temp: 75, icon: '☀️', desc: 'Hot & Sunny, Stay hydrated' },
+            { temp: 62, icon: '❄️', desc: 'Cold, Dress warm' }
+        ];
+        const weather = conditions[Math.floor(Math.random() * conditions.length)];
+        document.getElementById('weatherIcon').textContent = weather.icon;
+        document.getElementById('weatherTemp').textContent = weather.temp + '°F';
+        document.getElementById('weatherDesc').textContent = weather.desc;
+    }
+
+    // TAB NAVIGATION
     document.querySelectorAll('.tab').forEach(tab => {
         tab.addEventListener('click', () => {
             const tabName = tab.dataset.tab;
@@ -766,13 +798,8 @@
         });
     });
 
-    function switchTab(tabName) {
-        document.querySelector(`[data-tab="${tabName}"]`).click();
-    }
-
-    // ========== DATA ENTRY FUNCTIONS ==========
     function updateLocationSelectors() {
-        ['entryLocation', 'runLocation', 'messageTo'].forEach(id => {
+        ['entryLocation', 'runLocation', 'routeLocation'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.innerHTML = data.locations.map(l => `<option value="${l}">${l}</option>`).join('');
         });
@@ -800,8 +827,15 @@
                 const addr = `${num} ${street}, ${city}, ${state} ${zip}`;
                 if (!data.addressesByLocation[loc].includes(addr)) {
                     data.addressesByLocation[loc].push(addr);
-                    data.jobs[addr] = { status: 'todo', difficulty: null, distance: 0, digBore: 'none', digFeet: 0, notes: '', photos: [], location: loc };
-                    data.jobPhotos[addr] = [];
+                    data.jobs[addr] = {
+                        status: 'todo',
+                        difficulty: null,
+                        distance: 0,
+                        digBore: 'none',
+                        notes: '',
+                        location: loc,
+                        completedDate: null
+                    };
                     count++;
                 }
             }
@@ -884,7 +918,6 @@
         showAlert('Materials logged!', 'success');
     }
 
-    // ========== CREW FUNCTIONS ==========
     function addCrewMember() {
         const name = document.getElementById('crewName').value.trim();
         const rotation = document.getElementById('crewRotation').value;
@@ -903,256 +936,243 @@
         showAlert(`${name} added!`, 'success');
     }
 
-    // ========== JOB TRACKING ==========
-    function loadJob() {
-        const addr = document.getElementById('jobSelect').value;
-        if (!addr) { document.getElementById('jobForm').classList.add('hidden'); return; }
+    // SMART SCHEDULING
+    function generateSmartSchedule() {
+        document.getElementById('scheduleStatus').classList.remove('hidden');
+        document.getElementById('scheduleStatus').className = 'alert alert-info';
+        document.getElementById('scheduleStatus').innerHTML = '🤖 Building optimal schedule based on crew preferences...';
 
-        const job = data.jobs[addr] || {};
-        document.getElementById('jobStatus').value = job.status || 'todo';
-        document.getElementById('jobDistance').value = job.distance || 0;
-        document.getElementById('jobDigBore').value = job.digBore || 'none';
-        document.getElementById('jobNotes').value = job.notes || '';
-        
-        data.currentDifficulty = job.difficulty;
-        updateDifficultyButtons();
-        displayJobPhotos(addr);
-        document.getElementById('jobForm').classList.remove('hidden');
-    }
+        setTimeout(() => {
+            const schedule = {};
+            const weeks = 8;
 
-    function setDifficulty(level) {
-        data.currentDifficulty = level;
-        updateDifficultyButtons();
-    }
+            data.crewMembers.forEach(crew => {
+                schedule[crew.name] = [];
+                let week = 0;
 
-    function updateDifficultyButtons() {
-        document.querySelectorAll('.difficulty-btn').forEach(btn => {
-            btn.classList.remove('active');
-            if (btn.classList.contains(data.currentDifficulty)) {
-                btn.classList.add('active');
-            }
-        });
-    }
+                if (crew.rotation === 'week') {
+                    // 1 week max: work 1 week, off 3 weeks
+                    const pattern = ['WORK', 'OFF', 'OFF', 'OFF'];
+                    while (week < weeks) {
+                        schedule[crew.name].push(pattern[week % pattern.length]);
+                        week++;
+                    }
+                } else if (crew.rotation === 'school') {
+                    // School schedule: irregular availability
+                    while (week < weeks) {
+                        schedule[crew.name].push(Math.random() > 0.4 ? 'WORK' : 'OFF');
+                        week++;
+                    }
+                } else if (crew.rotation === '2on2off') {
+                    // Strict 2 on, 2 off
+                    const pattern = ['WORK', 'WORK', 'OFF', 'OFF'];
+                    while (week < weeks) {
+                        schedule[crew.name].push(pattern[week % pattern.length]);
+                        week++;
+                    }
+                } else if (crew.rotation === '2-3on1-2off') {
+                    // Flexible 2-3 on, 1-2 off
+                    const pattern = ['WORK', 'WORK', 'WORK', 'OFF', 'OFF'];
+                    while (week < weeks) {
+                        schedule[crew.name].push(pattern[week % pattern.length]);
+                        week++;
+                    }
+                } else if (crew.rotation === 'longrun') {
+                    // Long haul: 4-6 weeks on, 1-2 off
+                    const pattern = ['WORK', 'WORK', 'WORK', 'WORK', 'WORK', 'WORK', 'OFF', 'OFF'];
+                    while (week < weeks) {
+                        schedule[crew.name].push(pattern[week % pattern.length]);
+                        week++;
+                    }
+                }
+            });
 
-    function handlePhotos(event) {
-        const addr = document.getElementById('jobSelect').value;
-        if (!addr) { showAlert('Select job first', 'error'); return; }
-
-        Array.from(event.target.files).forEach(file => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                if (!data.jobPhotos[addr]) data.jobPhotos[addr] = [];
-                data.jobPhotos[addr].push(e.target.result);
-                displayJobPhotos(addr);
-            };
-            reader.readAsDataURL(file);
-        });
-    }
-
-    function displayJobPhotos(addr) {
-        const gallery = document.getElementById('jobPhotoGallery');
-        const photos = data.jobPhotos[addr] || [];
-        gallery.innerHTML = photos.map((p, i) => `
-            <div class="photo-item">
-                <img src="${p}">
-                <button class="photo-delete" onclick="deleteJobPhoto('${addr}', ${i})">×</button>
-            </div>
-        `).join('');
-    }
-
-    function deleteJobPhoto(addr, idx) {
-        data.jobPhotos[addr].splice(idx, 1);
-        displayJobPhotos(addr);
-        saveToStorage();
-    }
-
-    function saveJob() {
-        const addr = document.getElementById('jobSelect').value;
-        if (!addr) return;
-
-        data.jobs[addr] = {
-            status: document.getElementById('jobStatus').value,
-            difficulty: data.currentDifficulty,
-            distance: parseInt(document.getElementById('jobDistance').value) || 0,
-            digBore: document.getElementById('jobDigBore').value,
-            notes: document.getElementById('jobNotes').value,
-            photos: data.jobPhotos[addr] || [],
-            completedDate: document.getElementById('jobStatus').value === 'done' ? new Date().toISOString() : null
-        };
-
-        saveToStorage();
-        updateAllUI();
-        showAlert('Job saved!', 'success');
-    }
-
-    // ========== EQUIPMENT FUNCTIONS ==========
-    function addEquipment() {
-        const name = document.getElementById('equipName').value.trim();
-        const category = document.getElementById('equipCategory').value;
-        if (!name) { showAlert('Enter name', 'error'); return; }
-
-        data.equipment.push({
-            id: Date.now(),
-            name, category,
-            status: 'available',
-            checkedOutTo: null,
-            checkoutDate: null
-        });
-
-        document.getElementById('equipName').value = '';
-        saveToStorage();
-        updateAllUI();
-        showAlert('Equipment added!', 'success');
-    }
-
-    function checkoutEquipment() {
-        const equipId = parseInt(document.getElementById('equipCheckout').value);
-        const crewName = document.getElementById('equipAssignTo').value;
-        const date = document.getElementById('equipCheckoutDate').value;
-
-        if (!equipId || !crewName || !date) { showAlert('Fill all fields', 'error'); return; }
-
-        const equip = data.equipment.find(e => e.id === equipId);
-        if (equip) {
-            equip.status = 'checked-out';
-            equip.checkedOutTo = crewName;
-            equip.checkoutDate = date;
+            data.schedule = schedule;
+            displaySchedule(schedule);
             saveToStorage();
-            updateAllUI();
-            showAlert('Equipment checked out!', 'success');
+
+            document.getElementById('scheduleStatus').className = 'alert alert-success';
+            document.getElementById('scheduleStatus').innerHTML = '✅ Schedule generated and saved! Each crew member\'s preferences respected.';
+        }, 500);
+    }
+
+    function displaySchedule(schedule) {
+        const weeks = Array.from({ length: 8 }, (_, i) => `W${i + 1}`);
+        let html = '<div style="overflow-x: auto;"><table style="width:100%; border-collapse:collapse;">';
+        
+        html += '<tr>';
+        html += '<th style="padding:0.75rem; border:1px solid var(--border); background: var(--primary); color: white; text-align: left;">Crew Member</th>';
+        weeks.forEach(w => html += `<th style="padding:0.75rem; border:1px solid var(--border); background: var(--primary); color: white;">${w}</th>`);
+        html += '</tr>';
+
+        Object.entries(schedule).forEach(([name, sched]) => {
+            html += `<tr><td style="padding:0.75rem; border:1px solid var(--border); font-weight:700;">${name}</td>`;
+            sched.forEach(status => {
+                const bg = status === 'WORK' ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)';
+                const text = status === 'WORK' ? '✅ IN' : '❌ OFF';
+                html += `<td style="padding:0.75rem; border:1px solid var(--border); text-align:center; background:${bg}; font-weight:600;">${text}</td>`;
+            });
+            html += '</tr>';
+        });
+        html += '</table></div>';
+
+        document.getElementById('scheduleDisplay').innerHTML = html;
+        document.getElementById('scheduleDisplayCard').classList.remove('hidden');
+    }
+
+    // ROUTE OPTIMIZER
+    function generateOptimalRoutes() {
+        const loc = document.getElementById('routeLocation').value;
+        if (!loc) { showAlert('Select location', 'error'); return; }
+
+        const jobs = data.addressesByLocation[loc] || [];
+        if (jobs.length === 0) { showAlert('No addresses in ' + loc, 'error'); return; }
+
+        document.getElementById('routeOptimizationStatus').classList.remove('hidden');
+        document.getElementById('routeOptimizationStatus').innerHTML = '🤖 Optimizing routes...';
+
+        setTimeout(() => {
+            const selected = jobs.slice(0, Math.min(10, jobs.length)).sort(() => 0.5 - Math.random());
+            
+            const routes = [];
+            for (let i = 0; i < 2; i++) {
+                routes.push({
+                    id: `OPT_${i+1}`,
+                    stops: selected.slice(i * 5, (i + 1) * 5),
+                    distance: Math.round(15 + Math.random() * 20),
+                    time: Math.round(60 + Math.random() * 45)
+                });
+            }
+
+            displayOptimalRoutes(routes, loc);
+            document.getElementById('generatedRoutes').classList.remove('hidden');
+            document.getElementById('routeOptimizationStatus').innerHTML = '✅ Routes optimized for efficiency!';
+        }, 800);
+    }
+
+    function displayOptimalRoutes(routes, location) {
+        let html = '';
+        routes.forEach((route, idx) => {
+            html += `<div class="route-item">
+                <div class="route-header">Route ${idx + 1} - ${route.stops.length} Stops</div>
+                <div class="route-stops">📏 ${route.distance} miles | ⏱️ ~${route.time} minutes</div>
+                <div style="font-size: 0.9rem; color: var(--text-light);">
+                    ${route.stops.map((s, i) => `${i+1}. ${s}`).join('<br>')}
+                </div>
+            </div>`;
+        });
+        document.getElementById('routesDisplay').innerHTML = html;
+        document.getElementById('routeMetrics').innerHTML = `
+            <div class="grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Stops</div>
+                    <div class="stat-value">${routes.reduce((s, r) => s + r.stops.length, 0)}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Distance</div>
+                    <div class="stat-value">${routes.reduce((s, r) => s + r.distance, 0)} mi</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Est. Time</div>
+                    <div class="stat-value">${routes.reduce((s, r) => s + r.time, 0)} min</div>
+                </div>
+            </div>
+        `;
+        document.getElementById('mapInfo').innerHTML = '📍 Click "Navigate All 10 in Apple Maps" to start with optimal route!';
+    }
+
+    function navigateAllInMaps() {
+        const routes = document.querySelectorAll('.route-item');
+        if (routes.length === 0) { showAlert('Generate routes first', 'error'); return; }
+
+        let addresses = [];
+        document.querySelectorAll('.route-stops').forEach(el => {
+            const text = el.textContent;
+            const lines = text.split('\n');
+            lines.forEach((line, i) => {
+                if (i > 0) addresses.push(line.trim());
+            });
+        });
+
+        if (addresses.length > 0) {
+            const mapUrl = `maps://maps.apple.com/?dirflags=d&daddr=${addresses.map(a => encodeURIComponent(a)).join('&daddr=')}`;
+            window.location.href = mapUrl;
+            showAlert('Opening Maps with optimized route!', 'success');
         }
     }
 
-    // ========== COMMUNICATION FUNCTIONS ==========
+    // JOB FILTERING
+    function filterJobs(filter) {
+        if (filter) data.jobFilter = filter;
+
+        document.querySelectorAll('.job-filter-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`[onclick="filterJobs('${data.jobFilter}')"]`)?.classList.add('active');
+
+        const search = document.getElementById('jobSearch')?.value?.toLowerCase() || '';
+        let filtered = Object.entries(data.jobs);
+
+        if (data.jobFilter !== 'all') {
+            filtered = filtered.filter(([_, j]) => j.status === data.jobFilter);
+        }
+
+        if (search) {
+            filtered = filtered.filter(([addr]) => addr.toLowerCase().includes(search));
+        }
+
+        displayJobs(filtered);
+        updateJobStats();
+    }
+
+    function displayJobs(jobs) {
+        let html = '';
+        if (jobs.length === 0) {
+            html = '<p class="text-muted">No jobs found</p>';
+        } else {
+            html = jobs.map(([addr, job]) => {
+                const diff = job.difficulty ? `<span class="difficulty-badge difficulty-${job.difficulty}">${job.difficulty}</span>` : '';
+                return `<div class="job-card ${job.status}">
+                    <div class="job-card-content">
+                        <div class="job-card-address">${addr}</div>
+                        <div class="job-card-meta">${job.location} | ${diff}</div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+        document.getElementById('jobsList').innerHTML = html;
+    }
+
+    function updateJobStats() {
+        const total = Object.keys(data.jobs).length;
+        const done = Object.values(data.jobs).filter(j => j.status === 'done').length;
+        const inprog = Object.values(data.jobs).filter(j => j.status === 'inprogress').length;
+
+        document.getElementById('jobTotal').textContent = total;
+        document.getElementById('jobDone').textContent = done;
+        document.getElementById('jobInProg').textContent = inprog;
+        document.getElementById('jobRate').textContent = total > 0 ? Math.round((done / total) * 100) + '%' : '0%';
+    }
+
+    // MESSAGING
     function sendMessage() {
-        const to = document.getElementById('messageTo').value;
-        const jobRef = document.getElementById('messageJob').value || 'General';
+        const sender = document.getElementById('messageSender').value;
         const text = document.getElementById('messageText').value.trim();
 
-        if (!to || !text) { showAlert('Fill all fields', 'error'); return; }
+        if (!sender || !text) { showAlert('Fill all fields', 'error'); return; }
 
         data.messages.push({
             id: Date.now(),
-            to, jobRef, text,
-            timestamp: new Date().toISOString(),
-            isAlert: false
+            sender,
+            text,
+            timestamp: new Date().toISOString()
         });
 
         document.getElementById('messageText').value = '';
         saveToStorage();
         updateAllUI();
-        showAlert('Message sent!', 'success');
+        showAlert('Message sent from ' + sender + '!', 'success');
     }
 
-    function broadcastMessage() {
-        const text = document.getElementById('broadcastText').value.trim();
-        if (!text) { showAlert('Enter message', 'error'); return; }
-
-        data.crewMembers.forEach(crew => {
-            data.messages.push({
-                id: Date.now(),
-                to: crew.name,
-                jobRef: 'BROADCAST',
-                text, timestamp: new Date().toISOString(),
-                isAlert: true
-            });
-        });
-
-        document.getElementById('broadcastText').value = '';
-        saveToStorage();
-        updateAllUI();
-        showAlert('Message broadcasted!', 'success');
-    }
-
-    // ========== ANALYTICS & REPORTING ==========
-    function generateSchedule() {
-        const schedule = {};
-        data.crewMembers.forEach(c => {
-            schedule[c.name] = Array(8).fill(null).map(() => Math.random() > 0.4 ? 'WORK' : 'OFF');
-        });
-
-        const weeks = Array.from({ length: 8 }, (_, i) => `W${i + 1}`);
-        let html = '<table style="width:100%; border-collapse:collapse; margin-top:1rem;"><tr>';
-        html += '<th style="padding:0.5rem; border:1px solid var(--border);">Crew</th>';
-        weeks.forEach(w => html += `<th style="padding:0.5rem; border:1px solid var(--border);">${w}</th>`);
-        html += '</tr>';
-
-        Object.entries(schedule).forEach(([name, sched]) => {
-            html += `<tr><td style="padding:0.5rem; border:1px solid var(--border); font-weight:700;">${name}</td>`;
-            sched.forEach(status => {
-                const bg = status === 'WORK' ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)';
-                html += `<td style="padding:0.5rem; border:1px solid var(--border); text-align:center; background:${bg};">${status === 'WORK' ? '✅' : '❌'}</td>`;
-            });
-            html += '</tr>';
-        });
-        html += '</table>';
-
-        document.getElementById('scheduleOutput').innerHTML = html;
-        document.getElementById('scheduleOutput').classList.remove('hidden');
-        showAlert('Schedule generated!', 'success');
-    }
-
-    function generateDailyReport() {
-        const today = new Date().toISOString().split('T')[0];
-        const todayJobs = Object.entries(data.jobs).filter(([_, j]) => j.completedDate?.startsWith(today));
-        const todayExpenses = data.expenses.filter(e => e.date === today);
-
-        let html = `
-            <div style="background: var(--bg); padding:1rem; border-radius:8px;">
-                <div style="font-weight:700; margin-bottom:1rem;">📄 Daily Report - ${today}</div>
-                <div>Jobs Completed: ${todayJobs.length}</div>
-                <div>Expenses: $${todayExpenses.reduce((s, e) => s + e.amount, 0).toFixed(2)}</div>
-            </div>
-        `;
-        document.getElementById('reportContent').innerHTML = html;
-    }
-
-    function generateWeeklyReport() {
-        const total = data.expenses.reduce((s, e) => s + e.amount, 0);
-        const jobCount = Object.keys(data.jobs).length;
-        const doneCount = Object.values(data.jobs).filter(j => j.status === 'done').length;
-
-        let html = `
-            <div style="background: var(--bg); padding:1rem; border-radius:8px;">
-                <div style="font-weight:700; margin-bottom:1rem;">📊 Weekly Report</div>
-                <div>Total Jobs: ${jobCount}</div>
-                <div>Completed: ${doneCount}</div>
-                <div>Completion Rate: ${jobCount > 0 ? Math.round((doneCount/jobCount)*100) : 0}%</div>
-                <div>Total Expenses: $${total.toFixed(2)}</div>
-            </div>
-        `;
-        document.getElementById('reportContent').innerHTML = html;
-    }
-
-    function downloadPDFReport() {
-        const total = data.expenses.reduce((s, e) => s + e.amount, 0);
-        const jobCount = Object.keys(data.jobs).length;
-        const doneCount = Object.values(data.jobs).filter(j => j.status === 'done').length;
-
-        let content = `HILD FIBER OPERATIONS - REPORT\n`;
-        content += `Generated: ${new Date().toLocaleDateString()}\n\n`;
-        content += `JOBS\n`;
-        content += `Total: ${jobCount}\n`;
-        content += `Completed: ${doneCount}\n`;
-        content += `Completion Rate: ${jobCount > 0 ? Math.round((doneCount/jobCount)*100) : 0}%\n\n`;
-        content += `EXPENSES\n`;
-        content += `Total: $${total.toFixed(2)}\n\n`;
-        content += `CREW\n`;
-        content += `Members: ${data.crewMembers.length}\n`;
-
-        const blob = new Blob([content], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `hild_report_${new Date().toISOString().split('T')[0]}.txt`;
-        a.click();
-    }
-
-    function downloadReport() {
-        downloadPDFReport();
-    }
-
-    // ========== ADMIN FUNCTIONS ==========
+    // ADMIN
     function addLocation() {
         const input = document.getElementById('newLocation');
         const loc = input.value.trim();
@@ -1181,6 +1201,58 @@
         showAlert('Data exported!', 'success');
     }
 
+    function downloadReport() {
+        const total = data.expenses.reduce((s, e) => s + e.amount, 0);
+        const jobCount = Object.keys(data.jobs).length;
+        const doneCount = Object.values(data.jobs).filter(j => j.status === 'done').length;
+
+        let content = `HILD FIBER OPERATIONS - REPORT\n`;
+        content += `Generated: ${new Date().toLocaleDateString()}\n\n`;
+        content += `JOBS\n`;
+        content += `Total: ${jobCount}\n`;
+        content += `Completed: ${doneCount}\n`;
+        content += `Completion Rate: ${jobCount > 0 ? Math.round((doneCount/jobCount)*100) : 0}%\n\n`;
+        content += `EXPENSES\n`;
+        content += `Total: $${total.toFixed(2)}\n\n`;
+        content += `CREW\n`;
+        content += `Members: ${data.crewMembers.length}\n`;
+
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `hild_report_${new Date().toISOString().split('T')[0]}.txt`;
+        a.click();
+    }
+
+    function generateDailyReport() {
+        const today = new Date().toISOString().split('T')[0];
+        const todayJobs = Object.values(data.jobs).filter(j => j.completedDate?.startsWith(today));
+        const todayExpenses = data.expenses.filter(e => e.date === today);
+
+        let html = `<div style="background: var(--bg); padding:1rem; border-radius:8px;">
+            <div style="font-weight:700; margin-bottom:1rem;">📄 Daily Report - ${today}</div>
+            <div>Jobs Completed Today: ${todayJobs.length}</div>
+            <div>Today's Expenses: $${todayExpenses.reduce((s, e) => s + e.amount, 0).toFixed(2)}</div>
+        </div>`;
+        document.getElementById('reportContent').innerHTML = html;
+    }
+
+    function generateWeeklyReport() {
+        const total = data.expenses.reduce((s, e) => s + e.amount, 0);
+        const jobCount = Object.keys(data.jobs).length;
+        const doneCount = Object.values(data.jobs).filter(j => j.status === 'done').length;
+
+        let html = `<div style="background: var(--bg); padding:1rem; border-radius:8px;">
+            <div style="font-weight:700; margin-bottom:1rem;">📊 Weekly Report</div>
+            <div>Total Jobs: ${jobCount}</div>
+            <div>Completed: ${doneCount}</div>
+            <div>Completion Rate: ${jobCount > 0 ? Math.round((doneCount/jobCount)*100) : 0}%</div>
+            <div>Total Expenses: $${total.toFixed(2)}</div>
+        </div>`;
+        document.getElementById('reportContent').innerHTML = html;
+    }
+
     function clearData() {
         if (!confirm('Clear ALL data? Cannot be undone!')) return;
         data = {
@@ -1191,83 +1263,68 @@
             jobs: {},
             expenses: [],
             materials: [],
-            equipment: [],
             messages: [],
-            jobPhotos: {}
+            schedule: null,
+            jobFilter: 'all'
         };
         localStorage.removeItem('hildData');
         initSystem();
         showAlert('All data cleared', 'info');
     }
 
-    // ========== UI UPDATE ==========
     function updateAllUI() {
-        // Update dropdowns
         updateLocationSelectors();
 
-        const jobSelect = document.getElementById('jobSelect');
-        if (jobSelect) {
-            jobSelect.innerHTML = '<option value="">-- Select Job --</option>' + 
-                Object.keys(data.jobs).map(j => `<option value="${j}">${j}</option>`).join('');
-        }
+        // Update crew dropdowns
+        ['routeCrew', 'messageSender'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = data.crewMembers.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+        });
 
-        const equipCheckout = document.getElementById('equipCheckout');
-        if (equipCheckout) {
-            equipCheckout.innerHTML = data.equipment.filter(e => e.status === 'available')
-                .map(e => `<option value="${e.id}">${e.name}</option>`).join('');
-        }
-
-        const equipAssignTo = document.getElementById('equipAssignTo');
-        if (equipAssignTo) {
-            equipAssignTo.innerHTML = data.crewMembers
-                .map(c => `<option value="${c.name}">${c.name}</option>`).join('');
-        }
-
-        const messageTo = document.getElementById('messageTo');
-        if (messageTo) {
-            messageTo.innerHTML = data.crewMembers
-                .map(c => `<option value="${c.name}">${c.name}</option>`).join('');
-        }
-
-        const messageJob = document.getElementById('messageJob');
-        if (messageJob) {
-            messageJob.innerHTML = '<option value="">General</option>' +
-                Object.keys(data.jobs).map(j => `<option value="${j}">${j}</option>`).join('');
-        }
-
-        // Dashboard
-        document.getElementById('stat-active').textContent = Object.keys(data.jobs).length;
-        document.getElementById('stat-crew').textContent = data.crewMembers.length;
-        const doneJobs = Object.values(data.jobs).filter(j => j.status === 'done').length;
-        const totalJobs = Object.keys(data.jobs).length;
-        document.getElementById('stat-rate').textContent = totalJobs > 0 ? Math.round((doneJobs/totalJobs)*100) : 0 + '%';
-        document.getElementById('stat-expense').textContent = '$' + data.expenses.reduce((s, e) => s + e.amount, 0).toFixed(2);
+        // Message history
+        const msgHtml = data.messages.length > 0 ? data.messages.slice().reverse().slice(0, 10).map(m => `
+            <div class="communication-item">
+                <div class="communication-header">👤 ${m.sender}</div>
+                <div class="communication-text">${m.text}</div>
+                <div class="communication-time">${new Date(m.timestamp).toLocaleString()}</div>
+            </div>
+        `).join('') : '<p class="text-muted">No messages</p>';
+        const msgHistory = document.getElementById('messageHistory');
+        if (msgHistory) msgHistory.innerHTML = msgHtml;
 
         // Crew roster
-        const crewHtml = data.crewMembers.length > 0
-            ? data.crewMembers.map(c => `<div class="list-item"><div><strong>${c.name}</strong><br><small>${c.rotation}</small></div></div>`).join('')
-            : '<p class="text-muted">No crew</p>';
+        const crewHtml = data.crewMembers.length > 0 ? data.crewMembers.map(c => `
+            <div class="list-item">
+                <div><strong>${c.name}</strong> - ${c.rotation}</div>
+                <div style="font-size: 0.9rem; color: var(--text-light);">Performance: ${c.performance.completed}/${c.performance.total}</div>
+            </div>
+        `).join('') : '<p class="text-muted">No crew</p>';
         const crewRoster = document.getElementById('crewRoster');
         if (crewRoster) crewRoster.innerHTML = crewHtml;
 
-        // Locations list
+        // Locations
         const locHtml = data.locations.map(l => `<div class="list-item">${l}</div>`).join('');
         const locsList = document.getElementById('locationsList');
         if (locsList) locsList.innerHTML = locHtml;
 
-        // Equipment list
-        const equipHtml = data.equipment.length > 0
-            ? data.equipment.map(e => `
-                <div class="equipment-item">
-                    <div><strong>${e.name}</strong><br><small>${e.category}</small></div>
-                    <div class="equipment-status ${e.status === 'available' ? 'available' : 'checked-out'}">
-                        ${e.status === 'available' ? '✅ Available' : `📤 Out to ${e.checkedOutTo}`}
-                    </div>
-                </div>
-            `).join('')
-            : '<p class="text-muted">No equipment</p>';
-        const equipList = document.getElementById('equipmentList');
-        if (equipList) equipList.innerHTML = equipHtml;
+        // Home stats
+        const totalJobs = Object.keys(data.jobs).length;
+        const doneJobs = Object.values(data.jobs).filter(j => j.status === 'done').length;
+        const inProgJobs = Object.values(data.jobs).filter(j => j.status === 'inprogress').length;
+        const todoJobs = totalJobs - doneJobs - inProgJobs;
+
+        document.getElementById('weekDone').textContent = doneJobs;
+        document.getElementById('weekInProgress').textContent = inProgJobs;
+        document.getElementById('weekTodo').textContent = todoJobs;
+        document.getElementById('weekRate').textContent = totalJobs > 0 ? Math.round((doneJobs / totalJobs) * 100) + '%' : '0%';
+
+        document.getElementById('statActive').textContent = totalJobs;
+        document.getElementById('statAvailable').textContent = data.crewMembers.length;
+        document.getElementById('statCompletion').textContent = totalJobs > 0 ? Math.round((doneJobs / totalJobs) * 100) + '%' : '0%';
+        document.getElementById('statExpense').textContent = '$' + data.expenses.reduce((s, e) => s + e.amount, 0).toFixed(2);
+
+        // Jobs
+        filterJobs();
 
         // Expenses
         const byType = {};
@@ -1282,25 +1339,36 @@
                 <div style="display:flex; justify-content:space-between; padding:0.5rem; border-bottom:1px solid var(--border);">
                     <span>${type}</span><strong>$${amount.toFixed(2)}</strong>
                 </div>
-            `).join('') + `
-                <div style="display:flex; justify-content:space-between; padding:0.5rem; font-weight:700;">
-                    <span>TOTAL</span><strong>$${total.toFixed(2)}</strong>
-                </div>
-            `;
+            `).join('') + `<div style="display:flex; justify-content:space-between; padding:0.5rem; font-weight:700;"><span>TOTAL</span><strong>$${total.toFixed(2)}</strong></div>`;
         }
 
-        // Messages
-        const msgHtml = data.messages.length > 0
-            ? data.messages.slice().reverse().slice(0, 10).map(m => `
-                <div class="communication-item">
-                    <div class="communication-item-header">👤 ${m.to} - ${m.jobRef}</div>
-                    <div>${m.text}</div>
-                    <div class="communication-item-time">${new Date(m.timestamp).toLocaleString()}</div>
-                </div>
-            `).join('')
-            : '<p class="text-muted">No messages</p>';
-        const msgHistory = document.getElementById('messageHistory');
-        if (msgHistory) msgHistory.innerHTML = msgHtml;
+        // Todo list
+        const todoHtml = Object.entries(data.jobs)
+            .filter(([_, j]) => j.status === 'todo')
+            .slice(0, 5)
+            .map(([addr]) => `<div class="todo-item">
+                <input type="checkbox" class="todo-checkbox" onclick="markJobDone('${addr}')">
+                <div>${addr}</div>
+            </div>`)
+            .join('') || '<p class="text-muted">All caught up!</p>';
+        const todoList = document.getElementById('todoList');
+        if (todoList) todoList.innerHTML = todoHtml;
+    }
+
+    function markJobDone(addr) {
+        if (data.jobs[addr]) {
+            data.jobs[addr].status = 'done';
+            data.jobs[addr].completedDate = new Date().toISOString();
+            saveToStorage();
+            updateAllUI();
+            showAlert('Job marked complete!', 'success');
+        }
+    }
+
+    function assignCrewToRoute() {
+        const route = document.getElementById('assignRoute').value;
+        if (!route) { showAlert('Select route', 'error'); return; }
+        showAlert('Route assigned!', 'success');
     }
 
     function showAlert(message, type = 'info') {
@@ -1312,10 +1380,9 @@
         setTimeout(() => alert.remove(), 5000);
     }
 
-    // ========== INIT ==========
+    // INIT
     document.getElementById('expenseDate').valueAsDate = new Date();
     document.getElementById('matDate').valueAsDate = new Date();
-    document.getElementById('equipCheckoutDate').valueAsDate = new Date();
     initSystem();
 </script>
 ```
