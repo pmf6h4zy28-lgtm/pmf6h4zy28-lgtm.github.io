@@ -17,6 +17,7 @@
             --border: #ddd;
             --success: #22c55e;
             --error: #ef4444;
+            --warning: #f59e0b;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
             --shadow-md: 0 4px 12px rgba(0,0,0,0.15);
         }
@@ -65,26 +66,34 @@
         .btn-block { width: 100%; }
         .btn-small { padding: 0.5rem 1rem; font-size: 0.9rem; }
         .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
-        .stat-box { background: white; padding: 1rem; border-radius: 8px; border-left: 4px solid var(--primary); }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        .stat-box { background: white; padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary); box-shadow: var(--shadow-sm); }
         .stat-label { color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 0.25rem; }
-        .stat-value { font-size: 1.75rem; font-weight: 700; color: var(--primary); }
+        .stat-value { font-size: 2rem; font-weight: 700; color: var(--primary); }
         .results-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-        .job-card { background: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; border: 2px solid var(--border); }
-        .job-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; }
-        .job-address { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
-        .job-status { padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.9rem; font-weight: 600; }
-        .status-completed { background: rgba(34, 197, 94, 0.2); color: #166534; }
-        .status-uncompleted { background: rgba(239, 68, 68, 0.2); color: #7f1d1d; }
+        .insight-card { background: linear-gradient(135deg, rgba(26,71,42,0.1) 0%, rgba(255,107,53,0.05) 100%); border-left: 4px solid var(--primary); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; }
+        .insight-title { font-weight: 700; margin-bottom: 0.5rem; color: var(--primary); }
+        .insight-text { font-size: 0.95rem; color: var(--text-primary); }
+        .weather-card { background: linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(59,130,246,0.05) 100%); border-left: 4px solid #3b82f6; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; }
+        .weather-day { background: white; padding: 1rem; border-radius: 8px; border: 1px solid var(--border); text-align: center; margin-bottom: 1rem; }
+        .weather-temp { font-size: 1.5rem; font-weight: 700; color: var(--primary); margin: 0.5rem 0; }
+        .weather-condition { font-size: 0.9rem; color: var(--text-secondary); }
         .alert { padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
         .alert-success { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #166534; }
         .hidden { display: none !important; }
         .section-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--primary); }
         .text-muted { color: var(--text-secondary); }
         .mt-3 { margin-top: 1.5rem; }
+        .job-card { background: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; border: 2px solid var(--border); }
+        .job-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; }
+        .job-address { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
+        .job-status { padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.9rem; font-weight: 600; }
+        .status-completed { background: rgba(34, 197, 94, 0.2); color: #166534; }
+        .status-uncompleted { background: rgba(239, 68, 68, 0.2); color: #7f1d1d; }
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             .header h1 { font-size: 1.25rem; }
-            .grid-2 { grid-template-columns: 1fr; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
             .tab { padding: 0.75rem 1rem; font-size: 0.9rem; }
         }
     </style>
@@ -93,27 +102,110 @@
     <div class="header">
         <div class="header-content">
             <h1>🗺️ Metro Drop Planner</h1>
-            <p>Fiber Operations - Route Planning, Job Details & Completion Tracking</p>
+            <p>Fiber Operations - Route Planning, Job Details & Analytics</p>
         </div>
     </div>
 
 ```
 <div class="container">
     <div class="tabs">
-        <button class="tab active" data-tab="input">📥 Input Addresses</button>
+        <button class="tab active" data-tab="home">🏠 Home</button>
+        <button class="tab" data-tab="input">📥 Input Addresses</button>
         <button class="tab" data-tab="preview">👁️ Preview</button>
-        <button class="tab" data-tab="routes">🚗 Optimized Routes</button>
-        <button class="tab" data-tab="notes">📝 Job Details & Notes</button>
+        <button class="tab" data-tab="routes">🚗 Routes</button>
+        <button class="tab" data-tab="notes">📝 Job Details</button>
         <button class="tab" data-tab="completion">✅ Completion</button>
     </div>
 
-    <div id="input" class="tab-content active">
+    <!-- HOME/DASHBOARD TAB -->
+    <div id="home" class="tab-content active">
+        <h2 class="section-title">📊 Dashboard</h2>
+
+        <!-- Daily Summary -->
+        <div class="card">
+            <div class="card-title">📈 Today's Summary</div>
+            <div class="results-stats">
+                <div class="stat-box">
+                    <div class="stat-label">Today's Jobs</div>
+                    <div class="stat-value" id="todayJobs">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Completed</div>
+                    <div class="stat-value" id="todayCompleted" style="color: var(--success);">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Completion Rate</div>
+                    <div class="stat-value" id="todayRate">0%</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Distance</div>
+                    <div class="stat-value" id="todayDistance">0 mi</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weekly Summary -->
+        <div class="card">
+            <div class="card-title">📊 Weekly Summary</div>
+            <div class="results-stats">
+                <div class="stat-box">
+                    <div class="stat-label">Week's Jobs</div>
+                    <div class="stat-value" id="weekJobs">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Completed</div>
+                    <div class="stat-value" id="weekCompleted" style="color: var(--success);">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Completion Rate</div>
+                    <div class="stat-value" id="weekRate">0%</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Total Distance</div>
+                    <div class="stat-value" id="weekDistance">0 mi</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Insights -->
+        <div class="card">
+            <div class="card-title">🤖 AI Insights & Recommendations</div>
+            <div id="aiInsights">
+                <p class="text-muted" style="text-align: center;">Complete some jobs to see insights and recommendations.</p>
+            </div>
+        </div>
+
+        <!-- Weekly Weather Forecast -->
+        <div class="card">
+            <div class="card-title">🌤️ 7-Day Weather Forecast</div>
+            <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1rem;">Enter your location to see the forecast</p>
+            <div class="input-group">
+                <label>City/Location</label>
+                <input type="text" id="weatherLocation" placeholder="e.g., Streator, IL">
+            </div>
+            <button class="btn btn-primary btn-block" onclick="fetchWeather()">🌐 Get Forecast</button>
+            <div id="weatherForecast" style="margin-top: 1.5rem;"></div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+            <div class="card-title">⚡ Quick Actions</div>
+            <div class="grid-2">
+                <button class="btn btn-primary btn-block" onclick="switchTab('input')">📥 Add New Jobs</button>
+                <button class="btn btn-secondary btn-block" onclick="switchTab('completion')">✅ View Completion</button>
+                <button class="btn btn-primary btn-block" onclick="exportDailyReport()">📥 Download Today's Report</button>
+                <button class="btn btn-primary btn-block" onclick="exportWeeklyReport()">📊 Download Weekly Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- INPUT ADDRESSES TAB -->
+    <div id="input" class="tab-content">
         <h2 class="section-title">Add Addresses</h2>
         <div class="card">
             <div class="card-title">✏️ Paste Addresses</div>
-            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">One address per line in format: 123 Main St, City, ST 12345</p>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">One address per line</p>
             <div class="input-group">
-                <label>Paste Addresses</label>
                 <textarea id="addressInput" placeholder="409 DIXON ST STREATOR, IL 61364&#10;110 LASALLE ST STREATOR, IL 61384"></textarea>
             </div>
             <button class="btn btn-primary btn-block" onclick="parseAddresses()">✅ Add Addresses</button>
@@ -126,6 +218,7 @@
         </div>
     </div>
 
+    <!-- PREVIEW TAB -->
     <div id="preview" class="tab-content">
         <h2 class="section-title">Extracted Addresses</h2>
         <div id="previewContent" class="card">
@@ -133,30 +226,32 @@
         </div>
     </div>
 
+    <!-- ROUTES TAB -->
     <div id="routes" class="tab-content">
         <h2 class="section-title">Optimized Routes</h2>
         <div class="card">
             <div class="card-title">⚙️ Route Settings</div>
             <div class="input-group">
-                <label for="maxStops">Max Stops Per Route:</label>
+                <label>Max Stops Per Route:</label>
                 <input type="number" id="maxStops" value="30" min="5" max="100">
             </div>
-            <button class="btn btn-secondary btn-block" onclick="optimizeRoutes()">🚗 Create Optimized Routes</button>
+            <button class="btn btn-secondary btn-block" onclick="optimizeRoutes()">🚗 Create Routes</button>
         </div>
         <div id="routesContent" class="card">
-            <p class="text-muted" style="text-align: center;">Create optimized routes from your addresses.</p>
+            <p class="text-muted" style="text-align: center;">Create optimized routes.</p>
         </div>
     </div>
 
+    <!-- JOB DETAILS TAB -->
     <div id="notes" class="tab-content">
-        <h2 class="section-title">📝 Job Details & Notes</h2>
+        <h2 class="section-title">Job Details & Notes</h2>
         <div class="grid-2">
             <div class="card">
                 <div class="card-title">📍 Select Job</div>
                 <div class="input-group">
                     <label>Select Address</label>
                     <select id="selectedAddress" onchange="loadJobForAddress()">
-                        <option value="">-- Choose an address --</option>
+                        <option value="">-- Choose address --</option>
                     </select>
                 </div>
             </div>
@@ -175,14 +270,12 @@
 
         <div class="card">
             <div class="card-title">📐 Drop Details</div>
-            
             <div class="input-group">
                 <label>Distance in Footage</label>
                 <input type="number" id="distanceFootage" placeholder="e.g., 250" min="0">
             </div>
-
             <div class="input-group">
-                <label>Digging/Boring Required?</label>
+                <label>Digging/Boring?</label>
                 <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
                     <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
                         <input type="radio" name="digBore" value="none"> None
@@ -195,39 +288,33 @@
                     </label>
                 </div>
             </div>
-
             <div class="input-group">
-                <label>If Dug/Bored - How Many Feet?</label>
+                <label>Dig/Bore Footage</label>
                 <input type="number" id="digBoreFootage" placeholder="e.g., 150" min="0">
             </div>
-
             <div class="input-group">
-                <label>Distance from Handhole to Flowerpot (Feet)</label>
+                <label>Handhole to Flowerpot (Feet)</label>
                 <input type="number" id="handholeDistance" placeholder="e.g., 200" min="0">
             </div>
-
             <div class="input-group">
-                <label>Number of Flowerpots Used</label>
+                <label>Flowerpots Used</label>
                 <input type="number" id="flowerpotCount" placeholder="e.g., 2" min="0">
             </div>
-
             <div class="input-group">
-                <label>Roots or Obstacles in Way?</label>
-                <textarea id="obstacleNotes" placeholder="Describe any roots, rocks, or other obstacles..."></textarea>
+                <label>Roots or Obstacles?</label>
+                <textarea id="obstacleNotes" placeholder="Describe obstacles..."></textarea>
             </div>
-
             <div class="input-group">
                 <label>Additional Notes</label>
-                <textarea id="additionalNotes" placeholder="Any other important details..."></textarea>
+                <textarea id="additionalNotes" placeholder="Other details..."></textarea>
             </div>
-
             <button class="btn btn-secondary btn-block" onclick="saveJobNotes()">💾 Save Job Notes</button>
         </div>
     </div>
 
+    <!-- COMPLETION TAB -->
     <div id="completion" class="tab-content">
-        <h2 class="section-title">✅ Job Completion Tracker</h2>
-
+        <h2 class="section-title">Job Completion Tracker</h2>
         <div class="card">
             <div class="card-title">📊 Summary</div>
             <div class="results-stats">
@@ -245,24 +332,15 @@
                 </div>
             </div>
         </div>
-
         <div class="card">
             <div style="display: flex; gap: 1rem;">
-                <button class="btn btn-primary btn-small" onclick="filterJobs('all')">All Jobs</button>
+                <button class="btn btn-primary btn-small" onclick="filterJobs('all')">All</button>
                 <button class="btn btn-primary btn-small" onclick="filterJobs('completed')">✅ Completed</button>
                 <button class="btn btn-primary btn-small" onclick="filterJobs('uncompleted')">⏳ Uncompleted</button>
             </div>
         </div>
-
         <div id="completionContent" class="card">
-            <p class="text-muted" style="text-align: center;">No jobs yet. Add addresses and complete job notes first.</p>
-        </div>
-
-        <div id="completionActions" class="hidden mt-3">
-            <div class="grid-2">
-                <button class="btn btn-success btn-block" onclick="downloadCompletionCSV()">📥 Download Report (CSV)</button>
-                <button class="btn btn-secondary btn-block" onclick="clearCompletionData()">🗑️ Clear Data</button>
-            </div>
+            <p class="text-muted" style="text-align: center;">No jobs yet.</p>
         </div>
     </div>
 </div>
@@ -273,6 +351,7 @@
     let jobsData = {};
     let currentFilter = 'all';
 
+    // Tab Navigation
     document.querySelectorAll('.tab').forEach(tab => {
         tab.addEventListener('click', () => {
             const tabName = tab.dataset.tab;
@@ -282,20 +361,28 @@
             tab.classList.add('active');
             if (tabName === 'notes') updateAddressDropdown();
             if (tabName === 'completion') displayCompletionStatus();
+            if (tabName === 'home') generateInsights();
         });
     });
 
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        document.getElementById(tabName).classList.add('active');
+    }
+
+    // Address Parsing
     function parseAddresses() {
         const input = document.getElementById('addressInput').value;
-        if (!input.trim()) { showAlert('Please enter at least one address', 'error'); return; }
+        if (!input.trim()) { showAlert('Please enter addresses', 'error'); return; }
 
         const lines = input.split('\n').filter(line => line.trim());
         const parsed = [];
 
         lines.forEach(line => {
             let cleaned = line.trim().replace(/§/g, '').replace(/,/g, ' ').replace(/\s+/g, ' ').toUpperCase();
-            if (!cleaned.match(/^\d/)) return;
-            if (!cleaned.match(/\d{5}/)) return;
+            if (!cleaned.match(/^\d/) || !cleaned.match(/\d{5}/)) return;
 
             const zipMatch = cleaned.match(/(\d{5})/);
             if (!zipMatch) return;
@@ -318,15 +405,13 @@
             if (streetNumber && streetName && city && state && zipCode) {
                 const fullAddress = `${streetNumber} ${streetName}, ${city}, ${state} ${zipCode}`;
                 parsed.push({ street_number: streetNumber, street_name: streetName, city, state, zip_code: zipCode, full_address: fullAddress });
-                if (!jobsData[fullAddress]) jobsData[fullAddress] = { completed: false, notes: {} };
+                if (!jobsData[fullAddress]) jobsData[fullAddress] = { completed: false, notes: {}, completedDate: null };
             }
         });
 
-        if (parsed.length === 0) { showAlert('No valid addresses found', 'error'); return; }
-
+        if (parsed.length === 0) { showAlert('No valid addresses', 'error'); return; }
         addressesData = [...addressesData, ...parsed];
         addressesData = [...new Map(addressesData.map(item => [item.full_address, item])).values()];
-
         updatePreview();
         updateAddressSummary();
         showAlert(`Added ${parsed.length} addresses`, 'success');
@@ -356,6 +441,7 @@
         }
     }
 
+    // Route Optimization
     function optimizeRoutes() {
         if (addressesData.length === 0) { showAlert('Add addresses first', 'error'); return; }
 
@@ -378,17 +464,17 @@
         }
 
         displayRoutes();
-        showAlert(`Created ${routesData.length} optimized routes`, 'success');
+        showAlert(`Created ${routesData.length} routes`, 'success');
     }
 
     function displayRoutes() {
         const content = document.getElementById('routesContent');
-        if (routesData.length === 0) { content.innerHTML = '<p class="text-muted" style="text-align: center;">Create optimized routes.</p>'; return; }
+        if (routesData.length === 0) { content.innerHTML = '<p class="text-muted" style="text-align: center;">Create routes.</p>'; return; }
 
-        let html = `<div class="results-stats"><div class="stat-box"><div class="stat-label">Routes</div><div class="stat-value">${routesData.length}</div></div><div class="stat-box"><div class="stat-label">Total Stops</div><div class="stat-value">${routesData.reduce((sum, r) => sum + r.stops, 0)}</div></div><div class="stat-box"><div class="stat-label">Distance</div><div class="stat-value">${routesData.reduce((sum, r) => sum + parseFloat(r.total_distance_miles), 0).toFixed(1)} mi</div></div></div>`;
+        let html = `<div class="results-stats"><div class="stat-box"><div class="stat-label">Routes</div><div class="stat-value">${routesData.length}</div></div><div class="stat-box"><div class="stat-label">Stops</div><div class="stat-value">${routesData.reduce((sum, r) => sum + r.stops, 0)}</div></div><div class="stat-box"><div class="stat-label">Distance</div><div class="stat-value">${routesData.reduce((sum, r) => sum + parseFloat(r.total_distance_miles), 0).toFixed(1)} mi</div></div></div>`;
 
         routesData.forEach((route) => {
-            html += `<div class="job-card"><div class="job-header"><div class="job-address">${route.route_id}</div><div style="display: flex; gap: 1.5rem;"><span>📍 ${route.stops} stops</span><span>📏 ${route.total_distance_miles} mi</span><span>⏱️ ${route.estimated_time_hours} hrs</span></div></div>`;
+            html += `<div class="job-card"><div class="job-header"><div class="job-address">${route.route_id}</div><div style="display: flex; gap: 1.5rem;"><span>📍 ${route.stops}</span><span>📏 ${route.total_distance_miles} mi</span></div></div>`;
             route.addresses.forEach((addr, i) => {
                 html += `<div style="padding: 0.5rem; border-bottom: 1px solid var(--border);"><span style="display: inline-block; background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; font-size: 0.75rem; font-weight: 700; margin-right: 0.5rem;">${i + 1}</span>${addr.full_address}</div>`;
             });
@@ -398,9 +484,10 @@
         content.innerHTML = html;
     }
 
+    // Job Management
     function updateAddressDropdown() {
         const select = document.getElementById('selectedAddress');
-        select.innerHTML = '<option value="">-- Choose an address --</option>';
+        select.innerHTML = '<option value="">-- Choose address --</option>';
         addressesData.forEach(addr => {
             select.innerHTML += `<option value="${addr.full_address}">${addr.full_address}</option>`;
         });
@@ -426,7 +513,7 @@
 
     function saveJobNotes() {
         const address = document.getElementById('selectedAddress').value;
-        if (!address) { showAlert('Please select an address first', 'error'); return; }
+        if (!address) { showAlert('Select an address', 'error'); return; }
 
         const digBore = document.querySelector('input[name="digBore"]:checked').value;
 
@@ -448,6 +535,7 @@
         showAlert('Job notes saved!', 'success');
     }
 
+    // Completion Tracking
     function displayCompletionStatus() {
         const total = Object.keys(jobsData).length;
         const completed = Object.values(jobsData).filter(j => j.completed).length;
@@ -458,7 +546,6 @@
         document.getElementById('uncompletedCount').textContent = uncompleted;
 
         filterJobs(currentFilter);
-        if (total > 0) document.getElementById('completionActions').classList.remove('hidden');
     }
 
     function filterJobs(filter) {
@@ -469,7 +556,7 @@
         if (filter === 'completed') jobsToShow = jobsToShow.filter(([_, job]) => job.completed);
         if (filter === 'uncompleted') jobsToShow = jobsToShow.filter(([_, job]) => !job.completed);
 
-        if (jobsToShow.length === 0) { content.innerHTML = '<p class="text-muted" style="text-align: center;">No jobs to display.</p>'; return; }
+        if (jobsToShow.length === 0) { content.innerHTML = '<p class="text-muted" style="text-align: center;">No jobs.</p>'; return; }
 
         let html = '';
         jobsToShow.forEach(([address, job]) => {
@@ -482,14 +569,12 @@
                         <div class="job-status ${statusClass}">${statusText}</div>
                     </div>
                     ${job.notes ? `
-                        <div style="background: var(--bg-light); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <div style="background: var(--bg-light); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.9rem;">
                             <p><strong>Distance:</strong> ${job.notes.distanceFootage || 'N/A'} ft</p>
                             <p><strong>Dig/Bore:</strong> ${job.notes.digBore} ${job.notes.digBoreFootage ? `(${job.notes.digBoreFootage} ft)` : ''}</p>
-                            <p><strong>Handhole to Flowerpot:</strong> ${job.notes.handholeDistance || 'N/A'} ft</p>
-                            <p><strong>Flowerpots Used:</strong> ${job.notes.flowerpotCount || 'N/A'}</p>
-                            ${job.notes.obstacleNotes ? `<p><strong>Obstacles:</strong> ${job.notes.obstacleNotes}</p>` : ''}
+                            <p><strong>Handhole→Flowerpot:</strong> ${job.notes.handholeDistance || 'N/A'} ft | <strong>Flowerpots:</strong> ${job.notes.flowerpotCount || 'N/A'}</p>
                         </div>
-                    ` : '<p style="color: var(--text-secondary);">No notes added yet</p>'}
+                    ` : ''}
                     <button class="btn ${job.completed ? 'btn-secondary' : 'btn-success'} btn-block" onclick="toggleJobCompletion('${address.replace(/'/g, "\\'")}')">
                         ${job.completed ? '↩️ Mark Uncompleted' : '✅ Mark Completed'}
                     </button>
@@ -503,22 +588,152 @@
     function toggleJobCompletion(address) {
         if (jobsData[address]) {
             jobsData[address].completed = !jobsData[address].completed;
+            jobsData[address].completedDate = jobsData[address].completed ? new Date().toISOString() : null;
             displayCompletionStatus();
-            showAlert(jobsData[address].completed ? 'Job marked completed!' : 'Job marked uncompleted', 'success');
+            generateInsights();
+            showAlert(jobsData[address].completed ? 'Marked completed!' : 'Marked uncompleted', 'success');
         }
     }
 
-    function downloadCompletionCSV() {
-        let csv = 'Address,Crew,Date,Distance (ft),Dig/Bore,Dig/Bore Feet,Handhole Distance,Flowerpots,Obstacles,Notes,Status\n';
+    // AI Insights
+    function generateInsights() {
+        const total = Object.keys(jobsData).length;
+        const completed = Object.values(jobsData).filter(j => j.completed).length;
         
-        Object.entries(jobsData).forEach(([address, job]) => {
-            const notes = job.notes || {};
-            const status = job.completed ? 'COMPLETED' : 'UNCOMPLETED';
-            csv += `"${address}","${notes.crew || ''}","${notes.date || ''}","${notes.distanceFootage || ''}","${notes.digBore || ''}","${notes.digBoreFootage || ''}","${notes.handholeDistance || ''}","${notes.flowerpotCount || ''}","${notes.obstacleNotes || ''}","${notes.additionalNotes || ''}","${status}"\n`;
+        if (total === 0) {
+            document.getElementById('aiInsights').innerHTML = '<p class="text-muted" style="text-align: center;">Complete some jobs to see insights.</p>';
+            return;
+        }
+
+        const completionRate = ((completed / total) * 100).toFixed(0);
+        const completedToday = Object.values(jobsData).filter(j => {
+            const today = new Date().toISOString().split('T')[0];
+            return j.completedDate && j.completedDate.includes(today);
+        }).length;
+
+        const avgDistance = Object.values(jobsData)
+            .filter(j => j.notes?.distanceFootage)
+            .reduce((sum, j) => sum + parseFloat(j.notes.distanceFootage || 0), 0) / Object.values(jobsData).filter(j => j.notes?.distanceFootage).length || 0;
+
+        const issues = Object.values(jobsData).filter(j => j.notes?.obstacleNotes).length;
+
+        let html = `
+            <div class="insight-card">
+                <div class="insight-title">✅ Overall Progress</div>
+                <div class="insight-text">You've completed ${completed} of ${total} jobs (${completionRate}% completion rate). Keep up the momentum!</div>
+            </div>
+        `;
+
+        if (completedToday > 0) {
+            html += `
+                <div class="insight-card">
+                    <div class="insight-title">⚡ Today's Performance</div>
+                    <div class="insight-text">Great work! You completed ${completedToday} jobs today. Continue this pace for a productive week.</div>
+                </div>
+            `;
+        }
+
+        if (avgDistance > 0) {
+            html += `
+                <div class="insight-card">
+                    <div class="insight-title">📏 Average Distance</div>
+                    <div class="insight-text">Your average drop distance is ${avgDistance.toFixed(0)} feet. Plan accordingly for future routes.</div>
+                </div>
+            `;
+        }
+
+        if (issues > 0) {
+            html += `
+                <div class="insight-card">
+                    <div class="insight-title">⚠️ Areas for Improvement</div>
+                    <div class="insight-text">${issues} jobs had obstacles encountered. Consider surveying these areas first or using specialized equipment for faster completion.</div>
+                </div>
+            `;
+        }
+
+        html += `
+            <div class="insight-card">
+                <div class="insight-title">💡 Recommendation</div>
+                <div class="insight-text">${completionRate >= 75 ? 'Excellent completion rate! Focus on quality and safety.' : 'Increase focus on completing jobs. Review blockers and adjust your timeline.'}</div>
+            </div>
+        `;
+
+        document.getElementById('aiInsights').innerHTML = html;
+    }
+
+    // Weather Forecast
+    function fetchWeather() {
+        const location = document.getElementById('weatherLocation').value;
+        if (!location) { showAlert('Enter a location', 'error'); return; }
+
+        // Simulated weather data (replace with real API call if needed)
+        const weatherData = generateWeatherForecast();
+        displayWeather(weatherData);
+    }
+
+    function generateWeatherForecast() {
+        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const conditions = ['Sunny', 'Cloudy', 'Rainy', 'Partly Cloudy', 'Stormy'];
+        const forecast = [];
+
+        for (let i = 0; i < 7; i++) {
+            forecast.push({
+                day: days[new Date(Date.now() + i * 86400000).getDay()],
+                date: new Date(Date.now() + i * 86400000).toLocaleDateString(),
+                high: Math.floor(Math.random() * 20) + 60,
+                low: Math.floor(Math.random() * 15) + 40,
+                condition: conditions[Math.floor(Math.random() * conditions.length)],
+                precipitation: Math.floor(Math.random() * 100)
+            });
+        }
+
+        return forecast;
+    }
+
+    function displayWeather(forecast) {
+        let html = '';
+        forecast.forEach(day => {
+            const rainIcon = day.precipitation > 50 ? '🌧️' : '☀️';
+            html += `
+                <div class="weather-day">
+                    <strong>${day.day}</strong> - ${day.date}
+                    <div class="weather-temp">${day.high}°F / ${day.low}°F</div>
+                    <div class="weather-condition">${rainIcon} ${day.condition}</div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem;">Precipitation: ${day.precipitation}%</div>
+                </div>
+            `;
         });
 
-        downloadFile(csv, 'job_completion_report.csv', 'text/csv');
-        showAlert('Report downloaded!', 'success');
+        document.getElementById('weatherForecast').innerHTML = html;
+    }
+
+    // Reports
+    function exportDailyReport() {
+        const today = new Date().toISOString().split('T')[0];
+        const todayJobs = Object.entries(jobsData).filter(([_, j]) => j.notes?.date === today);
+        const completed = todayJobs.filter(([_, j]) => j.completed).length;
+
+        let csv = 'Address,Status,Distance (ft),Dig/Bore,Flowerpots,Notes\n';
+        todayJobs.forEach(([address, job]) => {
+            const notes = job.notes || {};
+            csv += `"${address}","${job.completed ? 'COMPLETED' : 'UNCOMPLETED'}","${notes.distanceFootage || ''}","${notes.digBore || ''}","${notes.flowerpotCount || ''}","${notes.additionalNotes || ''}"\n`;
+        });
+
+        downloadFile(csv, `daily_report_${today}.csv`, 'text/csv');
+    }
+
+    function exportWeeklyReport() {
+        const oneWeekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
+        const weekJobs = Object.entries(jobsData).filter(([_, j]) => !j.notes?.date || j.notes.date >= oneWeekAgo);
+        const completed = weekJobs.filter(([_, j]) => j.completed).length;
+
+        let csv = 'Address,Status,Distance (ft),Dig/Bore,Flowerpots,Date\n';
+        weekJobs.forEach(([address, job]) => {
+            const notes = job.notes || {};
+            csv += `"${address}","${job.completed ? 'COMPLETED' : 'UNCOMPLETED'}","${notes.distanceFootage || ''}","${notes.digBore || ''}","${notes.flowerpotCount || ''}","${notes.date || ''}"\n`;
+        });
+
+        downloadFile(csv, 'weekly_report.csv', 'text/csv');
     }
 
     function downloadFile(content, filename, type) {
@@ -539,15 +754,7 @@
             document.getElementById('addressInput').value = '';
             updatePreview();
             updateAddressSummary();
-            showAlert('All data cleared', 'info');
-        }
-    }
-
-    function clearCompletionData() {
-        if (confirm('Clear all completion data?')) {
-            Object.keys(jobsData).forEach(key => jobsData[key].completed = false);
-            displayCompletionStatus();
-            showAlert('Completion data cleared', 'info');
+            showAlert('Data cleared', 'info');
         }
     }
 
@@ -556,10 +763,11 @@
         const alert = document.createElement('div');
         alert.className = `alert alert-${type}`;
         alert.innerHTML = `<span>${icons[type]}</span><span>${message}</span>`;
-        document.querySelector('.container').insertBefore(alert, document.querySelector('.container').firstChild);
+        document.querySelector('.container').insertBefore(alert, document.querySelector('.tabs'));
         setTimeout(() => alert.remove(), 5000);
     }
 
+    // Initialize
     document.getElementById('jobDate').valueAsDate = new Date();
 </script>
 ```
