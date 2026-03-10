@@ -125,6 +125,7 @@
         .alert-success { background: rgba(16, 185, 129, 0.1); border-color: var(--success); color: #047857; }
         .alert-info { background: rgba(59, 130, 246, 0.1); border-color: var(--info); color: #1e40af; }
         .alert-warning { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); color: #92400e; }
+        .alert-error { background: rgba(239, 68, 68, 0.1); border-color: var(--error); color: #991b1b; }
         .alert-close { cursor: pointer; font-weight: 700; margin-left: auto; }
         .list-item {
             padding: 1rem;
@@ -159,14 +160,10 @@
             border-radius: 8px;
             margin-bottom: 0.75rem;
             border-left: 4px solid;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
         .job-card.done { border-left-color: var(--success); }
         .job-card.inprogress { border-left-color: var(--warning); }
         .job-card.todo { border-left-color: var(--error); }
-        .job-card-content { flex: 1; }
         .job-card-address { font-weight: 700; margin-bottom: 0.25rem; }
         .job-card-meta { font-size: 0.85rem; color: var(--text-light); }
         .route-item {
@@ -224,35 +221,6 @@
         .communication-header { font-weight: 700; color: var(--primary); margin-bottom: 0.25rem; }
         .communication-text { margin-bottom: 0.5rem; }
         .communication-time { font-size: 0.85rem; color: var(--text-light); }
-        .crew-schedule-grid {
-            display: grid;
-            grid-template-columns: 100px repeat(8, 1fr);
-            gap: 0.5rem;
-            margin-top: 1rem;
-            overflow-x: auto;
-        }
-        .crew-schedule-cell {
-            padding: 0.5rem;
-            text-align: center;
-            font-size: 0.85rem;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-        .crew-schedule-cell.header { background: var(--primary); color: white; }
-        .crew-schedule-cell.name { background: var(--bg); text-align: left; font-weight: 700; }
-        .crew-schedule-cell.working { background: rgba(16, 185, 129, 0.2); color: #047857; }
-        .crew-schedule-cell.off { background: rgba(239, 68, 68, 0.2); color: #991b1b; }
-        .crew-schedule-cell.available { background: rgba(59, 130, 246, 0.2); color: #1e40af; }
-        .difficulty-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        .difficulty-easy { background: rgba(16, 185, 129, 0.2); color: #047857; }
-        .difficulty-medium { background: rgba(245, 158, 11, 0.2); color: #92400e; }
-        .difficulty-hard { background: rgba(239, 68, 68, 0.2); color: #991b1b; }
         .section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text); }
         .hidden { display: none !important; }
         .text-muted { color: var(--text-light); }
@@ -264,7 +232,6 @@
             .header h1 { font-size: 1.4rem; }
             .tab { padding: 0.75rem 1rem; font-size: 0.85rem; }
             .grid { grid-template-columns: 1fr; }
-            .crew-schedule-grid { grid-template-columns: 80px repeat(4, 1fr); }
         }
     </style>
 </head>
@@ -329,11 +296,6 @@
         </div>
 
         <div class="card">
-            <div class="card-title">Crew Status Today</div>
-            <div id="crewStatusToday"></div>
-        </div>
-
-        <div class="card">
             <div class="card-title">Quick Stats</div>
             <div class="grid">
                 <div class="stat-card">
@@ -373,7 +335,7 @@
                 </div>
             </div>
             <button class="btn btn-secondary btn-block" onclick="generateOptimalRoutes()">🤖 Generate Best 10 Drops</button>
-            <div id="routeOptimizationStatus" class="hidden alert alert-info mt-2"></div>
+            <div id="routeOptimizationStatus" class="hidden alert mt-2"></div>
         </div>
 
         <div id="generatedRoutes" class="hidden">
@@ -460,7 +422,7 @@
 
         <div class="card">
             <div class="card-title">🌱 Add Long-Run/Restoration</div>
-            <select id="runLocation" class="input-group"></select>
+            <select id="runLocation" class="input-group" style="margin-bottom: 1rem;"></select>
             <div class="grid-2">
                 <div class="input-group">
                     <label>Highway/Road</label>
@@ -624,11 +586,6 @@
         <h2 class="section-title">📈 Analytics & Reporting</h2>
 
         <div class="card">
-            <div class="card-title">Job Performance by Location</div>
-            <div id="locationAnalytics"></div>
-        </div>
-
-        <div class="card">
             <div class="card-title">Crew Performance</div>
             <div id="crewAnalytics"></div>
         </div>
@@ -667,9 +624,9 @@
         <h2 class="section-title">💬 Crew Communication</h2>
 
         <div class="card">
-            <div class="card-title">Send Message (From Your Account)</div>
+            <div class="card-title">Send Message</div>
             <div class="input-group">
-                <label>Your Name (Who is sending)</label>
+                <label>Your Name</label>
                 <select id="messageSender">
                     <option value="">-- Select Your Name --</option>
                 </select>
@@ -708,11 +665,6 @@
             <button class="btn btn-primary btn-block" onclick="exportData()">📥 Export Data</button>
             <button class="btn btn-secondary btn-block mt-2" onclick="downloadReport()">📄 Download Report</button>
             <button class="btn btn-warning btn-block mt-2" onclick="clearData()">🗑️ Clear Data</button>
-        </div>
-
-        <div class="card">
-            <div class="card-title">System Info</div>
-            <div id="systemInfo"></div>
         </div>
     </div>
 </div>
@@ -756,17 +708,21 @@
     }
 
     function saveToStorage() {
-        localStorage.setItem('hildData', JSON.stringify(data));
+        try {
+            localStorage.setItem('hildData', JSON.stringify(data));
+        } catch(e) {
+            console.log('Storage full or unavailable');
+        }
     }
 
     function loadFromStorage() {
-        const stored = localStorage.getItem('hildData');
-        if (stored) {
-            try {
+        try {
+            const stored = localStorage.getItem('hildData');
+            if (stored) {
                 data = JSON.parse(stored);
-            } catch (e) {
-                console.log('Could not load from storage');
             }
+        } catch (e) {
+            console.log('Could not load from storage');
         }
     }
 
@@ -781,9 +737,12 @@
             { temp: 62, icon: '❄️', desc: 'Cold, Dress warm' }
         ];
         const weather = conditions[Math.floor(Math.random() * conditions.length)];
-        document.getElementById('weatherIcon').textContent = weather.icon;
-        document.getElementById('weatherTemp').textContent = weather.temp + '°F';
-        document.getElementById('weatherDesc').textContent = weather.desc;
+        const tempEl = document.getElementById('weatherTemp');
+        const descEl = document.getElementById('weatherDesc');
+        const iconEl = document.getElementById('weatherIcon');
+        if (tempEl) tempEl.textContent = weather.temp + '°F';
+        if (descEl) descEl.textContent = weather.desc;
+        if (iconEl) iconEl.textContent = weather.icon;
     }
 
     // TAB NAVIGATION
@@ -792,8 +751,11 @@
             const tabName = tab.dataset.tab;
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-            tab.classList.add('active');
+            const content = document.getElementById(tabName);
+            if (content) {
+                content.classList.add('active');
+                tab.classList.add('active');
+            }
             updateAllUI();
         });
     });
@@ -801,7 +763,9 @@
     function updateLocationSelectors() {
         ['entryLocation', 'runLocation', 'routeLocation'].forEach(id => {
             const el = document.getElementById(id);
-            if (el) el.innerHTML = data.locations.map(l => `<option value="${l}">${l}</option>`).join('');
+            if (el) {
+                el.innerHTML = data.locations.map(l => `<option value="${l}">${l}</option>`).join('');
+            }
         });
     }
 
@@ -815,29 +779,35 @@
             const cleaned = line.trim().replace(/,/g, ' ').replace(/\s+/g, ' ').toUpperCase();
             if (!cleaned.match(/^\d/) || !cleaned.match(/\d{5}/)) return;
 
-            const zip = cleaned.match(/(\d{5})/)[1];
-            const state = cleaned.match(/([A-Z]{2})\s+\d{5}/)[1];
-            const beforeZip = cleaned.replace(/\s*[A-Z]{2}\s+\d{5}\s*$/, '').trim();
-            const num = beforeZip.match(/^(\d+)/)[1];
-            const parts = beforeZip.substring(num.length).trim().split(' ');
-            const city = parts[parts.length - 1];
-            const street = parts.slice(0, -1).join(' ').trim();
+            try {
+                const zip = cleaned.match(/(\d{5})/)[1];
+                const state = cleaned.match(/([A-Z]{2})\s+\d{5}/)[1];
+                const beforeZip = cleaned.replace(/\s*[A-Z]{2}\s+\d{5}\s*$/, '').trim();
+                const numMatch = beforeZip.match(/^(\d+)/);
+                if (!numMatch) return;
+                const num = numMatch[1];
+                const parts = beforeZip.substring(num.length).trim().split(' ');
+                const city = parts[parts.length - 1];
+                const street = parts.slice(0, -1).join(' ').trim();
 
-            if (num && street && city && state && zip) {
-                const addr = `${num} ${street}, ${city}, ${state} ${zip}`;
-                if (!data.addressesByLocation[loc].includes(addr)) {
-                    data.addressesByLocation[loc].push(addr);
-                    data.jobs[addr] = {
-                        status: 'todo',
-                        difficulty: null,
-                        distance: 0,
-                        digBore: 'none',
-                        notes: '',
-                        location: loc,
-                        completedDate: null
-                    };
-                    count++;
+                if (num && street && city && state && zip) {
+                    const addr = `${num} ${street}, ${city}, ${state} ${zip}`;
+                    if (!data.addressesByLocation[loc].includes(addr)) {
+                        data.addressesByLocation[loc].push(addr);
+                        data.jobs[addr] = {
+                            status: 'todo',
+                            difficulty: null,
+                            distance: 0,
+                            digBore: 'none',
+                            notes: '',
+                            location: loc,
+                            completedDate: null
+                        };
+                        count++;
+                    }
                 }
+            } catch (e) {
+                console.log('Error parsing address:', line);
             }
         });
 
@@ -846,6 +816,8 @@
             saveToStorage();
             updateAllUI();
             showAlert(`Added ${count} addresses!`, 'success');
+        } else {
+            showAlert('No valid addresses found. Format: NUMBER STREET CITY, STATE ZIP', 'error');
         }
     }
 
@@ -858,6 +830,7 @@
 
         if (!loc || !road || !from || !to || !distance) { showAlert('Fill all fields', 'error'); return; }
 
+        data.runsByLocation[loc] = data.runsByLocation[loc] || [];
         data.runsByLocation[loc].push({
             id: `RUN_${Date.now()}`,
             road, from, to, distance,
@@ -881,7 +854,7 @@
         const desc = document.getElementById('expenseDesc').value.trim();
         const amount = parseFloat(document.getElementById('expenseAmount').value);
 
-        if (!date || !desc || !amount) { showAlert('Fill all fields', 'error'); return; }
+        if (!date || !desc || !amount || isNaN(amount)) { showAlert('Fill all fields correctly', 'error'); return; }
 
         data.expenses.push({ date, type, desc, amount, id: Date.now() });
 
@@ -925,6 +898,7 @@
         const phone = document.getElementById('crewPhone').value.trim();
 
         if (!name) { showAlert('Enter name', 'error'); return; }
+        if (data.crewMembers.find(c => c.name === name)) { showAlert('Crew member already exists', 'error'); return; }
 
         data.crewMembers.push({ name, rotation, spec, phone, performance: { completed: 0, total: 0 } });
 
@@ -938,9 +912,14 @@
 
     // SMART SCHEDULING
     function generateSmartSchedule() {
-        document.getElementById('scheduleStatus').classList.remove('hidden');
-        document.getElementById('scheduleStatus').className = 'alert alert-info';
-        document.getElementById('scheduleStatus').innerHTML = '🤖 Building optimal schedule based on crew preferences...';
+        const scheduleBtn = event.target;
+        scheduleBtn.disabled = true;
+        scheduleBtn.textContent = '⏳ Generating...';
+
+        const statusEl = document.getElementById('scheduleStatus');
+        statusEl.classList.remove('hidden');
+        statusEl.className = 'alert alert-info';
+        statusEl.innerHTML = '🤖 Building optimal schedule based on crew preferences...';
 
         setTimeout(() => {
             const schedule = {};
@@ -951,34 +930,29 @@
                 let week = 0;
 
                 if (crew.rotation === 'week') {
-                    // 1 week max: work 1 week, off 3 weeks
                     const pattern = ['WORK', 'OFF', 'OFF', 'OFF'];
                     while (week < weeks) {
                         schedule[crew.name].push(pattern[week % pattern.length]);
                         week++;
                     }
                 } else if (crew.rotation === 'school') {
-                    // School schedule: irregular availability
                     while (week < weeks) {
                         schedule[crew.name].push(Math.random() > 0.4 ? 'WORK' : 'OFF');
                         week++;
                     }
                 } else if (crew.rotation === '2on2off') {
-                    // Strict 2 on, 2 off
                     const pattern = ['WORK', 'WORK', 'OFF', 'OFF'];
                     while (week < weeks) {
                         schedule[crew.name].push(pattern[week % pattern.length]);
                         week++;
                     }
                 } else if (crew.rotation === '2-3on1-2off') {
-                    // Flexible 2-3 on, 1-2 off
                     const pattern = ['WORK', 'WORK', 'WORK', 'OFF', 'OFF'];
                     while (week < weeks) {
                         schedule[crew.name].push(pattern[week % pattern.length]);
                         week++;
                     }
                 } else if (crew.rotation === 'longrun') {
-                    // Long haul: 4-6 weeks on, 1-2 off
                     const pattern = ['WORK', 'WORK', 'WORK', 'WORK', 'WORK', 'WORK', 'OFF', 'OFF'];
                     while (week < weeks) {
                         schedule[crew.name].push(pattern[week % pattern.length]);
@@ -991,8 +965,10 @@
             displaySchedule(schedule);
             saveToStorage();
 
-            document.getElementById('scheduleStatus').className = 'alert alert-success';
-            document.getElementById('scheduleStatus').innerHTML = '✅ Schedule generated and saved! Each crew member\'s preferences respected.';
+            statusEl.className = 'alert alert-success';
+            statusEl.innerHTML = '✅ Schedule generated and saved! Each crew member\'s preferences respected.';
+            scheduleBtn.disabled = false;
+            scheduleBtn.textContent = '🤖 Generate & Save Schedule';
         }, 500);
     }
 
@@ -1028,14 +1004,16 @@
         const jobs = data.addressesByLocation[loc] || [];
         if (jobs.length === 0) { showAlert('No addresses in ' + loc, 'error'); return; }
 
-        document.getElementById('routeOptimizationStatus').classList.remove('hidden');
-        document.getElementById('routeOptimizationStatus').innerHTML = '🤖 Optimizing routes...';
+        const statusEl = document.getElementById('routeOptimizationStatus');
+        statusEl.classList.remove('hidden');
+        statusEl.className = 'alert alert-info';
+        statusEl.innerHTML = '🤖 Optimizing routes...';
 
         setTimeout(() => {
-            const selected = jobs.slice(0, Math.min(10, jobs.length)).sort(() => 0.5 - Math.random());
+            const selected = jobs.slice(0, Math.min(10, jobs.length));
             
             const routes = [];
-            for (let i = 0; i < 2; i++) {
+            for (let i = 0; i < 2 && selected.length > i * 5; i++) {
                 routes.push({
                     id: `OPT_${i+1}`,
                     stops: selected.slice(i * 5, (i + 1) * 5),
@@ -1046,7 +1024,8 @@
 
             displayOptimalRoutes(routes, loc);
             document.getElementById('generatedRoutes').classList.remove('hidden');
-            document.getElementById('routeOptimizationStatus').innerHTML = '✅ Routes optimized for efficiency!';
+            statusEl.className = 'alert alert-success';
+            statusEl.innerHTML = '✅ Routes optimized for efficiency!';
         }, 800);
     }
 
@@ -1090,7 +1069,10 @@
             const text = el.textContent;
             const lines = text.split('\n');
             lines.forEach((line, i) => {
-                if (i > 0) addresses.push(line.trim());
+                if (i > 0 && line.trim()) {
+                    const addr = line.trim().replace(/^\d+\.\s/, '');
+                    addresses.push(addr);
+                }
             });
         });
 
@@ -1106,7 +1088,8 @@
         if (filter) data.jobFilter = filter;
 
         document.querySelectorAll('.job-filter-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelector(`[onclick="filterJobs('${data.jobFilter}')"]`)?.classList.add('active');
+        const activeBtn = document.querySelector(`[onclick="filterJobs('${data.jobFilter}')"]`);
+        if (activeBtn) activeBtn.classList.add('active');
 
         const search = document.getElementById('jobSearch')?.value?.toLowerCase() || '';
         let filtered = Object.entries(data.jobs);
@@ -1129,12 +1112,9 @@
             html = '<p class="text-muted">No jobs found</p>';
         } else {
             html = jobs.map(([addr, job]) => {
-                const diff = job.difficulty ? `<span class="difficulty-badge difficulty-${job.difficulty}">${job.difficulty}</span>` : '';
                 return `<div class="job-card ${job.status}">
-                    <div class="job-card-content">
-                        <div class="job-card-address">${addr}</div>
-                        <div class="job-card-meta">${job.location} | ${diff}</div>
-                    </div>
+                    <div class="job-card-address">${addr}</div>
+                    <div class="job-card-meta">${job.location}</div>
                 </div>`;
             }).join('');
         }
@@ -1198,6 +1178,7 @@
         a.href = url;
         a.download = `hild_backup_${new Date().toISOString().split('T')[0]}.json`;
         a.click();
+        URL.revokeObjectURL(url);
         showAlert('Data exported!', 'success');
     }
 
@@ -1223,11 +1204,12 @@
         a.href = url;
         a.download = `hild_report_${new Date().toISOString().split('T')[0]}.txt`;
         a.click();
+        URL.revokeObjectURL(url);
     }
 
     function generateDailyReport() {
         const today = new Date().toISOString().split('T')[0];
-        const todayJobs = Object.values(data.jobs).filter(j => j.completedDate?.startsWith(today));
+        const todayJobs = Object.values(data.jobs).filter(j => j.completedDate && j.completedDate.startsWith(today));
         const todayExpenses = data.expenses.filter(e => e.date === today);
 
         let html = `<div style="background: var(--bg); padding:1rem; border-radius:8px;">
@@ -1254,7 +1236,7 @@
     }
 
     function clearData() {
-        if (!confirm('Clear ALL data? Cannot be undone!')) return;
+        if (!confirm('Clear ALL data? This cannot be undone!')) return;
         data = {
             locations: ['Sullivan', 'Rockford', 'Belleville'],
             addressesByLocation: { 'Sullivan': [], 'Rockford': [], 'Belleville': [] },
@@ -1278,17 +1260,19 @@
         // Update crew dropdowns
         ['routeCrew', 'messageSender'].forEach(id => {
             const el = document.getElementById(id);
-            if (el) el.innerHTML = data.crewMembers.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+            if (el) {
+                el.innerHTML = '<option value="">-- Select --</option>' + data.crewMembers.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+            }
         });
 
         // Message history
-        const msgHtml = data.messages.length > 0 ? data.messages.slice().reverse().slice(0, 10).map(m => `
+        const msgHtml = data.messages.length > 0 ? data.messages.slice().reverse().slice(0, 15).map(m => `
             <div class="communication-item">
                 <div class="communication-header">👤 ${m.sender}</div>
                 <div class="communication-text">${m.text}</div>
                 <div class="communication-time">${new Date(m.timestamp).toLocaleString()}</div>
             </div>
-        `).join('') : '<p class="text-muted">No messages</p>';
+        `).join('') : '<p class="text-muted">No messages yet</p>';
         const msgHistory = document.getElementById('messageHistory');
         if (msgHistory) msgHistory.innerHTML = msgHtml;
 
@@ -1298,12 +1282,12 @@
                 <div><strong>${c.name}</strong> - ${c.rotation}</div>
                 <div style="font-size: 0.9rem; color: var(--text-light);">Performance: ${c.performance.completed}/${c.performance.total}</div>
             </div>
-        `).join('') : '<p class="text-muted">No crew</p>';
+        `).join('') : '<p class="text-muted">No crew yet</p>';
         const crewRoster = document.getElementById('crewRoster');
         if (crewRoster) crewRoster.innerHTML = crewHtml;
 
         // Locations
-        const locHtml = data.locations.map(l => `<div class="list-item">${l}</div>`).join('');
+        const locHtml = data.locations.length > 0 ? data.locations.map(l => `<div class="list-item">${l}</div>`).join('') : '<p class="text-muted">No locations</p>';
         const locsList = document.getElementById('locationsList');
         if (locsList) locsList.innerHTML = locHtml;
 
@@ -1313,15 +1297,23 @@
         const inProgJobs = Object.values(data.jobs).filter(j => j.status === 'inprogress').length;
         const todoJobs = totalJobs - doneJobs - inProgJobs;
 
-        document.getElementById('weekDone').textContent = doneJobs;
-        document.getElementById('weekInProgress').textContent = inProgJobs;
-        document.getElementById('weekTodo').textContent = todoJobs;
-        document.getElementById('weekRate').textContent = totalJobs > 0 ? Math.round((doneJobs / totalJobs) * 100) + '%' : '0%';
+        const el1 = document.getElementById('weekDone');
+        if (el1) el1.textContent = doneJobs;
+        const el2 = document.getElementById('weekInProgress');
+        if (el2) el2.textContent = inProgJobs;
+        const el3 = document.getElementById('weekTodo');
+        if (el3) el3.textContent = todoJobs;
+        const el4 = document.getElementById('weekRate');
+        if (el4) el4.textContent = totalJobs > 0 ? Math.round((doneJobs / totalJobs) * 100) + '%' : '0%';
 
-        document.getElementById('statActive').textContent = totalJobs;
-        document.getElementById('statAvailable').textContent = data.crewMembers.length;
-        document.getElementById('statCompletion').textContent = totalJobs > 0 ? Math.round((doneJobs / totalJobs) * 100) + '%' : '0%';
-        document.getElementById('statExpense').textContent = '$' + data.expenses.reduce((s, e) => s + e.amount, 0).toFixed(2);
+        const el5 = document.getElementById('statActive');
+        if (el5) el5.textContent = totalJobs;
+        const el6 = document.getElementById('statAvailable');
+        if (el6) el6.textContent = data.crewMembers.length;
+        const el7 = document.getElementById('statCompletion');
+        if (el7) el7.textContent = totalJobs > 0 ? Math.round((doneJobs / totalJobs) * 100) + '%' : '0%';
+        const el8 = document.getElementById('statExpense');
+        if (el8) el8.textContent = '$' + data.expenses.reduce((s, e) => s + e.amount, 0).toFixed(2);
 
         // Jobs
         filterJobs();
@@ -1339,7 +1331,29 @@
                 <div style="display:flex; justify-content:space-between; padding:0.5rem; border-bottom:1px solid var(--border);">
                     <span>${type}</span><strong>$${amount.toFixed(2)}</strong>
                 </div>
-            `).join('') + `<div style="display:flex; justify-content:space-between; padding:0.5rem; font-weight:700;"><span>TOTAL</span><strong>$${total.toFixed(2)}</strong></div>`;
+            `).join('') + (total > 0 ? `<div style="display:flex; justify-content:space-between; padding:0.5rem; font-weight:700;"><span>TOTAL</span><strong>$${total.toFixed(2)}</strong></div>` : '<p class="text-muted">No expenses yet</p>');
+        }
+
+        // Expense list
+        const expList = document.getElementById('expenseList');
+        if (expList) {
+            expList.innerHTML = data.expenses.length > 0 ? data.expenses.map(e => `
+                <div style="padding: 0.75rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
+                    <div><strong>${e.date}</strong><br><small>${e.type}: ${e.desc}</small></div>
+                    <strong>$${e.amount.toFixed(2)}</strong>
+                </div>
+            `).join('') : '<p class="text-muted">No expenses logged</p>';
+        }
+
+        // Materials
+        const matTracking = document.getElementById('materialsTracking');
+        if (matTracking) {
+            matTracking.innerHTML = data.materials.length > 0 ? data.materials.map(m => `
+                <div style="padding: 0.75rem; border-bottom: 1px solid var(--border);">
+                    <strong>${m.date}</strong> - ${m.location}<br>
+                    <small>Seed: ${m.seed}lbs | Straw: ${m.straw} bales | Dirt: ${m.dirt}t | Bad: ${m.badDirt}</small>
+                </div>
+            `).join('') : '<p class="text-muted">No materials logged</p>';
         }
 
         // Todo list
@@ -1347,7 +1361,7 @@
             .filter(([_, j]) => j.status === 'todo')
             .slice(0, 5)
             .map(([addr]) => `<div class="todo-item">
-                <input type="checkbox" class="todo-checkbox" onclick="markJobDone('${addr}')">
+                <input type="checkbox" class="todo-checkbox" onclick="markJobDone('${addr.replace(/'/g, "\\'")}')">
                 <div>${addr}</div>
             </div>`)
             .join('') || '<p class="text-muted">All caught up!</p>';
@@ -1373,16 +1387,21 @@
 
     function showAlert(message, type = 'info') {
         const container = document.getElementById('alertContainer');
+        if (!container) return;
         const alert = document.createElement('div');
         alert.className = `alert alert-${type}`;
         alert.innerHTML = `<div style="flex:1;">${message}</div><div class="alert-close" onclick="this.parentElement.remove()">✕</div>`;
         container.insertBefore(alert, container.firstChild);
-        setTimeout(() => alert.remove(), 5000);
+        setTimeout(() => {
+            if (alert.parentElement) alert.remove();
+        }, 5000);
     }
 
     // INIT
-    document.getElementById('expenseDate').valueAsDate = new Date();
-    document.getElementById('matDate').valueAsDate = new Date();
+    const expDateEl = document.getElementById('expenseDate');
+    if (expDateEl) expDateEl.valueAsDate = new Date();
+    const matDateEl = document.getElementById('matDate');
+    if (matDateEl) matDateEl.valueAsDate = new Date();
     initSystem();
 </script>
 ```
