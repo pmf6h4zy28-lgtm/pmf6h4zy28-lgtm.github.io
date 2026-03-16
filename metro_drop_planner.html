@@ -591,6 +591,15 @@
 
     window.addEventListener('beforeunload', saveToStorage);
 
+    // Town to state/zip mapping - MUST BE BEFORE displayExtractedAddresses
+    const townDatabase = {
+        'Westville': { state: 'IL', zip: '61883' },
+        'Georgetown': { state: 'IL', zip: '61846' },
+        'Streator': { state: 'IL', zip: '61364' },
+        'Sullivan': { state: 'IL', zip: '61951' },
+        'Rockford': { state: 'IL', zip: '61101' }
+    };
+
     function generateWeatherData() {
         const conditions = [
             { temp: 72, icon: '☀️', desc: 'Sunny, Perfect for outdoor work' },
@@ -801,15 +810,6 @@
         document.getElementById('addressesList').innerHTML = html;
         document.getElementById('extractedAddresses').style.display = 'block';
     }
-
-    // Town to state/zip mapping
-    const townDatabase = {
-        'Westville': { state: 'IL', zip: '61883' },
-        'Georgetown': { state: 'IL', zip: '61846' },
-        'Streator': { state: 'IL', zip: '61364' },
-        'Sullivan': { state: 'IL', zip: '61951' },
-        'Rockford': { state: 'IL', zip: '61101' }
-    };
 
     function formatAddressToUSPS(shortAddr, town) {
         // Input: "319 Bridgett St" or "115 Oak St" or "1389 E 16TH RD"
