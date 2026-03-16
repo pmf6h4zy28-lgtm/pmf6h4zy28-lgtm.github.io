@@ -939,12 +939,28 @@
         const streetGroups = {};
         
         addresses.forEach(addr => {
-            // Extract street name (usually words between number and city)
-            const parts = addr.split(',');
-            if (parts.length >= 2) {
-                const streetPart = parts[0].trim();
-                const streetName = streetPart.replace(/^\d+\s+/, '').toUpperCase();
-                
+            // Extract street name - handle both formats:
+            // Format 1: "115 Oak St Westville" (no comma)
+            // Format 2: "1389 E 16TH RD STREATOR, IL 61364" (with comma)
+            
+            let streetPart = addr;
+            
+            if (addr.includes(',')) {
+                // Has comma: get part before comma
+                streetPart = addr.split(',')[0].trim();
+            } else {
+                // No comma: get everything except the last word (town)
+                const parts = addr.split(/\s+/);
+                if (parts.length > 1) {
+                    // Remove last word (town) and rejoin
+                    streetPart = parts.slice(0, -1).join(' ');
+                }
+            }
+            
+            // Extract just the street name (remove house number)
+            const streetName = streetPart.replace(/^\d+\s+/, '').toUpperCase();
+            
+            if (streetName.length > 0) {
                 if (!streetGroups[streetName]) {
                     streetGroups[streetName] = [];
                 }
