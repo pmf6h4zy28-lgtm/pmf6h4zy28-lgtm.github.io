@@ -697,24 +697,27 @@
             // Remove line numbers from the start (1, 2, 3, 4, etc, or 1., 2., etc)
             cleaned = cleaned.replace(/^[\d]+[\.\s]\s*/, '').trim();
             
-            // STRICT validation: Must match real address pattern
-            // Pattern: starts with number, has letters (street name), and has a comma (for town)
-            // Example: "205 N Walnut St, Georgetown"
+            // Skip obviously bad lines
+            const lowerCleaned = cleaned.toLowerCase();
+            if (lowerCleaned.includes('locate') || 
+                lowerCleaned.includes('poe') ||
+                lowerCleaned.includes('sheet') ||
+                lowerCleaned.includes('ull') ||
+                lowerCleaned.includes('< 2f') ||
+                lowerCleaned.includes('=') ||
+                lowerCleaned.includes('arata') ||
+                cleaned.length < 10) {
+                return; // Skip this line
+            }
             
-            const addressPattern = /^\d+\s+[A-Za-z].+,\s*[A-Za-z]/;
+            // Check if line has typical address pattern:
+            // Starts with number, has street words, has comma and town
+            const hasNumber = /^\d+/.test(cleaned);
+            const hasStreet = /\b(st|street|ave|avenue|dr|drive|rd|road|ln|lane|blvd|boulevard|ct|court|pl|place|way|circle|cir|parkway|pkwy)\b/i.test(cleaned);
+            const hasTown = /,\s*[A-Za-z]/.test(cleaned); // Has comma followed by letters
             
-            if (addressPattern.test(cleaned)) {
-                // Additional filters - skip junk
-                const lowerCleaned = cleaned.toLowerCase();
-                if (!lowerCleaned.includes('locate') && 
-                    !lowerCleaned.includes('poe') &&
-                    !lowerCleaned.includes('sheet') &&
-                    !lowerCleaned.includes('ull') &&
-                    !lowerCleaned.includes('< 2f') &&
-                    !lowerCleaned.includes('=') &&
-                    cleaned.length > 15) {  // Real addresses are longer
-                    addresses.push(cleaned);
-                }
+            if (hasNumber && hasStreet && hasTown) {
+                addresses.push(cleaned);
             }
         });
 
