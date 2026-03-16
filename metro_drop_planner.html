@@ -792,14 +792,19 @@
                     
                     if (fullAddr.includes(',')) {
                         // Format: "1389 E 16TH RD STREATOR, IL 61364"
-                        // Extract the part before comma
+                        // Extract the part before comma, then get the last word(s)
                         const beforeComma = fullAddr.split(',')[0];
-                        // Get the last word(s) before the address number part
                         const parts = beforeComma.trim().split(/\s+/);
-                        // Usually format is: NUMBER STREET TOWN
-                        // Get last meaningful word(s) that look like a town
-                        if (parts.length > 2) {
-                            town = parts[parts.length - 1]; // Last word is usually town
+                        
+                        // Find the town - usually after the street abbreviation
+                        // Pattern: NUMBER STREET[ST/AVE/DR/etc] TOWN
+                        for (let i = parts.length - 1; i >= 0; i--) {
+                            const word = parts[i];
+                            // Skip street abbreviations and single letters
+                            if (!/^(st|ave|dr|rd|ln|blvd|ct|pl|pkwy|e|w|n|s)$/i.test(word) && word.length > 1) {
+                                town = word;
+                                break;
+                            }
                         }
                     } else {
                         // Format: "115 Oak St Westville" or "217 Mc Kinley Westville"
@@ -810,8 +815,8 @@
                         }
                     }
                     
-                    // Validate town (should be letters, not a street abbrev)
-                    if (town && /^[A-Za-z]+$/.test(town) && !['St', 'Ave', 'Dr', 'Rd', 'Ln', 'Blvd'].includes(town)) {
+                    // Validate town (should be letters, meaningful)
+                    if (town && town.length > 1 && /^[A-Za-z]+$/.test(town)) {
                         // Add town to locations if it doesn't exist
                         if (!data.locations.includes(town)) {
                             data.locations.push(town);
