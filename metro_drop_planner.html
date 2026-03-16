@@ -848,18 +848,25 @@
     }
 
     function confirmAddresses() {
+        console.log('=== CONFIRM ADDRESSES CALLED ===');
+        
         const checkboxes = document.querySelectorAll('#addressesList input[type="checkbox"]');
+        console.log('Checkboxes found:', checkboxes.length);
+        
+        // Log each checkbox status
+        checkboxes.forEach((cb, idx) => {
+            console.log(`Checkbox ${idx}: checked=${cb.checked}, nextSibling=${cb.nextElementSibling?.textContent?.substring(0, 50)}`);
+        });
+        
         let count = 0;
         const townCounts = {};
-
-        console.log('Starting confirmAddresses. Checkboxes found:', checkboxes.length);
 
         checkboxes.forEach((checkbox) => {
             if (checkbox.checked) {
                 const span = checkbox.nextElementSibling;
                 if (span && span.textContent) {
                     const fullAddr = span.textContent.trim();
-                    console.log('Processing address:', fullAddr);
+                    console.log('Processing CHECKED address:', fullAddr.substring(0, 50));
                     
                     if (fullAddr.length > 5) {
                         let town = '';
@@ -895,18 +902,21 @@
                                     location: town,
                                     createdAt: new Date().toISOString()
                                 };
-                                console.log('Added job:', fullAddr, 'to town:', town);
+                                console.log('✅ Added job:', fullAddr.substring(0, 40));
                                 count++;
                                 townCounts[town] = (townCounts[town] || 0) + 1;
                             }
+                        } else {
+                            console.log('❌ Town validation failed. Town:', town);
                         }
                     }
                 }
             }
         });
 
-        console.log('Total addresses to add:', count);
-        console.log('Current data.jobs:', data.jobs);
+        console.log('=== FINAL RESULT ===');
+        console.log('Total addresses added:', count);
+        console.log('data.jobs now has', Object.keys(data.jobs).length, 'items');
 
         if (count > 0) {
             saveToStorage();
@@ -918,7 +928,7 @@
             document.getElementById('previewContainer').style.display = 'none';
             imageInput.value = '';
         } else {
-            console.log('No valid addresses found to add');
+            console.log('NO ADDRESSES WERE ADDED');
             showAlert('No addresses selected', 'error');
         }
     }
