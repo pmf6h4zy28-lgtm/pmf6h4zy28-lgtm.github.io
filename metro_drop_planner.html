@@ -726,11 +726,39 @@
 
     function displayExtractedAddresses(addresses) {
         let html = '';
+        
+        // Find towns from addresses and format them automatically
+        const formattedAddresses = [];
+        
         addresses.forEach((addr) => {
+            let town = '';
+            let streetAddr = addr;
+            
+            // Extract town
+            if (addr.includes(',')) {
+                const beforeComma = addr.split(',')[0].trim();
+                const parts = beforeComma.split(/\s+/);
+                town = parts[parts.length - 1];
+                streetAddr = beforeComma.replace(/\s+\S+$/, '').trim();
+            } else {
+                const parts = addr.trim().split(/\s+/);
+                town = parts[parts.length - 1];
+                streetAddr = parts.slice(0, -1).join(' ');
+            }
+            
+            // Format to USPS automatically
+            let formatted = addr;
+            if (town && /^[A-Za-z]+$/.test(town)) {
+                formatted = formatAddressToUSPS(streetAddr, town);
+            }
+            
+            formattedAddresses.push(formatted);
+            
             html += `<div class="address-item">
-                <input type="checkbox" checked> <span>${addr}</span>
+                <input type="checkbox" checked> <span>${formatted}</span>
             </div>`;
         });
+        
         document.getElementById('addressesList').innerHTML = html;
         document.getElementById('extractedAddresses').style.display = 'block';
     }
@@ -992,48 +1020,53 @@
 
         const addresses = [];
         
-        // Extract addresses from the displayed route
+        // Extract addresses from displayed route
         routeItems.forEach(item => {
-            // Get all text content
-            const content = item.textContent;
-            const lines = content.split('\n');
+            const text = item.textContent;
+            const lines = text.split('\n');
             
-            // Find lines that look like addresses (start with number and contain dots)
             lines.forEach(line => {
                 const trimmed = line.trim();
-                // Match "1. Address, City, State ZIP" or "1. Address City"
+                // Match numbered items "1. Address"
                 const match = trimmed.match(/^\d+\.\s+(.+)$/);
                 if (match) {
-                    const addr = match[1].trim();
-                    // Only add if it looks like a real address
-                    if (addr.length > 10 && /\d+/.test(addr)) {
+                    let addr = match[1].trim();
+                    // Clean up - remove extra whitespace
+                    addr = addr.replace(/\s+/g, ' ');
+                    if (addr.length > 15) {
                         addresses.push(addr);
                     }
                 }
             });
         });
 
-        if (addresses.length > 0) {
-            // Build proper Apple Maps URL
-            // Format: maps://maps.apple.com/?address=&daddr=&daddr=
-            let mapsUrl = `https://maps.apple.com/?`;
-            
-            // Add first address as starting point
-            mapsUrl += `saddr=${encodeURIComponent(addresses[0])}`;
-            
-            // Add rest as destinations
-            for (let i = 1; i < addresses.length; i++) {
-                mapsUrl += `&daddr=${encodeURIComponent(addresses[i])}`;
-            }
-            
-            // Add dirflags for driving directions
-            mapsUrl += `&dirflags=d`;
-            
-            console.log('Opening Maps URL:', mapsUrl);
-            window.open(mapsUrl, '_blank');
-            showAlert('Opening Apple Maps with optimized route!', 'success');
-        } else {
+        if (addresses.length === 0) {
             showAlert('No addresses found in route', 'error');
+            return;
+        }
+
+        // Build Apple Maps URL with all addresses
+        // Format: https://maps.apple.com/?address=Start&daddr=Stop1&daddr=Stop2&dirflags=d
+        try {
+            const encodedAddresses = addresses.map(addr => encodeURIComponent(addr));
+            
+            let mapsUrl = `https://maps.apple.com/?dirflags=d`;
+            
+            // Add all addresses as destinations
+            encodedAddresses.forEach(addr => {
+                mapsUrl += `&daddr=${addr}`;
+            });
+            
+            console.log('Maps URL:', mapsUrl);
+            console.log('Addresses:', addresses);
+            
+            // Open in new window
+            window.location.href = mapsUrl;
+            
+            showAlert('Opening Apple Maps with your optimized route!', 'success');
+        } catch (error) {
+            console.error('Error opening maps:', error);
+            showAlert('Error opening maps. Make sure you have Apple Maps installed.', 'error');
         }
     }
 
