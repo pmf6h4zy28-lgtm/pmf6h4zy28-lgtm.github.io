@@ -719,9 +719,18 @@
             
             // Check: must look like an address
             // Has street abbreviations or common street words
-            const hasStreetWords = /\b(st|st\.|street|ave|ave\.|avenue|dr|dr\.|drive|rd|rd\.|road|ln|ln\.|lane|blvd|boulevard|ct|ct\.|court|pl|pl\.|place|way|circle|pkwy|parkway|williams|kinley|oak|main|indiana|bridgett|washington|village|wisconsin|south)\b/i.test(cleaned);
+            const hasStreetWords = /\b(st|st\.|street|ave|ave\.|avenue|dr|dr\.|drive|rd|rd\.|road|ln|ln\.|lane|blvd|boulevard|ct|ct\.|court|pl|pl\.|place|way|circle|pkwy|parkway|williams|kinley|oak|main|indiana|bridgett|washington|village|wisconsin|south|walnut|mack|garfield|west)\b/i.test(cleaned);
             
             if (hasStreetWords) {
+                // Remove ALL "Locate" variations and everything after it
+                cleaned = cleaned.replace(/\s+locate.*/gi, '').trim();
+                
+                // Remove ALL "Poe" variations and everything after it
+                cleaned = cleaned.replace(/\s+poe.*/gi, '').trim();
+                
+                // Clean up trailing spaces
+                cleaned = cleaned.replace(/\s+$/, '').trim();
+                
                 addresses.push(cleaned);
             }
         });
