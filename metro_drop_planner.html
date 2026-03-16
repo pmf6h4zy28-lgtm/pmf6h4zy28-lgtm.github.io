@@ -667,9 +667,7 @@
             );
 
             const text = result.data.text;
-            console.log('OCR TEXT:', text);
             const addresses = extractAddressesFromText(text);
-            console.log('EXTRACTED ADDRESSES:', addresses);
 
             if (addresses.length === 0) {
                 showAlert('No addresses found. Try manual entry.', 'error');
@@ -694,52 +692,21 @@
         const addresses = [];
 
         lines.forEach(line => {
-            let cleaned = line.trim();
-            
-            // Skip empty lines
-            if (cleaned.length === 0) return;
-            
-            // Remove line numbers from the start (1, 2, 3, 4, etc, or 1., 2., etc)
-            cleaned = cleaned.replace(/^[\d]+[\.\s]\s*/, '').trim();
-            
-            console.log('Processing line:', cleaned);
-            
-            // Skip obviously bad lines
-            const lowerCleaned = cleaned.toLowerCase();
-            if (lowerCleaned.includes('locate') || 
-                lowerCleaned.includes('poe') ||
-                lowerCleaned.includes('sheet') ||
-                lowerCleaned.includes('11:') ||
-                lowerCleaned.includes('<') ||
-                lowerCleaned.includes('=') ||
-                cleaned.length < 8) {
-                console.log('  -> SKIPPED (bad markers)');
-                return; // Skip this line
+            const cleaned = line.trim();
+            // Only extract lines with numbers (addresses) and filter out location markers
+            if (cleaned.length > 5 && /\d+/.test(cleaned)) {
+                // Skip lines with common location markers
+                if (!cleaned.toLowerCase().includes('locate') && 
+                    !cleaned.toLowerCase().includes('poe') &&
+                    !cleaned.toLowerCase().includes('sheet') &&
+                    !cleaned.toLowerCase().includes('ull') &&
+                    !cleaned.toLowerCase().includes('<') &&
+                    !cleaned.toLowerCase().includes('=')) {
+                    addresses.push(cleaned);
+                }
             }
-            
-            // Check if line starts with a number (address number)
-            if (!(/^\d+/.test(cleaned))) {
-                console.log('  -> SKIPPED (no number start)');
-                return;
-            }
-            
-            // Check if it has a comma (town separator)
-            if (!cleaned.includes(',')) {
-                console.log('  -> SKIPPED (no comma)');
-                return;
-            }
-            
-            // Check if it has at least some letters (street name)
-            if (!/[A-Za-z]{2,}/.test(cleaned)) {
-                console.log('  -> SKIPPED (too few letters)');
-                return;
-            }
-            
-            console.log('  -> ACCEPTED');
-            addresses.push(cleaned);
         });
 
-        console.log('Final addresses:', addresses);
         return [...new Set(addresses)];
     }
 
