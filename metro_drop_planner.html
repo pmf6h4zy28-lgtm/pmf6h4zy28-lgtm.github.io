@@ -226,6 +226,63 @@
         .text-muted { color: var(--text-light); }
         .mt-2 { margin-top: 1rem; }
         .mt-3 { margin-top: 1.5rem; }
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        .file-input-label {
+            display: block;
+            padding: 2rem;
+            border: 2px dashed var(--primary);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(45, 80, 22, 0.05);
+        }
+        .file-input-label:hover {
+            background: rgba(45, 80, 22, 0.1);
+            border-color: var(--primary-light);
+        }
+        .file-input-label.dragover {
+            background: rgba(45, 80, 22, 0.2);
+            border-color: var(--primary-light);
+        }
+        #imageInput { display: none; }
+        .preview-container {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--bg);
+            border-radius: 8px;
+            display: none;
+        }
+        .preview-container img {
+            max-width: 100%;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+        .extracted-addresses {
+            background: var(--bg);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .address-item {
+            padding: 0.75rem;
+            background: white;
+            border-left: 4px solid var(--success);
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .address-item input { width: 20px; height: 20px; }
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             .header { padding: 1.5rem; }
@@ -247,6 +304,7 @@
 
     <div class="tabs">
         <button class="tab active" data-tab="home">🏠 Home</button>
+        <button class="tab" data-tab="image-upload">📷 Upload Addresses</button>
         <button class="tab" data-tab="route-optimizer">🗺️ Route Optimizer</button>
         <button class="tab" data-tab="jobs">✅ Jobs</button>
         <button class="tab" data-tab="data-entry">📥 Data Entry</button>
@@ -314,6 +372,43 @@
                     <div class="stat-label">Week Expenses</div>
                     <div class="stat-value" id="statExpense">$0</div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- IMAGE UPLOAD TAB -->
+    <div id="image-upload" class="tab-content">
+        <h2 class="section-title">📷 Upload Screenshot of Addresses</h2>
+        
+        <div class="card">
+            <div class="card-title">📸 Extract Addresses from Image</div>
+            <p style="margin-bottom: 1.5rem; color: var(--text-light);">
+                Take a screenshot of your address list and upload it. The app will automatically extract all addresses!
+            </p>
+            
+            <div class="input-group">
+                <label>Select Location</label>
+                <select id="uploadLocation"></select>
+            </div>
+
+            <div class="file-input-wrapper">
+                <label for="imageInput" class="file-input-label" id="dragDropZone">
+                    📤 Click to upload or drag & drop
+                    <br><small style="color: var(--text-light); display: block; margin-top: 0.5rem;">JPG, PNG, WebP</small>
+                </label>
+                <input type="file" id="imageInput" accept="image/*">
+            </div>
+
+            <div class="preview-container" id="previewContainer">
+                <div style="font-weight: 600; margin-bottom: 1rem;">📸 Preview:</div>
+                <img id="previewImage" src="" alt="Preview">
+                <button class="btn btn-primary btn-block" onclick="processImage()">🤖 Extract Addresses</button>
+            </div>
+
+            <div class="extracted-addresses" id="extractedAddresses">
+                <div style="font-weight: 600; margin-bottom: 1rem;">✅ Found Addresses:</div>
+                <div id="addressesList"></div>
+                <button class="btn btn-secondary btn-block mt-2" onclick="confirmAddresses()">✔️ Add All</button>
             </div>
         </div>
     </div>
@@ -415,7 +510,7 @@
             </div>
             <div class="input-group">
                 <label>Paste Addresses (one per line)</label>
-                <textarea id="addressInput" placeholder="1389 E 16TH RD STREATOR, IL 61364"></textarea>
+                <textarea id="addressInput" placeholder="205 N Walnut St, Georgetown&#10;202 Mack St, Georgetown"></textarea>
             </div>
             <button class="btn btn-primary btn-block" onclick="addAddresses()">➕ Add Addresses</button>
         </div>
@@ -511,7 +606,7 @@
 
         <div class="card">
             <div class="card-title">🤖 Generate Optimal 8-Week Schedule</div>
-            <p style="margin-bottom: 1.5rem; color: var(--text-light);">AI analyzes each crew member's preferences and creates the best schedule</p>
+            <p style="margin-bottom: 1.5rem; color: var(--text-light);">AI analyzes crew preferences and creates the best schedule</p>
             <button class="btn btn-secondary btn-block" onclick="generateSmartSchedule()">Generate & Save Schedule</button>
             <div id="scheduleStatus" class="hidden alert mt-2"></div>
         </div>
@@ -519,7 +614,7 @@
         <div id="scheduleDisplayCard" class="hidden">
             <div class="card">
                 <div class="card-title">✅ 8-Week Crew Rotation (Saved)</div>
-                <p style="margin-bottom: 1rem; color: var(--text-light);">✅ = Working | ❌ = Off | Optimized for preferences</p>
+                <p style="margin-bottom: 1rem; color: var(--text-light);">✅ = Working | ❌ = Off</p>
                 <div id="scheduleDisplay"></div>
             </div>
         </div>
@@ -653,7 +748,7 @@
             <div class="input-group">
                 <label>Add Location</label>
                 <div style="display: flex; gap: 0.5rem;">
-                    <input type="text" id="newLocation" placeholder="Sullivan, Rockford..." style="flex: 1;">
+                    <input type="text" id="newLocation" placeholder="Georgetown, Westville..." style="flex: 1;">
                     <button class="btn btn-primary" onclick="addLocation()">+</button>
                 </div>
             </div>
@@ -669,9 +764,11 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+
 <script>
     let data = {
-        locations: ['Sullivan', 'Rockford', 'Belleville'],
+        locations: ['Georgetown', 'Westville'],
         addressesByLocation: {},
         runsByLocation: {},
         crewMembers: [],
@@ -761,7 +858,7 @@
     });
 
     function updateLocationSelectors() {
-        ['entryLocation', 'runLocation', 'routeLocation'].forEach(id => {
+        ['uploadLocation', 'entryLocation', 'runLocation', 'routeLocation'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.innerHTML = data.locations.map(l => `<option value="${l}">${l}</option>`).join('');
@@ -769,45 +866,172 @@
         });
     }
 
-    function addAddresses() {
-        const input = document.getElementById('addressInput').value;
-        const loc = document.getElementById('entryLocation').value;
-        if (!input.trim() || !loc) { showAlert('Fill all fields', 'error'); return; }
+    // IMAGE UPLOAD HANDLING
+    const dragDropZone = document.getElementById('dragDropZone');
+    const imageInput = document.getElementById('imageInput');
+    let currentImageFile = null;
 
+    dragDropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dragDropZone.classList.add('dragover');
+    });
+
+    dragDropZone.addEventListener('dragleave', () => {
+        dragDropZone.classList.remove('dragover');
+    });
+
+    dragDropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dragDropZone.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleImageFile(files[0]);
+        }
+    });
+
+    imageInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            handleImageFile(e.target.files[0]);
+        }
+    });
+
+    function handleImageFile(file) {
+        if (!file.type.startsWith('image/')) {
+            showAlert('Please upload an image file', 'error');
+            return;
+        }
+
+        currentImageFile = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = document.getElementById('previewImage');
+            img.src = e.target.result;
+            document.getElementById('previewContainer').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // TESSERACT OCR PROCESSING
+    async function processImage() {
+        const btn = event.target;
+        btn.disabled = true;
+        btn.textContent = '⏳ Processing...';
+
+        try {
+            const result = await Tesseract.recognize(
+                document.getElementById('previewImage').src,
+                'eng'
+            );
+
+            const text = result.data.text;
+            const addresses = extractAddressesFromText(text);
+
+            if (addresses.length === 0) {
+                showAlert('No addresses found. Try manual entry.', 'error');
+                btn.disabled = false;
+                btn.textContent = '🤖 Extract Addresses';
+                return;
+            }
+
+            displayExtractedAddresses(addresses);
+            showAlert(`Found ${addresses.length} addresses!`, 'success');
+        } catch (error) {
+            console.error('OCR Error:', error);
+            showAlert('Error processing image. Try manual entry.', 'error');
+        }
+
+        btn.disabled = false;
+        btn.textContent = '🤖 Extract Addresses';
+    }
+
+    function extractAddressesFromText(text) {
+        const lines = text.split('\n');
+        const addresses = [];
+
+        lines.forEach(line => {
+            const cleaned = line.trim();
+            if (cleaned.length > 10 && /\d+/.test(cleaned)) {
+                addresses.push(cleaned);
+            }
+        });
+
+        return [...new Set(addresses)];
+    }
+
+    function displayExtractedAddresses(addresses) {
+        let html = '';
+        addresses.forEach((addr, idx) => {
+            html += `<div class="address-item">
+                <input type="checkbox" checked> <span>${addr}</span>
+            </div>`;
+        });
+        document.getElementById('addressesList').innerHTML = html;
+        document.getElementById('extractedAddresses').style.display = 'block';
+    }
+
+    function confirmAddresses() {
+        const location = document.getElementById('uploadLocation').value;
+        if (!location) {
+            showAlert('Select a location', 'error');
+            return;
+        }
+
+        const checkboxes = document.querySelectorAll('#addressesList input[type="checkbox"]');
         let count = 0;
-        input.split('\n').filter(l => l.trim()).forEach(line => {
-            const cleaned = line.trim().replace(/,/g, ' ').replace(/\s+/g, ' ').toUpperCase();
-            if (!cleaned.match(/^\d/) || !cleaned.match(/\d{5}/)) return;
 
-            try {
-                const zip = cleaned.match(/(\d{5})/)[1];
-                const state = cleaned.match(/([A-Z]{2})\s+\d{5}/)[1];
-                const beforeZip = cleaned.replace(/\s*[A-Z]{2}\s+\d{5}\s*$/, '').trim();
-                const numMatch = beforeZip.match(/^(\d+)/);
-                if (!numMatch) return;
-                const num = numMatch[1];
-                const parts = beforeZip.substring(num.length).trim().split(' ');
-                const city = parts[parts.length - 1];
-                const street = parts.slice(0, -1).join(' ').trim();
-
-                if (num && street && city && state && zip) {
-                    const addr = `${num} ${street}, ${city}, ${state} ${zip}`;
-                    if (!data.addressesByLocation[loc].includes(addr)) {
-                        data.addressesByLocation[loc].push(addr);
+        checkboxes.forEach((checkbox, idx) => {
+            if (checkbox.checked) {
+                const addr = checkbox.nextElementSibling.textContent.trim();
+                
+                if (addr.length > 5) {
+                    if (!data.addressesByLocation[location].includes(addr)) {
+                        data.addressesByLocation[location].push(addr);
                         data.jobs[addr] = {
                             status: 'todo',
-                            difficulty: null,
-                            distance: 0,
-                            digBore: 'none',
-                            notes: '',
-                            location: loc,
-                            completedDate: null
+                            location: location,
+                            createdAt: new Date().toISOString()
                         };
                         count++;
                     }
                 }
-            } catch (e) {
-                console.log('Error parsing address:', line);
+            }
+        });
+
+        if (count > 0) {
+            saveToStorage();
+            updateAllUI();
+            showAlert(`Added ${count} addresses!`, 'success');
+            document.getElementById('addressesList').innerHTML = '';
+            document.getElementById('extractedAddresses').style.display = 'none';
+            document.getElementById('previewContainer').style.display = 'none';
+            imageInput.value = '';
+        } else {
+            showAlert('No addresses selected', 'error');
+        }
+    }
+
+    // MANUAL ADDRESS ENTRY
+    function addAddresses() {
+        const input = document.getElementById('addressInput').value;
+        const loc = document.getElementById('entryLocation').value;
+        if (!input.trim() || !loc) { 
+            showAlert('Fill all fields', 'error'); 
+            return; 
+        }
+
+        let count = 0;
+        input.split('\n').filter(l => l.trim()).forEach(line => {
+            const addr = line.trim();
+            if (addr.length > 5) {
+                if (!data.addressesByLocation[loc].includes(addr)) {
+                    data.addressesByLocation[loc].push(addr);
+                    data.jobs[addr] = {
+                        status: 'todo',
+                        location: loc,
+                        createdAt: new Date().toISOString()
+                    };
+                    count++;
+                }
             }
         });
 
@@ -817,7 +1041,7 @@
             updateAllUI();
             showAlert(`Added ${count} addresses!`, 'success');
         } else {
-            showAlert('No valid addresses found. Format: NUMBER STREET CITY, STATE ZIP', 'error');
+            showAlert('No valid addresses added', 'error');
         }
     }
 
@@ -910,7 +1134,6 @@
         showAlert(`${name} added!`, 'success');
     }
 
-    // SMART SCHEDULING
     function generateSmartSchedule() {
         const scheduleBtn = event.target;
         scheduleBtn.disabled = true;
@@ -919,7 +1142,7 @@
         const statusEl = document.getElementById('scheduleStatus');
         statusEl.classList.remove('hidden');
         statusEl.className = 'alert alert-info';
-        statusEl.innerHTML = '🤖 Building optimal schedule based on crew preferences...';
+        statusEl.innerHTML = '🤖 Building optimal schedule...';
 
         setTimeout(() => {
             const schedule = {};
@@ -966,7 +1189,7 @@
             saveToStorage();
 
             statusEl.className = 'alert alert-success';
-            statusEl.innerHTML = '✅ Schedule generated and saved! Each crew member\'s preferences respected.';
+            statusEl.innerHTML = '✅ Schedule generated and saved!';
             scheduleBtn.disabled = false;
             scheduleBtn.textContent = '🤖 Generate & Save Schedule';
         }, 500);
@@ -996,7 +1219,6 @@
         document.getElementById('scheduleDisplayCard').classList.remove('hidden');
     }
 
-    // ROUTE OPTIMIZER
     function generateOptimalRoutes() {
         const loc = document.getElementById('routeLocation').value;
         if (!loc) { showAlert('Select location', 'error'); return; }
@@ -1025,7 +1247,7 @@
             displayOptimalRoutes(routes, loc);
             document.getElementById('generatedRoutes').classList.remove('hidden');
             statusEl.className = 'alert alert-success';
-            statusEl.innerHTML = '✅ Routes optimized for efficiency!';
+            statusEl.innerHTML = '✅ Routes optimized!';
         }, 800);
     }
 
@@ -1079,11 +1301,10 @@
         if (addresses.length > 0) {
             const mapUrl = `maps://maps.apple.com/?dirflags=d&daddr=${addresses.map(a => encodeURIComponent(a)).join('&daddr=')}`;
             window.location.href = mapUrl;
-            showAlert('Opening Maps with optimized route!', 'success');
+            showAlert('Opening Maps!', 'success');
         }
     }
 
-    // JOB FILTERING
     function filterJobs(filter) {
         if (filter) data.jobFilter = filter;
 
@@ -1132,7 +1353,6 @@
         document.getElementById('jobRate').textContent = total > 0 ? Math.round((done / total) * 100) + '%' : '0%';
     }
 
-    // MESSAGING
     function sendMessage() {
         const sender = document.getElementById('messageSender').value;
         const text = document.getElementById('messageText').value.trim();
@@ -1149,10 +1369,9 @@
         document.getElementById('messageText').value = '';
         saveToStorage();
         updateAllUI();
-        showAlert('Message sent from ' + sender + '!', 'success');
+        showAlert('Message sent!', 'success');
     }
 
-    // ADMIN
     function addLocation() {
         const input = document.getElementById('newLocation');
         const loc = input.value.trim();
@@ -1214,7 +1433,7 @@
 
         let html = `<div style="background: var(--bg); padding:1rem; border-radius:8px;">
             <div style="font-weight:700; margin-bottom:1rem;">📄 Daily Report - ${today}</div>
-            <div>Jobs Completed Today: ${todayJobs.length}</div>
+            <div>Jobs Completed: ${todayJobs.length}</div>
             <div>Today's Expenses: $${todayExpenses.reduce((s, e) => s + e.amount, 0).toFixed(2)}</div>
         </div>`;
         document.getElementById('reportContent').innerHTML = html;
@@ -1238,9 +1457,9 @@
     function clearData() {
         if (!confirm('Clear ALL data? This cannot be undone!')) return;
         data = {
-            locations: ['Sullivan', 'Rockford', 'Belleville'],
-            addressesByLocation: { 'Sullivan': [], 'Rockford': [], 'Belleville': [] },
-            runsByLocation: { 'Sullivan': [], 'Rockford': [], 'Belleville': [] },
+            locations: ['Georgetown', 'Westville'],
+            addressesByLocation: { 'Georgetown': [], 'Westville': [] },
+            runsByLocation: { 'Georgetown': [], 'Westville': [] },
             crewMembers: [],
             jobs: {},
             expenses: [],
@@ -1257,7 +1476,6 @@
     function updateAllUI() {
         updateLocationSelectors();
 
-        // Update crew dropdowns
         ['routeCrew', 'messageSender'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
@@ -1265,7 +1483,6 @@
             }
         });
 
-        // Message history
         const msgHtml = data.messages.length > 0 ? data.messages.slice().reverse().slice(0, 15).map(m => `
             <div class="communication-item">
                 <div class="communication-header">👤 ${m.sender}</div>
@@ -1276,7 +1493,6 @@
         const msgHistory = document.getElementById('messageHistory');
         if (msgHistory) msgHistory.innerHTML = msgHtml;
 
-        // Crew roster
         const crewHtml = data.crewMembers.length > 0 ? data.crewMembers.map(c => `
             <div class="list-item">
                 <div><strong>${c.name}</strong> - ${c.rotation}</div>
@@ -1286,39 +1502,27 @@
         const crewRoster = document.getElementById('crewRoster');
         if (crewRoster) crewRoster.innerHTML = crewHtml;
 
-        // Locations
         const locHtml = data.locations.length > 0 ? data.locations.map(l => `<div class="list-item">${l}</div>`).join('') : '<p class="text-muted">No locations</p>';
         const locsList = document.getElementById('locationsList');
         if (locsList) locsList.innerHTML = locHtml;
 
-        // Home stats
         const totalJobs = Object.keys(data.jobs).length;
         const doneJobs = Object.values(data.jobs).filter(j => j.status === 'done').length;
         const inProgJobs = Object.values(data.jobs).filter(j => j.status === 'inprogress').length;
         const todoJobs = totalJobs - doneJobs - inProgJobs;
 
-        const el1 = document.getElementById('weekDone');
-        if (el1) el1.textContent = doneJobs;
-        const el2 = document.getElementById('weekInProgress');
-        if (el2) el2.textContent = inProgJobs;
-        const el3 = document.getElementById('weekTodo');
-        if (el3) el3.textContent = todoJobs;
-        const el4 = document.getElementById('weekRate');
-        if (el4) el4.textContent = totalJobs > 0 ? Math.round((doneJobs / totalJobs) * 100) + '%' : '0%';
+        if (document.getElementById('weekDone')) document.getElementById('weekDone').textContent = doneJobs;
+        if (document.getElementById('weekInProgress')) document.getElementById('weekInProgress').textContent = inProgJobs;
+        if (document.getElementById('weekTodo')) document.getElementById('weekTodo').textContent = todoJobs;
+        if (document.getElementById('weekRate')) document.getElementById('weekRate').textContent = totalJobs > 0 ? Math.round((doneJobs / totalJobs) * 100) + '%' : '0%';
 
-        const el5 = document.getElementById('statActive');
-        if (el5) el5.textContent = totalJobs;
-        const el6 = document.getElementById('statAvailable');
-        if (el6) el6.textContent = data.crewMembers.length;
-        const el7 = document.getElementById('statCompletion');
-        if (el7) el7.textContent = totalJobs > 0 ? Math.round((doneJobs / totalJobs) * 100) + '%' : '0%';
-        const el8 = document.getElementById('statExpense');
-        if (el8) el8.textContent = '$' + data.expenses.reduce((s, e) => s + e.amount, 0).toFixed(2);
+        if (document.getElementById('statActive')) document.getElementById('statActive').textContent = totalJobs;
+        if (document.getElementById('statAvailable')) document.getElementById('statAvailable').textContent = data.crewMembers.length;
+        if (document.getElementById('statCompletion')) document.getElementById('statCompletion').textContent = totalJobs > 0 ? Math.round((doneJobs / totalJobs) * 100) + '%' : '0%';
+        if (document.getElementById('statExpense')) document.getElementById('statExpense').textContent = '$' + data.expenses.reduce((s, e) => s + e.amount, 0).toFixed(2);
 
-        // Jobs
         filterJobs();
 
-        // Expenses
         const byType = {};
         let total = 0;
         data.expenses.forEach(e => {
@@ -1334,7 +1538,6 @@
             `).join('') + (total > 0 ? `<div style="display:flex; justify-content:space-between; padding:0.5rem; font-weight:700;"><span>TOTAL</span><strong>$${total.toFixed(2)}</strong></div>` : '<p class="text-muted">No expenses yet</p>');
         }
 
-        // Expense list
         const expList = document.getElementById('expenseList');
         if (expList) {
             expList.innerHTML = data.expenses.length > 0 ? data.expenses.map(e => `
@@ -1345,7 +1548,6 @@
             `).join('') : '<p class="text-muted">No expenses logged</p>';
         }
 
-        // Materials
         const matTracking = document.getElementById('materialsTracking');
         if (matTracking) {
             matTracking.innerHTML = data.materials.length > 0 ? data.materials.map(m => `
@@ -1356,7 +1558,6 @@
             `).join('') : '<p class="text-muted">No materials logged</p>';
         }
 
-        // Todo list
         const todoHtml = Object.entries(data.jobs)
             .filter(([_, j]) => j.status === 'todo')
             .slice(0, 5)
@@ -1397,7 +1598,6 @@
         }, 5000);
     }
 
-    // INIT
     const expDateEl = document.getElementById('expenseDate');
     if (expDateEl) expDateEl.valueAsDate = new Date();
     const matDateEl = document.getElementById('matDate');
