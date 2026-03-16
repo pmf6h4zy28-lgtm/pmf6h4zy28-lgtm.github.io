@@ -1007,8 +1007,8 @@
             return;
         }
 
-        let html = addressesToShow.map(([addr, job]) => {
-            return `<div class="job-card ${job.status}" style="cursor: pointer;" onclick="openFootageModal('${addr.replace(/'/g, "\\'")}')">
+        let html = addressesToShow.map(([addr, job], idx) => {
+            return `<div class="job-card ${job.status}" style="cursor: pointer;" data-footage-addr="${idx}" onclick="openFootageModalByIndex(this.dataset.footageAddr)">
                 <div class="job-card-address">${addr}</div>
                 <div class="job-card-meta">${job.location}</div>
                 <div style="font-size: 0.75rem; color: var(--accent); margin-top: 0.5rem;">📏 Tap to add footage</div>
@@ -1016,6 +1016,27 @@
         }).join('');
 
         container.innerHTML = html;
+    }
+
+    function openFootageModalByIndex(idx) {
+        // Get the address from the filtered list
+        const selectedTown = document.getElementById('dropsMapTownFilter').value;
+        const addressesToShow = Object.entries(data.jobs).filter(([addr, job]) => {
+            const notes = data.jobNotes[addr] || {};
+            const hasFootage = notes.footage && notes.footage.trim() !== '';
+            const isDone = job.status === 'done';
+            
+            if (selectedTown && job.location !== selectedTown) {
+                return false;
+            }
+            
+            return !hasFootage && !isDone;
+        });
+
+        if (addressesToShow[idx]) {
+            const address = addressesToShow[idx][0];
+            openFootageModal(address);
+        }
     }
 
     function openFootageModal(address) {
