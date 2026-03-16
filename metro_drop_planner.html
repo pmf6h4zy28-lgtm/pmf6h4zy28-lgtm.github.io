@@ -411,12 +411,14 @@
                 
                 <div class="input-group">
                     <label>Status</label>
-                    <select id="modalStatus">
+                    <select id="modalStatus" onchange="updateTicketButton()">
                         <option value="todo">⏳ Todo</option>
                         <option value="inprogress">🟡 In Progress</option>
                         <option value="done">✅ Completed</option>
                     </select>
                 </div>
+                
+                <button id="closeTicketBtn" class="btn btn-secondary btn-block" style="display: none; background: #3b82f6;" onclick="openTicketWebsite()">🔗 Close Ticket</button>
                 
                 <div class="input-group">
                     <label>Footage Needed (feet)</label>
@@ -1135,8 +1137,28 @@
         
         window.currentJobAddress = address;
         
+        // Update ticket button visibility
+        updateTicketButton();
+        
         const modal = document.getElementById('jobDetailsModal');
         modal.style.display = 'flex';
+    }
+
+    function updateTicketButton() {
+        const status = document.getElementById('modalStatus').value;
+        const ticketBtn = document.getElementById('closeTicketBtn');
+        
+        if (status === 'done') {
+            ticketBtn.style.display = 'flex';
+        } else {
+            ticketBtn.style.display = 'none';
+        }
+    }
+
+    function openTicketWebsite() {
+        const ticketUrl = 'https://4792484.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=1834&deploy=2&compid=4792484&ns-at=AAEJ7tMQBDsNnNmxyaiaLIgC9fn6ZY30O10x0m4YbCUSWtXtyiU&email=shonn@hildlandscaping.com&url=mobile#/login';
+        window.open(ticketUrl, '_blank');
+        showAlert('🔗 Opening ticket closing website...', 'info');
     }
 
     function closeJobModal() {
