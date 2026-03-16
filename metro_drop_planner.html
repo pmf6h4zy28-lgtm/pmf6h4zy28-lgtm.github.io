@@ -1141,12 +1141,13 @@
         } else {
             html = jobs.map(([addr, job]) => {
                 const notes = data.jobNotes[addr] || {};
-                const dropLength = notes.dropLength ? ` | 📏 ${notes.dropLength} ft` : '';
+                const footageDisplay = notes.footage ? ` (${notes.footage}ft)` : '';
+                const hasNotes = notes.notes || notes.dropLength;
                 
                 return `<div class="job-card ${job.status}" onclick="openJobModal('${addr.replace(/'/g, "\\'")}', '${job.status}')" style="cursor: pointer; transition: all 0.2s;">
-                    <div class="job-card-address">${addr}</div>
-                    <div class="job-card-meta">${job.location}${dropLength}</div>
-                    ${notes.notes ? `<div style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem; font-style: italic;">📝 ${notes.notes}</div>` : ''}
+                    <div class="job-card-address">${addr}${footageDisplay}</div>
+                    <div class="job-card-meta">${job.location}</div>
+                    ${hasNotes ? `<div style="font-size: 0.8rem; color: var(--primary); margin-top: 0.5rem;">📝 Has notes</div>` : ''}
                 </div>`;
             }).join('');
         }
