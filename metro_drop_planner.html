@@ -735,6 +735,51 @@
         document.getElementById('extractedAddresses').style.display = 'block';
     }
 
+    // Town to state/zip mapping
+    const townDatabase = {
+        'Westville': { state: 'IL', zip: '61883' },
+        'Georgetown': { state: 'IL', zip: '61846' },
+        'Streator': { state: 'IL', zip: '61364' },
+        'Sullivan': { state: 'IL', zip: '61951' },
+        'Rockford': { state: 'IL', zip: '61101' }
+    };
+
+    function formatAddressToUSPS(shortAddr, town) {
+        // Input: "319 Bridgett St" or "115 Oak St" or "1389 E 16TH RD"
+        // Output: "319 S Bridgett St\nWestville, IL 61883\nUnited States"
+        
+        let street = shortAddr;
+        let state = 'IL';
+        let zip = '61883';
+        
+        // Get state and zip from town database
+        if (townDatabase[town]) {
+            state = townDatabase[town].state;
+            zip = townDatabase[town].zip;
+        }
+        
+        // Clean up street name - add common directional prefixes if missing
+        // "Bridgett St" -> "S Bridgett St" (South is common for secondary streets)
+        // But only if it doesn't already have a direction
+        if (!street.match(/\s[NSEW]\s/i)) {
+            // Check if it's a numbered street (like "16TH")
+            if (street.match(/\d+(ST|ND|RD|TH)\b/i)) {
+                // Numbered streets usually have East/West
+                if (!street.match(/^[EW]\s/i)) {
+                    street = 'E ' + street; // Default to East for numbered streets
+                }
+            } else {
+                // Named streets usually have North/South
+                if (!street.match(/^[NS]\s/i)) {
+                    street = 'S ' + street; // Default to South for named streets
+                }
+            }
+        }
+        
+        // Format as proper USPS address
+        return `${street}\n${town}, ${state} ${zip}\nUnited States`;
+    }
+
     function confirmAddresses() {
         const addressItems = document.querySelectorAll('#addressesList .address-item');
         let count = 0;
@@ -749,24 +794,20 @@
                 
                 if (fullAddr.length > 5) {
                     let town = '';
+                    let streetAddr = fullAddr;
                     
-                    // Extract town from full address
+                    // Extract town from address
                     if (fullAddr.includes(',')) {
                         // Format: "1389 E 16TH RD STREATOR, IL 61364"
-                        // Town is the word before the comma
                         const beforeComma = fullAddr.split(',')[0].trim();
                         const parts = beforeComma.split(/\s+/);
-                        // Last word before comma is usually the town
-                        if (parts.length > 0) {
-                            town = parts[parts.length - 1];
-                        }
+                        town = parts[parts.length - 1];
+                        streetAddr = beforeComma.replace(/\s+\S+$/, '').trim(); // Remove town from street
                     } else {
                         // Format: "115 Oak St Westville"
-                        // Last word is the town
                         const parts = fullAddr.trim().split(/\s+/);
-                        if (parts.length > 0) {
-                            town = parts[parts.length - 1];
-                        }
+                        town = parts[parts.length - 1];
+                        streetAddr = parts.slice(0, -1).join(' '); // Everything except last word
                     }
                     
                     // Validate town
@@ -777,10 +818,12 @@
                             data.addressesByLocation[town] = [];
                         }
                         
-                        // Store the FULL address (with state/zip if present)
-                        if (!data.addressesByLocation[town].includes(fullAddr)) {
-                            data.addressesByLocation[town].push(fullAddr);
-                            data.jobs[fullAddr] = {
+                        // Format address to USPS standard for Apple Maps accuracy
+                        const formattedAddr = formatAddressToUSPS(streetAddr, town);
+                        
+                        if (!data.addressesByLocation[town].includes(formattedAddr)) {
+                            data.addressesByLocation[town].push(formattedAddr);
+                            data.jobs[formattedAddr] = {
                                 status: 'todo',
                                 location: town,
                                 createdAt: new Date().toISOString()
