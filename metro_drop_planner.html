@@ -210,7 +210,6 @@
         .hidden { display: none !important; }
         .text-muted { color: var(--text-light); }
         .mt-2 { margin-top: 1rem; }
-        .mt-3 { margin-top: 1.5rem; }
         .job-filter-tabs {
             display: flex;
             gap: 0.5rem;
@@ -301,7 +300,7 @@
         <div class="card">
             <div class="card-title">📸 Extract Addresses from Image</div>
             <p style="margin-bottom: 1.5rem; color: var(--text-light);">
-                Take a screenshot of your address list and upload it. The app will automatically extract addresses and towns!
+                Take a screenshot of your address list and upload it. The app will automatically extract and add all addresses!
             </p>
 
             <div class="file-input-wrapper">
@@ -333,12 +332,12 @@
         <div class="card">
             <div class="card-title">Add Addresses Manually</div>
             <div class="input-group">
-                <label>Location</label>
-                <select id="entryLocation"></select>
+                <label>Location/Town</label>
+                <input type="text" id="entryLocation" placeholder="Georgetown, Westville, Streator...">
             </div>
             <div class="input-group">
-                <label>Paste Addresses (one per line - format: Address, Town)</label>
-                <textarea id="addressInput" placeholder="205 N Walnut St, Georgetown&#10;202 Mack St, Georgetown"></textarea>
+                <label>Paste Addresses (one per line)</label>
+                <textarea id="addressInput" placeholder="205 N Walnut St Georgetown&#10;202 Mack St Georgetown"></textarea>
             </div>
             <button class="btn btn-primary btn-block" onclick="addAddresses()">➕ Add Addresses</button>
         </div>
@@ -494,18 +493,6 @@
         <h2 class="section-title">⚙️ Administration</h2>
 
         <div class="card">
-            <div class="card-title">Manage Locations</div>
-            <div class="input-group">
-                <label>Add Location</label>
-                <div style="display: flex; gap: 0.5rem;">
-                    <input type="text" id="newLocation" placeholder="Georgetown, Westville..." style="flex: 1;">
-                    <button class="btn btn-primary" onclick="addLocation()">+</button>
-                </div>
-            </div>
-            <div id="locationsList" class="mt-2"></div>
-        </div>
-
-        <div class="card">
             <div class="card-title">Data Management</div>
             <button class="btn btn-primary btn-block" onclick="exportData()">📥 Export Data</button>
             <button class="btn btn-secondary btn-block mt-2" onclick="downloadReport()">📄 Download Report</button>
@@ -523,15 +510,11 @@
         crewMembers: [],
         jobs: {},
         expenses: [],
-        messages: [],
         jobFilter: 'all'
     };
 
     function initSystem() {
         loadFromStorage();
-        data.locations.forEach(loc => {
-            data.addressesByLocation[loc] = data.addressesByLocation[loc] || [];
-        });
         initDefaultCrew();
         generateWeatherData();
         updateAllUI();
@@ -599,12 +582,10 @@
     });
 
     function updateLocationSelectors() {
-        ['entryLocation', 'routeLocation'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.innerHTML = data.locations.map(l => `<option value="${l}">${l}</option>`).join('');
-            }
-        });
+        const routeLocation = document.getElementById('routeLocation');
+        if (routeLocation) {
+            routeLocation.innerHTML = data.locations.map(l => `<option value="${l}">${l}</option>`).join('');
+        }
     }
 
     // IMAGE UPLOAD HANDLING
@@ -689,10 +670,8 @@
         lines.forEach(line => {
             let cleaned = line.trim();
             
-            // Skip empty or very short lines
             if (cleaned.length < 8) return;
             
-            // Skip header/junk lines
             const lowerCleaned = cleaned.toLowerCase();
             if (lowerCleaned.includes('field service') ||
                 lowerCleaned.includes('task asset') ||
@@ -705,31 +684,20 @@
                 return;
             }
             
-            // Must have a number (address number)
             if (!/\d+/.test(cleaned)) return;
             
-            // Smart removal of leading row numbers
-            // Pattern: if line starts with 1-4 digit number followed by space and ANOTHER number
-            // then the first is row number, the second is house number
-            // Example: "1389 E 16TH RD" - starts with number, has street words = house number, keep it
-            // Example: "24 115 Oak St" - starts with 2-digit, then space, then 3-digit = row number, remove first
-            
+            // Remove leading row numbers smartly
             const leadingNumberMatch = cleaned.match(/^(\d+)\s+(\d+)/);
             if (leadingNumberMatch) {
                 const firstNum = leadingNumberMatch[1];
                 const secondNum = leadingNumberMatch[2];
                 
-                // If first number is 1-2 digits and second is 3-5 digits, likely row + house
-                // "24 115" = row 24, house 115 - remove the 24
                 if (firstNum.length <= 2 && secondNum.length >= 3) {
                     cleaned = cleaned.replace(/^\d+\s+/, '').trim();
                 }
-                // Otherwise keep everything (house number is first)
             }
             
-            // Look for comma separator (Google Sheets format with state/zip)
             if (cleaned.includes(',')) {
-                // Has comma: Extract address before ZIP code
                 let addr = cleaned.split(',')[0].trim();
                 addr = addr.replace(/\s+[A-Z]{2}\s+\d{5}.*$/i, '').trim();
                 
@@ -737,15 +705,10 @@
                     addresses.push(addr);
                 }
             } else {
-                // No comma: Table format (address + town without comma)
-                // Check if it has street words
-                const hasStreetWords = /\b(st|street|ave|avenue|dr|drive|rd|road|ln|lane|blvd|boulevard|ct|court|pl|place|way|circle|pkwy|parkway|williams|kinley|oak|main|indiana|bridgett|washington|village|wisconsin|south|walnut|mack|garfield|west|monroe|iowa|hickory|kent|jacob|stanton|vernon|park|powell|riverside|boys|e\s|w\s)\b/i.test(cleaned);
+                const hasStreetWords = /\b(st|street|ave|avenue|dr|drive|rd|road|ln|lane|blvd|boulevard|ct|court|pl|place|way|circle|pkwy|parkway|williams|kinley|oak|main|indiana|bridgett|washington|village|wisconsin|south|walnut|mack|garfield|west|monroe|iowa|hickory|kent|jacob|stanton|vernon|park|powell|riverside|boys)\b/i.test(cleaned);
                 
                 if (hasStreetWords) {
-                    // Remove state ZIP codes at the end
                     let addr = cleaned.replace(/\s+[A-Z]{2}\s+\d{5}.*$/i, '').trim();
-                    
-                    // Remove location markers (Locate, Poe, etc)
                     addr = addr.replace(/\s+(locate|poe).*/gi, '').trim();
                     
                     if (addr.length > 8) {
@@ -760,7 +723,7 @@
 
     function displayExtractedAddresses(addresses) {
         let html = '';
-        addresses.forEach((addr, idx) => {
+        addresses.forEach((addr) => {
             html += `<div class="address-item">
                 <input type="checkbox" checked> <span>${addr}</span>
             </div>`;
@@ -772,7 +735,7 @@
     function confirmAddresses() {
         const addressItems = document.querySelectorAll('#addressesList .address-item');
         let count = 0;
-        const townCounts = {}; // Track which towns have addresses
+        const townCounts = {};
 
         addressItems.forEach((item) => {
             const checkbox = item.querySelector('input[type="checkbox"]');
@@ -782,44 +745,32 @@
                 const fullAddr = addressText.textContent.trim();
                 
                 if (fullAddr.length > 5) {
-                    // Extract town from address
-                    // Addresses look like: "115 Oak St Westville" or "1389 E 16TH RD STREATOR, IL 61364"
                     let town = '';
                     
                     if (fullAddr.includes(',')) {
-                        // Format: "1389 E 16TH RD STREATOR, IL 61364"
-                        // Extract the part before comma, then get the last word(s)
                         const beforeComma = fullAddr.split(',')[0];
                         const parts = beforeComma.trim().split(/\s+/);
                         
-                        // Find the town - usually after the street abbreviation
-                        // Pattern: NUMBER STREET[ST/AVE/DR/etc] TOWN
                         for (let i = parts.length - 1; i >= 0; i--) {
                             const word = parts[i];
-                            // Skip street abbreviations and single letters
                             if (!/^(st|ave|dr|rd|ln|blvd|ct|pl|pkwy|e|w|n|s)$/i.test(word) && word.length > 1) {
                                 town = word;
                                 break;
                             }
                         }
                     } else {
-                        // Format: "115 Oak St Westville" or "217 Mc Kinley Westville"
-                        // Get the last word (should be town)
                         const parts = fullAddr.trim().split(/\s+/);
                         if (parts.length > 0) {
                             town = parts[parts.length - 1];
                         }
                     }
                     
-                    // Validate town (should be letters, meaningful)
                     if (town && town.length > 1 && /^[A-Za-z]+$/.test(town)) {
-                        // Add town to locations if it doesn't exist
                         if (!data.locations.includes(town)) {
                             data.locations.push(town);
                             data.addressesByLocation[town] = [];
                         }
                         
-                        // Add address to the town
                         if (!data.addressesByLocation[town].includes(fullAddr)) {
                             data.addressesByLocation[town].push(fullAddr);
                             data.jobs[fullAddr] = {
@@ -852,10 +803,15 @@
     // MANUAL ADDRESS ENTRY
     function addAddresses() {
         const input = document.getElementById('addressInput').value;
-        const loc = document.getElementById('entryLocation').value;
+        const loc = document.getElementById('entryLocation').value.trim();
         if (!input.trim() || !loc) { 
             showAlert('Fill all fields', 'error'); 
             return; 
+        }
+
+        if (!data.locations.includes(loc)) {
+            data.locations.push(loc);
+            data.addressesByLocation[loc] = [];
         }
 
         let count = 0;
@@ -875,12 +831,8 @@
         });
 
         if (count > 0) {
-            // Auto-add the location/town if it doesn't exist
-            if (!data.locations.includes(loc)) {
-                data.locations.push(loc);
-            }
-            
             document.getElementById('addressInput').value = '';
+            document.getElementById('entryLocation').value = '';
             saveToStorage();
             updateAllUI();
             showAlert(`Added ${count} addresses to ${loc}!`, 'success');
@@ -889,23 +841,13 @@
         }
     }
 
-    // ROUTE OPTIMIZER - MAILMAN STYLE (UP AND DOWN STREETS)
+    // ROUTE OPTIMIZER
     function generateOptimalRoutes() {
         const loc = document.getElementById('routeLocation').value;
         if (!loc) { showAlert('Select location', 'error'); return; }
 
-        console.log('Selected location:', loc);
-        console.log('All locations:', data.locations);
-        console.log('All addressesByLocation:', data.addressesByLocation);
-        console.log('Addresses in ' + loc + ':', data.addressesByLocation[loc]);
-
         const jobAddresses = data.addressesByLocation[loc] || [];
-        console.log('jobAddresses:', jobAddresses);
-        
-        if (jobAddresses.length === 0) { 
-            showAlert('No addresses in ' + loc + '. Make sure you added addresses to this location.', 'error'); 
-            return; 
-        }
+        if (jobAddresses.length === 0) { showAlert('No addresses in ' + loc, 'error'); return; }
 
         const statusEl = document.getElementById('routeOptimizationStatus');
         statusEl.classList.remove('hidden');
@@ -913,10 +855,7 @@
         statusEl.innerHTML = '🤖 Optimizing route...';
 
         setTimeout(() => {
-            // Sort addresses to create mailman-style route (up and down streets)
             const sortedAddresses = sortAddressesForMailmanRoute(jobAddresses);
-            
-            console.log('Sorted addresses:', sortedAddresses);
             
             const routes = [];
             routes.push({
@@ -928,36 +867,25 @@
             displayOptimalRoutes(routes, loc);
             document.getElementById('generatedRoutes').classList.remove('hidden');
             statusEl.className = 'alert alert-success';
-            statusEl.innerHTML = '✅ Route optimized for efficient navigation!';
+            statusEl.innerHTML = '✅ Route optimized!';
         }, 500);
     }
 
     function sortAddressesForMailmanRoute(addresses) {
-        // Sort addresses to minimize backtracking - like a mailman going up and down streets
-        // This extracts street names and groups addresses, then alternates direction
-        
         const streetGroups = {};
         
         addresses.forEach(addr => {
-            // Extract street name - handle both formats:
-            // Format 1: "115 Oak St Westville" (no comma)
-            // Format 2: "1389 E 16TH RD STREATOR, IL 61364" (with comma)
-            
             let streetPart = addr;
             
             if (addr.includes(',')) {
-                // Has comma: get part before comma
                 streetPart = addr.split(',')[0].trim();
             } else {
-                // No comma: get everything except the last word (town)
                 const parts = addr.split(/\s+/);
                 if (parts.length > 1) {
-                    // Remove last word (town) and rejoin
                     streetPart = parts.slice(0, -1).join(' ');
                 }
             }
             
-            // Extract just the street name (remove house number)
             const streetName = streetPart.replace(/^\d+\s+/, '').toUpperCase();
             
             if (streetName.length > 0) {
@@ -968,14 +896,12 @@
             }
         });
 
-        // Sort each street numerically, then alternate direction
         const sortedAddresses = [];
         let ascending = true;
         
         Object.keys(streetGroups).sort().forEach(street => {
             const streetAddresses = streetGroups[street];
             
-            // Extract numbers for sorting
             const numbered = streetAddresses.map(addr => ({
                 num: parseInt(addr.match(/\d+/)?.[0] || 0),
                 addr: addr
@@ -983,7 +909,6 @@
             
             numbered.sort((a, b) => a.num - b.num);
             
-            // Alternate direction for each street
             const addressList = numbered.map(n => n.addr);
             if (!ascending) {
                 addressList.reverse();
@@ -1012,8 +937,8 @@
     }
 
     function navigateInMaps() {
-        const stops = document.querySelectorAll('.route-stops');
-        if (stops.length === 0) { showAlert('Generate route first', 'error'); return; }
+        const routeItems = document.querySelectorAll('.route-item');
+        if (routeItems.length === 0) { showAlert('Generate route first', 'error'); return; }
 
         const addresses = [];
         document.querySelectorAll('.route-item').forEach(item => {
@@ -1027,10 +952,7 @@
         });
 
         if (addresses.length > 0) {
-            // Build Maps URL with proper waypoints
             let mapsUrl = `https://maps.apple.com/?dirflags=d`;
-            
-            // Add addresses as waypoints
             addresses.forEach(addr => {
                 mapsUrl += `&daddr=${encodeURIComponent(addr)}`;
             });
@@ -1094,7 +1016,7 @@
         document.getElementById('statCompletion').textContent = total > 0 ? Math.round((done / total) * 100) + '%' : '0%';
     }
 
-    // CREW FUNCTIONS
+    // CREW
     function addCrewMember() {
         const name = document.getElementById('crewName').value.trim();
         const phone = document.getElementById('crewPhone').value.trim();
@@ -1133,22 +1055,6 @@
     }
 
     // ADMIN
-    function addLocation() {
-        const input = document.getElementById('newLocation');
-        const loc = input.value.trim();
-        if (!loc) { showAlert('Enter location', 'error'); return; }
-        if (data.locations.includes(loc)) { showAlert('Already exists', 'error'); return; }
-
-        data.locations.push(loc);
-        data.addressesByLocation[loc] = [];
-
-        input.value = '';
-        saveToStorage();
-        updateLocationSelectors();
-        updateAllUI();
-        showAlert(`${loc} added!`, 'success');
-    }
-
     function exportData() {
         const json = JSON.stringify(data, null, 2);
         const blob = new Blob([json], { type: 'application/json' });
@@ -1194,7 +1100,6 @@
             crewMembers: [],
             jobs: {},
             expenses: [],
-            messages: [],
             jobFilter: 'all'
         };
         localStorage.removeItem('metroData');
@@ -1214,14 +1119,6 @@
         `).join('') : '<p class="text-muted">No crew members yet</p>';
         const crewRoster = document.getElementById('crewRoster');
         if (crewRoster) crewRoster.innerHTML = crewHtml;
-
-        const locHtml = data.locations.length > 0 ? data.locations.map(l => `
-            <div style="padding: 1rem; background: var(--bg); border-radius: 8px; margin-bottom: 0.75rem; border-left: 4px solid var(--primary);">
-                ${l}
-            </div>
-        `).join('') : '<p class="text-muted">No locations</p>';
-        const locsList = document.getElementById('locationsList');
-        if (locsList) locsList.innerHTML = locHtml;
 
         const byType = {};
         let total = 0;
