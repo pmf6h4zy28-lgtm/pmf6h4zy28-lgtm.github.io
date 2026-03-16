@@ -396,6 +396,44 @@
             <div id="jobsList"></div>
         </div>
 
+        <!-- JOB DETAILS MODAL -->
+        <div id="jobDetailsModal" class="hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; z-index: 1000; align-items: center; justify-content: center;">
+            <div style="background: white; border-radius: 12px; padding: 2rem; max-width: 500px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 id="modalTitle" style="margin: 0; font-size: 1.3rem; color: var(--primary);">Job Details</h3>
+                    <button onclick="closeJobModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">✕</button>
+                </div>
+                
+                <div id="modalAddress" style="font-weight: 700; margin-bottom: 1rem; word-break: break-word;"></div>
+                
+                <div class="input-group">
+                    <label>Status</label>
+                    <select id="modalStatus">
+                        <option value="todo">⏳ Todo</option>
+                        <option value="inprogress">🟡 In Progress</option>
+                        <option value="done">✅ Completed</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label>Drop Length (feet)</label>
+                    <input type="number" id="modalDropLength" placeholder="e.g., 150" min="0">
+                </div>
+                
+                <div class="input-group">
+                    <label>Footage Needed</label>
+                    <input type="text" id="modalFootage" placeholder="Will auto-populate" readonly style="background: var(--bg); cursor: not-allowed;">
+                </div>
+                
+                <div class="input-group">
+                    <label>Notes</label>
+                    <textarea id="modalNotes" placeholder="Add notes for this drop (access codes, conditions, special instructions, etc.)"></textarea>
+                </div>
+                
+                <button class="btn btn-secondary btn-block" onclick="saveJobDetails()">💾 Save Changes</button>
+            </div>
+        </div>
+
         <div class="card">
             <div class="card-title">Statistics</div>
             <div class="grid">
@@ -510,7 +548,8 @@
         crewMembers: [],
         jobs: {},
         expenses: [],
-        jobFilter: 'all'
+        jobFilter: 'all',
+        jobNotes: {} // Add notes storage
     };
 
     function initSystem() {
@@ -1090,13 +1129,68 @@
             html = '<p class="text-muted">No drops found</p>';
         } else {
             html = jobs.map(([addr, job]) => {
-                return `<div class="job-card ${job.status}">
+                const notes = data.jobNotes[addr] || {};
+                const dropLength = notes.dropLength ? ` | 📏 ${notes.dropLength} ft` : '';
+                
+                return `<div class="job-card ${job.status}" onclick="openJobModal('${addr.replace(/'/g, "\\'")}', '${job.status}')" style="cursor: pointer; transition: all 0.2s;">
                     <div class="job-card-address">${addr}</div>
-                    <div class="job-card-meta">${job.location}</div>
+                    <div class="job-card-meta">${job.location}${dropLength}</div>
+                    ${notes.notes ? `<div style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem; font-style: italic;">📝 ${notes.notes}</div>` : ''}
                 </div>`;
             }).join('');
         }
         document.getElementById('jobsList').innerHTML = html;
+    }
+
+    function openJobModal(address, status) {
+        const notes = data.jobNotes[address] || { dropLength: '', footage: '', notes: '' };
+        
+        document.getElementById('modalTitle').textContent = 'Drop Details';
+        document.getElementById('modalAddress').textContent = address;
+        document.getElementById('modalStatus').value = status;
+        document.getElementById('modalDropLength').value = notes.dropLength || '';
+        document.getElementById('modalFootage').value = notes.footage || '';
+        document.getElementById('modalNotes').value = notes.notes || '';
+        
+        // Store current address being edited
+        window.currentJobAddress = address;
+        
+        // Show modal
+        const modal = document.getElementById('jobDetailsModal');
+        modal.style.display = 'flex';
+    }
+
+    function closeJobModal() {
+        const modal = document.getElementById('jobDetailsModal');
+        modal.style.display = 'none';
+        window.currentJobAddress = null;
+    }
+
+    function saveJobDetails() {
+        if (!window.currentJobAddress) return;
+        
+        const address = window.currentJobAddress;
+        const status = document.getElementById('modalStatus').value;
+        const dropLength = document.getElementById('modalDropLength').value;
+        const footage = document.getElementById('modalFootage').value;
+        const notes = document.getElementById('modalNotes').value;
+        
+        // Update job status
+        if (data.jobs[address]) {
+            data.jobs[address].status = status;
+        }
+        
+        // Store notes and details
+        data.jobNotes[address] = {
+            dropLength: dropLength ? parseInt(dropLength) : '',
+            footage: footage,
+            notes: notes
+        };
+        
+        saveToStorage();
+        updateAllUI();
+        closeJobModal();
+        showAlert('Job details saved!', 'success');
     }
 
     function updateJobStats() {
