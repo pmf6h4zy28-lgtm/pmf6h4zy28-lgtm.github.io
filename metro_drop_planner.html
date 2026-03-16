@@ -467,10 +467,38 @@
     <!-- DROPS MAP TAB -->
     <div id="drops-map" class="tab-content">
         <iframe 
+            id="gisMapFrame"
             src="https://gis.metrocomm.com/portal/apps/webappviewer/index.html?id=b67d3b74fd9149ebb70fceb1ac6f3d02" 
             style="width: 100%; height: 100vh; border: none; border-radius: 8px;"
             allow="geolocation"
         ></iframe>
+        <script>
+            // Try to auto-enable Secondary Splitter Areas layer
+            document.getElementById('gisMapFrame').addEventListener('load', function() {
+                try {
+                    const iframeDoc = this.contentDocument || this.contentWindow.document;
+                    
+                    // Try to find and check the Secondary Splitter Areas checkbox
+                    // Look for checkboxes in the layer list
+                    const checkboxes = iframeDoc.querySelectorAll('input[type="checkbox"]');
+                    
+                    for (let checkbox of checkboxes) {
+                        // Look for Secondary Splitter or similar text nearby
+                        const label = checkbox.closest('label') || checkbox.parentElement;
+                        if (label && label.textContent.includes('Secondary Splitter')) {
+                            checkbox.checked = true;
+                            checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+                            checkbox.dispatchEvent(new Event('click', { bubbles: true }));
+                            console.log('✅ Secondary Splitter Areas layer enabled');
+                            break;
+                        }
+                    }
+                } catch (error) {
+                    console.log('⚠️ Could not auto-enable layer (cross-origin restriction):', error.message);
+                    console.log('You may need to manually enable "Secondary Splitter Areas" in the Layer List');
+                }
+            });
+        </script>
     </div>
 
     <!-- CREW TAB -->
