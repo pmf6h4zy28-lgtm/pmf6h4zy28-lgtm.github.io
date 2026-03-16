@@ -528,10 +528,6 @@
     };
 
     function initSystem() {
-        // Clear old localStorage data
-        localStorage.removeItem('metroData');
-        localStorage.removeItem('hildData');
-        
         loadFromStorage();
         data.locations.forEach(loc => {
             data.addressesByLocation[loc] = data.addressesByLocation[loc] || [];
@@ -898,8 +894,18 @@
         const loc = document.getElementById('routeLocation').value;
         if (!loc) { showAlert('Select location', 'error'); return; }
 
+        console.log('Selected location:', loc);
+        console.log('All locations:', data.locations);
+        console.log('All addressesByLocation:', data.addressesByLocation);
+        console.log('Addresses in ' + loc + ':', data.addressesByLocation[loc]);
+
         const jobAddresses = data.addressesByLocation[loc] || [];
-        if (jobAddresses.length === 0) { showAlert('No addresses in ' + loc, 'error'); return; }
+        console.log('jobAddresses:', jobAddresses);
+        
+        if (jobAddresses.length === 0) { 
+            showAlert('No addresses in ' + loc + '. Make sure you added addresses to this location.', 'error'); 
+            return; 
+        }
 
         const statusEl = document.getElementById('routeOptimizationStatus');
         statusEl.classList.remove('hidden');
@@ -909,6 +915,8 @@
         setTimeout(() => {
             // Sort addresses to create mailman-style route (up and down streets)
             const sortedAddresses = sortAddressesForMailmanRoute(jobAddresses);
+            
+            console.log('Sorted addresses:', sortedAddresses);
             
             const routes = [];
             routes.push({
