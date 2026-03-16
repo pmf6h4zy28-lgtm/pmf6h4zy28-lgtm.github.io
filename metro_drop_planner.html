@@ -397,14 +397,14 @@
         </div>
 
         <!-- JOB DETAILS MODAL -->
-        <div id="jobDetailsModal" class="hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; z-index: 1000; align-items: center; justify-content: center;">
-            <div style="background: white; border-radius: 12px; padding: 2rem; max-width: 500px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+        <div id="jobDetailsModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; z-index: 1000; align-items: center; justify-content: center;" onclick="closeJobModal()">
+            <div style="background: white; border-radius: 12px; padding: 2rem; max-width: 500px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2);" onclick="event.stopPropagation()">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <h3 id="modalTitle" style="margin: 0; font-size: 1.3rem; color: var(--primary);">Job Details</h3>
+                    <h3 id="modalTitle" style="margin: 0; font-size: 1.3rem; color: var(--primary);">Drop Details</h3>
                     <button onclick="closeJobModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">✕</button>
                 </div>
                 
-                <div id="modalAddress" style="font-weight: 700; margin-bottom: 1rem; word-break: break-word;"></div>
+                <div id="modalAddress" style="font-weight: 700; margin-bottom: 1rem; word-break: break-word; font-size: 0.95rem;"></div>
                 
                 <div class="input-group">
                     <label>Status</label>
@@ -416,13 +416,13 @@
                 </div>
                 
                 <div class="input-group">
-                    <label>Drop Length (feet)</label>
-                    <input type="number" id="modalDropLength" placeholder="e.g., 150" min="0">
+                    <label>Footage Needed (feet)</label>
+                    <input type="text" id="modalFootage" placeholder="e.g., 400" style="font-size: 1rem;">
                 </div>
                 
                 <div class="input-group">
-                    <label>Footage Needed</label>
-                    <input type="text" id="modalFootage" placeholder="Will auto-populate" readonly style="background: var(--bg); cursor: not-allowed;">
+                    <label>Drop Length (feet)</label>
+                    <input type="number" id="modalDropLength" placeholder="e.g., 150" min="0">
                 </div>
                 
                 <div class="input-group">
