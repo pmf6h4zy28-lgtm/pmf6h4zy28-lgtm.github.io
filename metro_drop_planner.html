@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hild Fiber Operations</title>
+    <title>Metro Drop Planner</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -98,10 +98,7 @@
         .btn-primary:hover { background: var(--primary-light); box-shadow: var(--shadow-md); }
         .btn-secondary { background: var(--accent); color: white; }
         .btn-secondary:hover { background: #ff5a1f; }
-        .btn-success { background: var(--success); color: white; }
-        .btn-warning { background: var(--warning); color: white; }
         .btn-block { width: 100%; }
-        .btn-small { padding: 0.5rem 1rem; font-size: 0.9rem; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
         .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
         .stat-card {
@@ -124,36 +121,8 @@
         }
         .alert-success { background: rgba(16, 185, 129, 0.1); border-color: var(--success); color: #047857; }
         .alert-info { background: rgba(59, 130, 246, 0.1); border-color: var(--info); color: #1e40af; }
-        .alert-warning { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); color: #92400e; }
         .alert-error { background: rgba(239, 68, 68, 0.1); border-color: var(--error); color: #991b1b; }
         .alert-close { cursor: pointer; font-weight: 700; margin-left: auto; }
-        .list-item {
-            padding: 1rem;
-            background: var(--bg);
-            border-radius: 8px;
-            margin-bottom: 0.75rem;
-            border-left: 4px solid var(--primary);
-        }
-        .job-filter-tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-        .job-filter-btn {
-            padding: 0.5rem 1rem;
-            border: 2px solid var(--border);
-            background: white;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        .job-filter-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
         .job-card {
             padding: 1rem;
             background: var(--bg);
@@ -185,52 +154,6 @@
         .weather-icon { font-size: 3rem; margin-bottom: 1rem; }
         .weather-temp { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
         .weather-description { color: var(--text-light); margin-top: 0.5rem; }
-        .todo-item {
-            padding: 1rem;
-            background: var(--bg);
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-            border-left: 4px solid var(--warning);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        .todo-checkbox { width: 20px; height: 20px; cursor: pointer; }
-        .week-summary {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        .summary-stat {
-            padding: 1rem;
-            background: var(--bg);
-            border-radius: 8px;
-            text-align: center;
-            border: 2px solid var(--border);
-        }
-        .summary-stat-label { font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.5rem; }
-        .summary-stat-value { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
-        .communication-item {
-            padding: 1rem;
-            background: var(--bg);
-            border-radius: 8px;
-            margin-bottom: 0.75rem;
-            border-left: 4px solid var(--info);
-        }
-        .communication-header { font-weight: 700; color: var(--primary); margin-bottom: 0.25rem; }
-        .communication-text { margin-bottom: 0.5rem; }
-        .communication-time { font-size: 0.85rem; color: var(--text-light); }
-        .section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text); }
-        .hidden { display: none !important; }
-        .text-muted { color: var(--text-light); }
-        .mt-2 { margin-top: 1rem; }
-        .mt-3 { margin-top: 1.5rem; }
-        .file-input-wrapper {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-        }
         .file-input-label {
             display: block;
             padding: 2rem;
@@ -283,6 +206,31 @@
             gap: 0.5rem;
         }
         .address-item input { width: 20px; height: 20px; }
+        .section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text); }
+        .hidden { display: none !important; }
+        .text-muted { color: var(--text-light); }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .job-filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .job-filter-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .job-filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             .header { padding: 1.5rem; }
@@ -294,8 +242,8 @@
 </head>
 <body>
     <div class="header">
-        <h1>🌐 Hild Fiber Operations</h1>
-        <p>Professional Fiber Drops & Restoration Management</p>
+        <h1>🌐 Metro Drop Planner</h1>
+        <p>Efficient Fiber Drop Route Management</p>
     </div>
 
 ```
@@ -305,14 +253,11 @@
     <div class="tabs">
         <button class="tab active" data-tab="home">🏠 Home</button>
         <button class="tab" data-tab="image-upload">📷 Upload Addresses</button>
+        <button class="tab" data-tab="data-entry">📥 Manual Entry</button>
         <button class="tab" data-tab="route-optimizer">🗺️ Route Optimizer</button>
         <button class="tab" data-tab="jobs">✅ Jobs</button>
-        <button class="tab" data-tab="data-entry">📥 Data Entry</button>
-        <button class="tab" data-tab="scheduling">📅 Scheduling</button>
-        <button class="tab" data-tab="crew">👥 Crew Management</button>
-        <button class="tab" data-tab="analytics">📈 Analytics</button>
+        <button class="tab" data-tab="crew">👥 Crew</button>
         <button class="tab" data-tab="expenses">💰 Expenses</button>
-        <button class="tab" data-tab="communication">💬 Communication</button>
         <button class="tab" data-tab="admin">⚙️ Admin</button>
     </div>
 
@@ -327,50 +272,23 @@
         </div>
 
         <div class="card">
-            <div class="card-title">This Week's Summary</div>
-            <div class="week-summary">
-                <div class="summary-stat">
-                    <div class="summary-stat-label">Jobs Done</div>
-                    <div class="summary-stat-value" id="weekDone">0</div>
-                </div>
-                <div class="summary-stat">
-                    <div class="summary-stat-label">In Progress</div>
-                    <div class="summary-stat-value" id="weekInProgress">0</div>
-                </div>
-                <div class="summary-stat">
-                    <div class="summary-stat-label">Still Todo</div>
-                    <div class="summary-stat-value" id="weekTodo">0</div>
-                </div>
-                <div class="summary-stat">
-                    <div class="summary-stat-label">Completion %</div>
-                    <div class="summary-stat-value" id="weekRate">0%</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">📋 Today's To-Do List</div>
-            <div id="todoList"></div>
-        </div>
-
-        <div class="card">
             <div class="card-title">Quick Stats</div>
             <div class="grid">
                 <div class="stat-card">
-                    <div class="stat-label">Active Jobs</div>
-                    <div class="stat-value" id="statActive">0</div>
+                    <div class="stat-label">Total Drops</div>
+                    <div class="stat-value" id="statTotal">0</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Crew Available</div>
-                    <div class="stat-value" id="statAvailable">0</div>
+                    <div class="stat-label">Completed</div>
+                    <div class="stat-value" id="statDone">0</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Week Completion</div>
+                    <div class="stat-label">In Progress</div>
+                    <div class="stat-value" id="statInProg">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Completion %</div>
                     <div class="stat-value" id="statCompletion">0%</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Week Expenses</div>
-                    <div class="stat-value" id="statExpense">$0</div>
                 </div>
             </div>
         </div>
@@ -383,7 +301,7 @@
         <div class="card">
             <div class="card-title">📸 Extract Addresses from Image</div>
             <p style="margin-bottom: 1.5rem; color: var(--text-light);">
-                Take a screenshot of your address list and upload it. The app will automatically extract all addresses!
+                Take a screenshot of your address list and upload it. The app will extract just the addresses!
             </p>
             
             <div class="input-group">
@@ -413,51 +331,60 @@
         </div>
     </div>
 
+    <!-- MANUAL ENTRY TAB -->
+    <div id="data-entry" class="tab-content">
+        <h2 class="section-title">📥 Manual Address Entry</h2>
+
+        <div class="card">
+            <div class="card-title">Add Addresses Manually</div>
+            <div class="input-group">
+                <label>Location</label>
+                <select id="entryLocation"></select>
+            </div>
+            <div class="input-group">
+                <label>Paste Addresses (one per line - format: Address, Town)</label>
+                <textarea id="addressInput" placeholder="205 N Walnut St, Georgetown&#10;202 Mack St, Georgetown"></textarea>
+            </div>
+            <button class="btn btn-primary btn-block" onclick="addAddresses()">➕ Add Addresses</button>
+        </div>
+    </div>
+
     <!-- ROUTE OPTIMIZER TAB -->
     <div id="route-optimizer" class="tab-content">
         <h2 class="section-title">🗺️ Smart Route Optimizer</h2>
 
         <div class="card">
-            <div class="card-title">Generate Daily Routes</div>
+            <div class="card-title">Generate Daily Route</div>
             <div class="grid-2">
                 <div class="input-group">
-                    <label>Select Location</label>
+                    <label>Select Location/Town</label>
                     <select id="routeLocation"></select>
                 </div>
-                <div class="input-group">
-                    <label>Crew Assignment</label>
-                    <select id="routeCrew"></select>
-                </div>
             </div>
-            <button class="btn btn-secondary btn-block" onclick="generateOptimalRoutes()">🤖 Generate Best 10 Drops</button>
+            <button class="btn btn-secondary btn-block" onclick="generateOptimalRoutes()">🤖 Generate Route</button>
             <div id="routeOptimizationStatus" class="hidden alert mt-2"></div>
         </div>
 
         <div id="generatedRoutes" class="hidden">
             <div class="card">
-                <div class="card-title">Optimized Routes for Today</div>
+                <div class="card-title">Optimized Route</div>
                 <div id="routesDisplay"></div>
             </div>
 
             <div class="card">
-                <div class="card-title">📍 Map Navigation</div>
-                <button class="btn btn-secondary btn-block" onclick="navigateAllInMaps()">🗺️ Navigate All 10 in Apple Maps</button>
+                <div class="card-title">📍 Navigate in Apple Maps</div>
+                <button class="btn btn-secondary btn-block" onclick="navigateInMaps()">🗺️ Open in Apple Maps</button>
                 <div id="mapInfo" class="mt-2 alert alert-info"></div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">Route Details</div>
-                <div id="routeMetrics"></div>
             </div>
         </div>
     </div>
 
     <!-- JOBS TAB -->
     <div id="jobs" class="tab-content">
-        <h2 class="section-title">✅ Job Management</h2>
+        <h2 class="section-title">✅ All Drops</h2>
 
         <div class="card">
-            <div class="card-title">Filter Jobs</div>
+            <div class="card-title">Filter Drops</div>
             <div class="job-filter-tabs">
                 <button class="job-filter-btn active" onclick="filterJobs('all')">All</button>
                 <button class="job-filter-btn" onclick="filterJobs('done')">✅ Completed</button>
@@ -465,21 +392,21 @@
                 <button class="job-filter-btn" onclick="filterJobs('todo')">⏳ Todo</button>
             </div>
             <div class="input-group">
-                <label>Search Jobs</label>
+                <label>Search</label>
                 <input type="text" id="jobSearch" placeholder="Search by address..." onkeyup="filterJobs()">
             </div>
         </div>
 
         <div class="card">
-            <div class="card-title" id="jobsTitle">All Jobs</div>
+            <div class="card-title" id="jobsTitle">All Drops</div>
             <div id="jobsList"></div>
         </div>
 
         <div class="card">
-            <div class="card-title">Job Statistics</div>
+            <div class="card-title">Statistics</div>
             <div class="grid">
                 <div class="stat-card">
-                    <div class="stat-label">Total Jobs</div>
+                    <div class="stat-label">Total</div>
                     <div class="stat-value" id="jobTotal">0</div>
                 </div>
                 <div class="stat-card">
@@ -491,56 +418,44 @@
                     <div class="stat-value" id="jobInProg">0</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Completion Rate</div>
+                    <div class="stat-label">Rate</div>
                     <div class="stat-value" id="jobRate">0%</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- DATA ENTRY TAB -->
-    <div id="data-entry" class="tab-content">
-        <h2 class="section-title">📥 Data Entry Hub</h2>
+    <!-- CREW TAB -->
+    <div id="crew" class="tab-content">
+        <h2 class="section-title">👥 Crew Members</h2>
 
         <div class="card">
-            <div class="card-title">🔌 Add Fiber Drop Addresses</div>
-            <div class="input-group">
-                <label>Location</label>
-                <select id="entryLocation"></select>
-            </div>
-            <div class="input-group">
-                <label>Paste Addresses (one per line)</label>
-                <textarea id="addressInput" placeholder="205 N Walnut St, Georgetown&#10;202 Mack St, Georgetown"></textarea>
-            </div>
-            <button class="btn btn-primary btn-block" onclick="addAddresses()">➕ Add Addresses</button>
-        </div>
-
-        <div class="card">
-            <div class="card-title">🌱 Add Long-Run/Restoration</div>
-            <select id="runLocation" class="input-group" style="margin-bottom: 1rem;"></select>
+            <div class="card-title">Add Crew Member</div>
             <div class="grid-2">
                 <div class="input-group">
-                    <label>Highway/Road</label>
-                    <input type="text" id="runRoad" placeholder="I-55">
+                    <label>Name</label>
+                    <input type="text" id="crewName" placeholder="Name">
                 </div>
                 <div class="input-group">
-                    <label>From</label>
-                    <input type="text" id="runFrom" placeholder="Mile 120">
-                </div>
-                <div class="input-group">
-                    <label>To</label>
-                    <input type="text" id="runTo" placeholder="Mile 140">
-                </div>
-                <div class="input-group">
-                    <label>Distance (miles)</label>
-                    <input type="number" id="runDistance" min="0" step="0.1">
+                    <label>Phone</label>
+                    <input type="tel" id="crewPhone" placeholder="(555) 123-4567">
                 </div>
             </div>
-            <button class="btn btn-primary btn-block" onclick="addLongRun()">➕ Create Long-Run</button>
+            <button class="btn btn-primary btn-block" onclick="addCrewMember()">➕ Add Member</button>
         </div>
 
         <div class="card">
-            <div class="card-title">💰 Log Expense</div>
+            <div class="card-title">Team Roster</div>
+            <div id="crewRoster"></div>
+        </div>
+    </div>
+
+    <!-- EXPENSES TAB -->
+    <div id="expenses" class="tab-content">
+        <h2 class="section-title">💰 Expense Management</h2>
+
+        <div class="card">
+            <div class="card-title">Log Expense</div>
             <div class="grid-2">
                 <div class="input-group">
                     <label>Date</label>
@@ -569,136 +484,6 @@
         </div>
 
         <div class="card">
-            <div class="card-title">🌱 Log Materials</div>
-            <div class="grid-2">
-                <div class="input-group">
-                    <label>Date</label>
-                    <input type="date" id="matDate">
-                </div>
-                <div class="input-group">
-                    <label>Seed (lbs)</label>
-                    <input type="number" id="matSeed" min="0" step="0.5">
-                </div>
-                <div class="input-group">
-                    <label>Straw (bales)</label>
-                    <input type="number" id="matStraw" min="0">
-                </div>
-                <div class="input-group">
-                    <label>Good Dirt (tons)</label>
-                    <input type="number" id="matDirt" min="0" step="0.5">
-                </div>
-                <div class="input-group">
-                    <label>Bad Dirt (loads)</label>
-                    <input type="number" id="matBadDirt" min="0">
-                </div>
-                <div class="input-group">
-                    <label>Location</label>
-                    <input type="text" id="matLocation" placeholder="Location">
-                </div>
-            </div>
-            <button class="btn btn-primary btn-block" onclick="logMaterials()">💾 Log Materials</button>
-        </div>
-    </div>
-
-    <!-- SCHEDULING TAB -->
-    <div id="scheduling" class="tab-content">
-        <h2 class="section-title">📅 Smart Scheduling</h2>
-
-        <div class="card">
-            <div class="card-title">🤖 Generate Optimal 8-Week Schedule</div>
-            <p style="margin-bottom: 1.5rem; color: var(--text-light);">AI analyzes crew preferences and creates the best schedule</p>
-            <button class="btn btn-secondary btn-block" onclick="generateSmartSchedule()">Generate & Save Schedule</button>
-            <div id="scheduleStatus" class="hidden alert mt-2"></div>
-        </div>
-
-        <div id="scheduleDisplayCard" class="hidden">
-            <div class="card">
-                <div class="card-title">✅ 8-Week Crew Rotation (Saved)</div>
-                <p style="margin-bottom: 1rem; color: var(--text-light);">✅ = Working | ❌ = Off</p>
-                <div id="scheduleDisplay"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- CREW MANAGEMENT TAB -->
-    <div id="crew" class="tab-content">
-        <h2 class="section-title">👥 Crew Management</h2>
-
-        <div class="card">
-            <div class="card-title">Add Crew Member</div>
-            <div class="grid-2">
-                <div class="input-group">
-                    <label>Name</label>
-                    <input type="text" id="crewName" placeholder="Name">
-                </div>
-                <div class="input-group">
-                    <label>Rotation Type</label>
-                    <select id="crewRotation">
-                        <option value="week">1 Week Max</option>
-                        <option value="school">School Schedule</option>
-                        <option value="2on2off">2 On / 2 Off</option>
-                        <option value="2-3on1-2off">2-3 On / 1-2 Off</option>
-                        <option value="longrun">4-6 Weeks / 1-2 Off</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>Specialization</label>
-                    <select id="crewSpec">
-                        <option value="any">Any</option>
-                        <option value="drops">Drops Only</option>
-                        <option value="restoration">Restoration Only</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>Phone</label>
-                    <input type="tel" id="crewPhone" placeholder="(555) 123-4567">
-                </div>
-            </div>
-            <button class="btn btn-primary btn-block" onclick="addCrewMember()">➕ Add Member</button>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Current Roster & Performance</div>
-            <div id="crewRoster"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Assign Crew to Route</div>
-            <div class="input-group">
-                <label>Route</label>
-                <select id="assignRoute"></select>
-            </div>
-            <div class="input-group">
-                <label>Select Crew</label>
-                <div id="crewCheckboxes"></div>
-            </div>
-            <button class="btn btn-secondary btn-block" onclick="assignCrewToRoute()">✅ Assign</button>
-        </div>
-    </div>
-
-    <!-- ANALYTICS TAB -->
-    <div id="analytics" class="tab-content">
-        <h2 class="section-title">📈 Analytics & Reporting</h2>
-
-        <div class="card">
-            <div class="card-title">Crew Performance</div>
-            <div id="crewAnalytics"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Generate Reports</div>
-            <button class="btn btn-primary btn-block" onclick="generateDailyReport()">Daily Summary</button>
-            <button class="btn btn-primary btn-block mt-2" onclick="generateWeeklyReport()">Weekly Report</button>
-            <button class="btn btn-secondary btn-block mt-2" onclick="downloadReport()">📥 Download Report</button>
-            <div id="reportContent" class="mt-3"></div>
-        </div>
-    </div>
-
-    <!-- EXPENSES TAB -->
-    <div id="expenses" class="tab-content">
-        <h2 class="section-title">💰 Expense Management</h2>
-
-        <div class="card">
             <div class="card-title">Expense Summary</div>
             <div id="expenseSummary"></div>
         </div>
@@ -706,36 +491,6 @@
         <div class="card">
             <div class="card-title">All Expenses</div>
             <div id="expenseList"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Materials Tracking</div>
-            <div id="materialsTracking"></div>
-        </div>
-    </div>
-
-    <!-- COMMUNICATION TAB -->
-    <div id="communication" class="tab-content">
-        <h2 class="section-title">💬 Crew Communication</h2>
-
-        <div class="card">
-            <div class="card-title">Send Message</div>
-            <div class="input-group">
-                <label>Your Name</label>
-                <select id="messageSender">
-                    <option value="">-- Select Your Name --</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label>Message</label>
-                <textarea id="messageText" placeholder="Type your message..."></textarea>
-            </div>
-            <button class="btn btn-primary btn-block" onclick="sendMessage()">📤 Send</button>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Message History</div>
-            <div id="messageHistory"></div>
         </div>
     </div>
 
@@ -759,7 +514,7 @@
             <div class="card-title">Data Management</div>
             <button class="btn btn-primary btn-block" onclick="exportData()">📥 Export Data</button>
             <button class="btn btn-secondary btn-block mt-2" onclick="downloadReport()">📄 Download Report</button>
-            <button class="btn btn-warning btn-block mt-2" onclick="clearData()">🗑️ Clear Data</button>
+            <button class="btn btn-secondary btn-block mt-2" onclick="clearData()">🗑️ Clear All Data</button>
         </div>
     </div>
 </div>
@@ -770,13 +525,10 @@
     let data = {
         locations: ['Georgetown', 'Westville'],
         addressesByLocation: {},
-        runsByLocation: {},
         crewMembers: [],
         jobs: {},
         expenses: [],
-        materials: [],
         messages: [],
-        schedule: null,
         jobFilter: 'all'
     };
 
@@ -784,7 +536,6 @@
         loadFromStorage();
         data.locations.forEach(loc => {
             data.addressesByLocation[loc] = data.addressesByLocation[loc] || [];
-            data.runsByLocation[loc] = data.runsByLocation[loc] || [];
         });
         initDefaultCrew();
         generateWeatherData();
@@ -794,19 +545,17 @@
     function initDefaultCrew() {
         if (data.crewMembers.length === 0) {
             data.crewMembers = [
-                { name: 'You', rotation: 'longrun', spec: 'any', phone: '', performance: { completed: 24, total: 28 } },
-                { name: 'Luke', rotation: '2on2off', spec: 'any', phone: '', performance: { completed: 18, total: 22 } },
-                { name: 'AJ', rotation: '2-3on1-2off', spec: 'any', phone: '', performance: { completed: 16, total: 20 } },
-                { name: 'Trent', rotation: 'week', spec: 'any', phone: '', performance: { completed: 12, total: 14 } },
-                { name: 'Cayden', rotation: 'school', spec: 'drops', phone: '', performance: { completed: 8, total: 10 } },
-                { name: 'Julio', rotation: 'longrun', spec: 'any', phone: '', performance: { completed: 22, total: 26 } }
+                { name: 'You', phone: '', performance: { completed: 0, total: 0 } },
+                { name: 'Luke', phone: '', performance: { completed: 0, total: 0 } },
+                { name: 'AJ', phone: '', performance: { completed: 0, total: 0 } },
+                { name: 'Trent', phone: '', performance: { completed: 0, total: 0 } }
             ];
         }
     }
 
     function saveToStorage() {
         try {
-            localStorage.setItem('hildData', JSON.stringify(data));
+            localStorage.setItem('metroData', JSON.stringify(data));
         } catch(e) {
             console.log('Storage full or unavailable');
         }
@@ -814,7 +563,7 @@
 
     function loadFromStorage() {
         try {
-            const stored = localStorage.getItem('hildData');
+            const stored = localStorage.getItem('metroData');
             if (stored) {
                 data = JSON.parse(stored);
             }
@@ -834,12 +583,9 @@
             { temp: 62, icon: '❄️', desc: 'Cold, Dress warm' }
         ];
         const weather = conditions[Math.floor(Math.random() * conditions.length)];
-        const tempEl = document.getElementById('weatherTemp');
-        const descEl = document.getElementById('weatherDesc');
-        const iconEl = document.getElementById('weatherIcon');
-        if (tempEl) tempEl.textContent = weather.temp + '°F';
-        if (descEl) descEl.textContent = weather.desc;
-        if (iconEl) iconEl.textContent = weather.icon;
+        document.getElementById('weatherTemp').textContent = weather.temp + '°F';
+        document.getElementById('weatherDesc').textContent = weather.desc;
+        document.getElementById('weatherIcon').textContent = weather.icon;
     }
 
     // TAB NAVIGATION
@@ -858,7 +604,7 @@
     });
 
     function updateLocationSelectors() {
-        ['uploadLocation', 'entryLocation', 'runLocation', 'routeLocation'].forEach(id => {
+        ['uploadLocation', 'entryLocation', 'routeLocation'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.innerHTML = data.locations.map(l => `<option value="${l}">${l}</option>`).join('');
@@ -869,7 +615,6 @@
     // IMAGE UPLOAD HANDLING
     const dragDropZone = document.getElementById('dragDropZone');
     const imageInput = document.getElementById('imageInput');
-    let currentImageFile = null;
 
     dragDropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
@@ -901,11 +646,9 @@
             return;
         }
 
-        currentImageFile = file;
         const reader = new FileReader();
         reader.onload = (e) => {
-            const img = document.getElementById('previewImage');
-            img.src = e.target.result;
+            document.getElementById('previewImage').src = e.target.result;
             document.getElementById('previewContainer').style.display = 'block';
         };
         reader.readAsDataURL(file);
@@ -950,8 +693,17 @@
 
         lines.forEach(line => {
             const cleaned = line.trim();
-            if (cleaned.length > 10 && /\d+/.test(cleaned)) {
-                addresses.push(cleaned);
+            // Only extract lines with numbers (addresses) and filter out location markers
+            if (cleaned.length > 5 && /\d+/.test(cleaned)) {
+                // Skip lines with common location markers
+                if (!cleaned.toLowerCase().includes('locate') && 
+                    !cleaned.toLowerCase().includes('poe') &&
+                    !cleaned.toLowerCase().includes('north') &&
+                    !cleaned.toLowerCase().includes('south') &&
+                    !cleaned.toLowerCase().includes('east') &&
+                    !cleaned.toLowerCase().includes('west')) {
+                    addresses.push(cleaned);
+                }
             }
         });
 
@@ -979,7 +731,7 @@
         const checkboxes = document.querySelectorAll('#addressesList input[type="checkbox"]');
         let count = 0;
 
-        checkboxes.forEach((checkbox, idx) => {
+        checkboxes.forEach((checkbox) => {
             if (checkbox.checked) {
                 const addr = checkbox.nextElementSibling.textContent.trim();
                 
@@ -1045,217 +797,90 @@
         }
     }
 
-    function addLongRun() {
-        const loc = document.getElementById('runLocation').value;
-        const road = document.getElementById('runRoad').value.trim();
-        const from = document.getElementById('runFrom').value.trim();
-        const to = document.getElementById('runTo').value.trim();
-        const distance = parseFloat(document.getElementById('runDistance').value);
-
-        if (!loc || !road || !from || !to || !distance) { showAlert('Fill all fields', 'error'); return; }
-
-        data.runsByLocation[loc] = data.runsByLocation[loc] || [];
-        data.runsByLocation[loc].push({
-            id: `RUN_${Date.now()}`,
-            road, from, to, distance,
-            status: 'active',
-            startDate: new Date().toISOString().split('T')[0]
-        });
-
-        document.getElementById('runRoad').value = '';
-        document.getElementById('runFrom').value = '';
-        document.getElementById('runTo').value = '';
-        document.getElementById('runDistance').value = '';
-
-        saveToStorage();
-        updateAllUI();
-        showAlert('Long-run created!', 'success');
-    }
-
-    function addExpense() {
-        const date = document.getElementById('expenseDate').value;
-        const type = document.getElementById('expenseType').value;
-        const desc = document.getElementById('expenseDesc').value.trim();
-        const amount = parseFloat(document.getElementById('expenseAmount').value);
-
-        if (!date || !desc || !amount || isNaN(amount)) { showAlert('Fill all fields correctly', 'error'); return; }
-
-        data.expenses.push({ date, type, desc, amount, id: Date.now() });
-
-        document.getElementById('expenseDate').value = '';
-        document.getElementById('expenseDesc').value = '';
-        document.getElementById('expenseAmount').value = '';
-
-        saveToStorage();
-        updateAllUI();
-        showAlert('Expense logged!', 'success');
-    }
-
-    function logMaterials() {
-        const date = document.getElementById('matDate').value;
-        const seed = parseFloat(document.getElementById('matSeed').value) || 0;
-        const straw = parseInt(document.getElementById('matStraw').value) || 0;
-        const dirt = parseFloat(document.getElementById('matDirt').value) || 0;
-        const badDirt = parseInt(document.getElementById('matBadDirt').value) || 0;
-        const location = document.getElementById('matLocation').value.trim();
-
-        if (!date) { showAlert('Select date', 'error'); return; }
-
-        data.materials.push({ date, seed, straw, dirt, badDirt, location, id: Date.now() });
-
-        document.getElementById('matDate').value = '';
-        document.getElementById('matSeed').value = '';
-        document.getElementById('matStraw').value = '';
-        document.getElementById('matDirt').value = '';
-        document.getElementById('matBadDirt').value = '';
-        document.getElementById('matLocation').value = '';
-
-        saveToStorage();
-        updateAllUI();
-        showAlert('Materials logged!', 'success');
-    }
-
-    function addCrewMember() {
-        const name = document.getElementById('crewName').value.trim();
-        const rotation = document.getElementById('crewRotation').value;
-        const spec = document.getElementById('crewSpec').value;
-        const phone = document.getElementById('crewPhone').value.trim();
-
-        if (!name) { showAlert('Enter name', 'error'); return; }
-        if (data.crewMembers.find(c => c.name === name)) { showAlert('Crew member already exists', 'error'); return; }
-
-        data.crewMembers.push({ name, rotation, spec, phone, performance: { completed: 0, total: 0 } });
-
-        document.getElementById('crewName').value = '';
-        document.getElementById('crewPhone').value = '';
-
-        saveToStorage();
-        updateAllUI();
-        showAlert(`${name} added!`, 'success');
-    }
-
-    function generateSmartSchedule() {
-        const scheduleBtn = event.target;
-        scheduleBtn.disabled = true;
-        scheduleBtn.textContent = '⏳ Generating...';
-
-        const statusEl = document.getElementById('scheduleStatus');
-        statusEl.classList.remove('hidden');
-        statusEl.className = 'alert alert-info';
-        statusEl.innerHTML = '🤖 Building optimal schedule...';
-
-        setTimeout(() => {
-            const schedule = {};
-            const weeks = 8;
-
-            data.crewMembers.forEach(crew => {
-                schedule[crew.name] = [];
-                let week = 0;
-
-                if (crew.rotation === 'week') {
-                    const pattern = ['WORK', 'OFF', 'OFF', 'OFF'];
-                    while (week < weeks) {
-                        schedule[crew.name].push(pattern[week % pattern.length]);
-                        week++;
-                    }
-                } else if (crew.rotation === 'school') {
-                    while (week < weeks) {
-                        schedule[crew.name].push(Math.random() > 0.4 ? 'WORK' : 'OFF');
-                        week++;
-                    }
-                } else if (crew.rotation === '2on2off') {
-                    const pattern = ['WORK', 'WORK', 'OFF', 'OFF'];
-                    while (week < weeks) {
-                        schedule[crew.name].push(pattern[week % pattern.length]);
-                        week++;
-                    }
-                } else if (crew.rotation === '2-3on1-2off') {
-                    const pattern = ['WORK', 'WORK', 'WORK', 'OFF', 'OFF'];
-                    while (week < weeks) {
-                        schedule[crew.name].push(pattern[week % pattern.length]);
-                        week++;
-                    }
-                } else if (crew.rotation === 'longrun') {
-                    const pattern = ['WORK', 'WORK', 'WORK', 'WORK', 'WORK', 'WORK', 'OFF', 'OFF'];
-                    while (week < weeks) {
-                        schedule[crew.name].push(pattern[week % pattern.length]);
-                        week++;
-                    }
-                }
-            });
-
-            data.schedule = schedule;
-            displaySchedule(schedule);
-            saveToStorage();
-
-            statusEl.className = 'alert alert-success';
-            statusEl.innerHTML = '✅ Schedule generated and saved!';
-            scheduleBtn.disabled = false;
-            scheduleBtn.textContent = '🤖 Generate & Save Schedule';
-        }, 500);
-    }
-
-    function displaySchedule(schedule) {
-        const weeks = Array.from({ length: 8 }, (_, i) => `W${i + 1}`);
-        let html = '<div style="overflow-x: auto;"><table style="width:100%; border-collapse:collapse;">';
-        
-        html += '<tr>';
-        html += '<th style="padding:0.75rem; border:1px solid var(--border); background: var(--primary); color: white; text-align: left;">Crew Member</th>';
-        weeks.forEach(w => html += `<th style="padding:0.75rem; border:1px solid var(--border); background: var(--primary); color: white;">${w}</th>`);
-        html += '</tr>';
-
-        Object.entries(schedule).forEach(([name, sched]) => {
-            html += `<tr><td style="padding:0.75rem; border:1px solid var(--border); font-weight:700;">${name}</td>`;
-            sched.forEach(status => {
-                const bg = status === 'WORK' ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)';
-                const text = status === 'WORK' ? '✅ IN' : '❌ OFF';
-                html += `<td style="padding:0.75rem; border:1px solid var(--border); text-align:center; background:${bg}; font-weight:600;">${text}</td>`;
-            });
-            html += '</tr>';
-        });
-        html += '</table></div>';
-
-        document.getElementById('scheduleDisplay').innerHTML = html;
-        document.getElementById('scheduleDisplayCard').classList.remove('hidden');
-    }
-
+    // ROUTE OPTIMIZER - MAILMAN STYLE (UP AND DOWN STREETS)
     function generateOptimalRoutes() {
         const loc = document.getElementById('routeLocation').value;
         if (!loc) { showAlert('Select location', 'error'); return; }
 
-        const jobs = data.addressesByLocation[loc] || [];
-        if (jobs.length === 0) { showAlert('No addresses in ' + loc, 'error'); return; }
+        const jobAddresses = data.addressesByLocation[loc] || [];
+        if (jobAddresses.length === 0) { showAlert('No addresses in ' + loc, 'error'); return; }
 
         const statusEl = document.getElementById('routeOptimizationStatus');
         statusEl.classList.remove('hidden');
         statusEl.className = 'alert alert-info';
-        statusEl.innerHTML = '🤖 Optimizing routes...';
+        statusEl.innerHTML = '🤖 Optimizing route...';
 
         setTimeout(() => {
-            const selected = jobs.slice(0, Math.min(10, jobs.length));
+            // Sort addresses to create mailman-style route (up and down streets)
+            const sortedAddresses = sortAddressesForMailmanRoute(jobAddresses);
             
             const routes = [];
-            for (let i = 0; i < 2 && selected.length > i * 5; i++) {
-                routes.push({
-                    id: `OPT_${i+1}`,
-                    stops: selected.slice(i * 5, (i + 1) * 5),
-                    distance: Math.round(15 + Math.random() * 20),
-                    time: Math.round(60 + Math.random() * 45)
-                });
-            }
+            routes.push({
+                stops: sortedAddresses,
+                distance: Math.round(15 + Math.random() * 20),
+                time: Math.round(60 + (sortedAddresses.length * 5))
+            });
 
             displayOptimalRoutes(routes, loc);
             document.getElementById('generatedRoutes').classList.remove('hidden');
             statusEl.className = 'alert alert-success';
-            statusEl.innerHTML = '✅ Routes optimized!';
-        }, 800);
+            statusEl.innerHTML = '✅ Route optimized for efficient navigation!';
+        }, 500);
+    }
+
+    function sortAddressesForMailmanRoute(addresses) {
+        // Sort addresses to minimize backtracking - like a mailman going up and down streets
+        // This extracts street names and groups addresses, then alternates direction
+        
+        const streetGroups = {};
+        
+        addresses.forEach(addr => {
+            // Extract street name (usually words between number and city)
+            const parts = addr.split(',');
+            if (parts.length >= 2) {
+                const streetPart = parts[0].trim();
+                const streetName = streetPart.replace(/^\d+\s+/, '').toUpperCase();
+                
+                if (!streetGroups[streetName]) {
+                    streetGroups[streetName] = [];
+                }
+                streetGroups[streetName].push(addr);
+            }
+        });
+
+        // Sort each street numerically, then alternate direction
+        const sortedAddresses = [];
+        let ascending = true;
+        
+        Object.keys(streetGroups).sort().forEach(street => {
+            const streetAddresses = streetGroups[street];
+            
+            // Extract numbers for sorting
+            const numbered = streetAddresses.map(addr => ({
+                num: parseInt(addr.match(/\d+/)?.[0] || 0),
+                addr: addr
+            }));
+            
+            numbered.sort((a, b) => a.num - b.num);
+            
+            // Alternate direction for each street
+            const addressList = numbered.map(n => n.addr);
+            if (!ascending) {
+                addressList.reverse();
+            }
+            
+            sortedAddresses.push(...addressList);
+            ascending = !ascending;
+        });
+
+        return sortedAddresses;
     }
 
     function displayOptimalRoutes(routes, location) {
         let html = '';
         routes.forEach((route, idx) => {
             html += `<div class="route-item">
-                <div class="route-header">Route ${idx + 1} - ${route.stops.length} Stops</div>
+                <div class="route-header">${location} Route - ${route.stops.length} Stops</div>
                 <div class="route-stops">📏 ${route.distance} miles | ⏱️ ~${route.time} minutes</div>
                 <div style="font-size: 0.9rem; color: var(--text-light);">
                     ${route.stops.map((s, i) => `${i+1}. ${s}`).join('<br>')}
@@ -1263,48 +888,39 @@
             </div>`;
         });
         document.getElementById('routesDisplay').innerHTML = html;
-        document.getElementById('routeMetrics').innerHTML = `
-            <div class="grid">
-                <div class="stat-card">
-                    <div class="stat-label">Total Stops</div>
-                    <div class="stat-value">${routes.reduce((s, r) => s + r.stops.length, 0)}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Total Distance</div>
-                    <div class="stat-value">${routes.reduce((s, r) => s + r.distance, 0)} mi</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Est. Time</div>
-                    <div class="stat-value">${routes.reduce((s, r) => s + r.time, 0)} min</div>
-                </div>
-            </div>
-        `;
-        document.getElementById('mapInfo').innerHTML = '📍 Click "Navigate All 10 in Apple Maps" to start with optimal route!';
+        document.getElementById('mapInfo').innerHTML = '📍 Click "Open in Apple Maps" to navigate the entire route!';
     }
 
-    function navigateAllInMaps() {
-        const routes = document.querySelectorAll('.route-item');
-        if (routes.length === 0) { showAlert('Generate routes first', 'error'); return; }
+    function navigateInMaps() {
+        const stops = document.querySelectorAll('.route-stops');
+        if (stops.length === 0) { showAlert('Generate route first', 'error'); return; }
 
-        let addresses = [];
-        document.querySelectorAll('.route-stops').forEach(el => {
-            const text = el.textContent;
-            const lines = text.split('\n');
-            lines.forEach((line, i) => {
-                if (i > 0 && line.trim()) {
-                    const addr = line.trim().replace(/^\d+\.\s/, '');
+        const addresses = [];
+        document.querySelectorAll('.route-item').forEach(item => {
+            const lines = item.innerText.split('\n');
+            lines.forEach((line, idx) => {
+                if (idx > 1 && line.trim() && /^\d+\./.test(line)) {
+                    const addr = line.trim().replace(/^\d+\.\s+/, '');
                     addresses.push(addr);
                 }
             });
         });
 
         if (addresses.length > 0) {
-            const mapUrl = `maps://maps.apple.com/?dirflags=d&daddr=${addresses.map(a => encodeURIComponent(a)).join('&daddr=')}`;
-            window.location.href = mapUrl;
-            showAlert('Opening Maps!', 'success');
+            // Build Maps URL with proper waypoints
+            let mapsUrl = `https://maps.apple.com/?dirflags=d`;
+            
+            // Add addresses as waypoints
+            addresses.forEach(addr => {
+                mapsUrl += `&daddr=${encodeURIComponent(addr)}`;
+            });
+            
+            window.open(mapsUrl, '_blank');
+            showAlert('Opening Apple Maps with route!', 'success');
         }
     }
 
+    // JOB FILTERING
     function filterJobs(filter) {
         if (filter) data.jobFilter = filter;
 
@@ -1330,7 +946,7 @@
     function displayJobs(jobs) {
         let html = '';
         if (jobs.length === 0) {
-            html = '<p class="text-muted">No jobs found</p>';
+            html = '<p class="text-muted">No drops found</p>';
         } else {
             html = jobs.map(([addr, job]) => {
                 return `<div class="job-card ${job.status}">
@@ -1351,27 +967,52 @@
         document.getElementById('jobDone').textContent = done;
         document.getElementById('jobInProg').textContent = inprog;
         document.getElementById('jobRate').textContent = total > 0 ? Math.round((done / total) * 100) + '%' : '0%';
+        
+        document.getElementById('statTotal').textContent = total;
+        document.getElementById('statDone').textContent = done;
+        document.getElementById('statInProg').textContent = inprog;
+        document.getElementById('statCompletion').textContent = total > 0 ? Math.round((done / total) * 100) + '%' : '0%';
     }
 
-    function sendMessage() {
-        const sender = document.getElementById('messageSender').value;
-        const text = document.getElementById('messageText').value.trim();
+    // CREW FUNCTIONS
+    function addCrewMember() {
+        const name = document.getElementById('crewName').value.trim();
+        const phone = document.getElementById('crewPhone').value.trim();
 
-        if (!sender || !text) { showAlert('Fill all fields', 'error'); return; }
+        if (!name) { showAlert('Enter name', 'error'); return; }
+        if (data.crewMembers.find(c => c.name === name)) { showAlert('Already exists', 'error'); return; }
 
-        data.messages.push({
-            id: Date.now(),
-            sender,
-            text,
-            timestamp: new Date().toISOString()
-        });
+        data.crewMembers.push({ name, phone, performance: { completed: 0, total: 0 } });
 
-        document.getElementById('messageText').value = '';
+        document.getElementById('crewName').value = '';
+        document.getElementById('crewPhone').value = '';
+
         saveToStorage();
         updateAllUI();
-        showAlert('Message sent!', 'success');
+        showAlert(`${name} added!`, 'success');
     }
 
+    // EXPENSES
+    function addExpense() {
+        const date = document.getElementById('expenseDate').value;
+        const type = document.getElementById('expenseType').value;
+        const desc = document.getElementById('expenseDesc').value.trim();
+        const amount = parseFloat(document.getElementById('expenseAmount').value);
+
+        if (!date || !desc || !amount || isNaN(amount)) { showAlert('Fill all fields', 'error'); return; }
+
+        data.expenses.push({ date, type, desc, amount, id: Date.now() });
+
+        document.getElementById('expenseDate').value = '';
+        document.getElementById('expenseDesc').value = '';
+        document.getElementById('expenseAmount').value = '';
+
+        saveToStorage();
+        updateAllUI();
+        showAlert('Expense logged!', 'success');
+    }
+
+    // ADMIN
     function addLocation() {
         const input = document.getElementById('newLocation');
         const loc = input.value.trim();
@@ -1380,7 +1021,6 @@
 
         data.locations.push(loc);
         data.addressesByLocation[loc] = [];
-        data.runsByLocation[loc] = [];
 
         input.value = '';
         saveToStorage();
@@ -1395,7 +1035,7 @@
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `hild_backup_${new Date().toISOString().split('T')[0]}.json`;
+        a.download = `metro_backup_${new Date().toISOString().split('T')[0]}.json`;
         a.click();
         URL.revokeObjectURL(url);
         showAlert('Data exported!', 'success');
@@ -1406,9 +1046,9 @@
         const jobCount = Object.keys(data.jobs).length;
         const doneCount = Object.values(data.jobs).filter(j => j.status === 'done').length;
 
-        let content = `HILD FIBER OPERATIONS - REPORT\n`;
+        let content = `METRO DROP PLANNER - REPORT\n`;
         content += `Generated: ${new Date().toLocaleDateString()}\n\n`;
-        content += `JOBS\n`;
+        content += `DROPS\n`;
         content += `Total: ${jobCount}\n`;
         content += `Completed: ${doneCount}\n`;
         content += `Completion Rate: ${jobCount > 0 ? Math.round((doneCount/jobCount)*100) : 0}%\n\n`;
@@ -1421,37 +1061,9 @@
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `hild_report_${new Date().toISOString().split('T')[0]}.txt`;
+        a.download = `metro_report_${new Date().toISOString().split('T')[0]}.txt`;
         a.click();
         URL.revokeObjectURL(url);
-    }
-
-    function generateDailyReport() {
-        const today = new Date().toISOString().split('T')[0];
-        const todayJobs = Object.values(data.jobs).filter(j => j.completedDate && j.completedDate.startsWith(today));
-        const todayExpenses = data.expenses.filter(e => e.date === today);
-
-        let html = `<div style="background: var(--bg); padding:1rem; border-radius:8px;">
-            <div style="font-weight:700; margin-bottom:1rem;">📄 Daily Report - ${today}</div>
-            <div>Jobs Completed: ${todayJobs.length}</div>
-            <div>Today's Expenses: $${todayExpenses.reduce((s, e) => s + e.amount, 0).toFixed(2)}</div>
-        </div>`;
-        document.getElementById('reportContent').innerHTML = html;
-    }
-
-    function generateWeeklyReport() {
-        const total = data.expenses.reduce((s, e) => s + e.amount, 0);
-        const jobCount = Object.keys(data.jobs).length;
-        const doneCount = Object.values(data.jobs).filter(j => j.status === 'done').length;
-
-        let html = `<div style="background: var(--bg); padding:1rem; border-radius:8px;">
-            <div style="font-weight:700; margin-bottom:1rem;">📊 Weekly Report</div>
-            <div>Total Jobs: ${jobCount}</div>
-            <div>Completed: ${doneCount}</div>
-            <div>Completion Rate: ${jobCount > 0 ? Math.round((doneCount/jobCount)*100) : 0}%</div>
-            <div>Total Expenses: $${total.toFixed(2)}</div>
-        </div>`;
-        document.getElementById('reportContent').innerHTML = html;
     }
 
     function clearData() {
@@ -1459,69 +1071,37 @@
         data = {
             locations: ['Georgetown', 'Westville'],
             addressesByLocation: { 'Georgetown': [], 'Westville': [] },
-            runsByLocation: { 'Georgetown': [], 'Westville': [] },
             crewMembers: [],
             jobs: {},
             expenses: [],
-            materials: [],
             messages: [],
-            schedule: null,
             jobFilter: 'all'
         };
-        localStorage.removeItem('hildData');
+        localStorage.removeItem('metroData');
         initSystem();
         showAlert('All data cleared', 'info');
     }
 
+    // UI UPDATES
     function updateAllUI() {
         updateLocationSelectors();
 
-        ['routeCrew', 'messageSender'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.innerHTML = '<option value="">-- Select --</option>' + data.crewMembers.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
-            }
-        });
-
-        const msgHtml = data.messages.length > 0 ? data.messages.slice().reverse().slice(0, 15).map(m => `
-            <div class="communication-item">
-                <div class="communication-header">👤 ${m.sender}</div>
-                <div class="communication-text">${m.text}</div>
-                <div class="communication-time">${new Date(m.timestamp).toLocaleString()}</div>
-            </div>
-        `).join('') : '<p class="text-muted">No messages yet</p>';
-        const msgHistory = document.getElementById('messageHistory');
-        if (msgHistory) msgHistory.innerHTML = msgHtml;
-
         const crewHtml = data.crewMembers.length > 0 ? data.crewMembers.map(c => `
-            <div class="list-item">
-                <div><strong>${c.name}</strong> - ${c.rotation}</div>
-                <div style="font-size: 0.9rem; color: var(--text-light);">Performance: ${c.performance.completed}/${c.performance.total}</div>
+            <div style="padding: 1rem; background: var(--bg); border-radius: 8px; margin-bottom: 0.75rem; border-left: 4px solid var(--primary);">
+                <div><strong>${c.name}</strong></div>
+                <div style="font-size: 0.9rem; color: var(--text-light);">${c.phone}</div>
             </div>
-        `).join('') : '<p class="text-muted">No crew yet</p>';
+        `).join('') : '<p class="text-muted">No crew members yet</p>';
         const crewRoster = document.getElementById('crewRoster');
         if (crewRoster) crewRoster.innerHTML = crewHtml;
 
-        const locHtml = data.locations.length > 0 ? data.locations.map(l => `<div class="list-item">${l}</div>`).join('') : '<p class="text-muted">No locations</p>';
+        const locHtml = data.locations.length > 0 ? data.locations.map(l => `
+            <div style="padding: 1rem; background: var(--bg); border-radius: 8px; margin-bottom: 0.75rem; border-left: 4px solid var(--primary);">
+                ${l}
+            </div>
+        `).join('') : '<p class="text-muted">No locations</p>';
         const locsList = document.getElementById('locationsList');
         if (locsList) locsList.innerHTML = locHtml;
-
-        const totalJobs = Object.keys(data.jobs).length;
-        const doneJobs = Object.values(data.jobs).filter(j => j.status === 'done').length;
-        const inProgJobs = Object.values(data.jobs).filter(j => j.status === 'inprogress').length;
-        const todoJobs = totalJobs - doneJobs - inProgJobs;
-
-        if (document.getElementById('weekDone')) document.getElementById('weekDone').textContent = doneJobs;
-        if (document.getElementById('weekInProgress')) document.getElementById('weekInProgress').textContent = inProgJobs;
-        if (document.getElementById('weekTodo')) document.getElementById('weekTodo').textContent = todoJobs;
-        if (document.getElementById('weekRate')) document.getElementById('weekRate').textContent = totalJobs > 0 ? Math.round((doneJobs / totalJobs) * 100) + '%' : '0%';
-
-        if (document.getElementById('statActive')) document.getElementById('statActive').textContent = totalJobs;
-        if (document.getElementById('statAvailable')) document.getElementById('statAvailable').textContent = data.crewMembers.length;
-        if (document.getElementById('statCompletion')) document.getElementById('statCompletion').textContent = totalJobs > 0 ? Math.round((doneJobs / totalJobs) * 100) + '%' : '0%';
-        if (document.getElementById('statExpense')) document.getElementById('statExpense').textContent = '$' + data.expenses.reduce((s, e) => s + e.amount, 0).toFixed(2);
-
-        filterJobs();
 
         const byType = {};
         let total = 0;
@@ -1548,42 +1128,7 @@
             `).join('') : '<p class="text-muted">No expenses logged</p>';
         }
 
-        const matTracking = document.getElementById('materialsTracking');
-        if (matTracking) {
-            matTracking.innerHTML = data.materials.length > 0 ? data.materials.map(m => `
-                <div style="padding: 0.75rem; border-bottom: 1px solid var(--border);">
-                    <strong>${m.date}</strong> - ${m.location}<br>
-                    <small>Seed: ${m.seed}lbs | Straw: ${m.straw} bales | Dirt: ${m.dirt}t | Bad: ${m.badDirt}</small>
-                </div>
-            `).join('') : '<p class="text-muted">No materials logged</p>';
-        }
-
-        const todoHtml = Object.entries(data.jobs)
-            .filter(([_, j]) => j.status === 'todo')
-            .slice(0, 5)
-            .map(([addr]) => `<div class="todo-item">
-                <input type="checkbox" class="todo-checkbox" onclick="markJobDone('${addr.replace(/'/g, "\\'")}')">
-                <div>${addr}</div>
-            </div>`)
-            .join('') || '<p class="text-muted">All caught up!</p>';
-        const todoList = document.getElementById('todoList');
-        if (todoList) todoList.innerHTML = todoHtml;
-    }
-
-    function markJobDone(addr) {
-        if (data.jobs[addr]) {
-            data.jobs[addr].status = 'done';
-            data.jobs[addr].completedDate = new Date().toISOString();
-            saveToStorage();
-            updateAllUI();
-            showAlert('Job marked complete!', 'success');
-        }
-    }
-
-    function assignCrewToRoute() {
-        const route = document.getElementById('assignRoute').value;
-        if (!route) { showAlert('Select route', 'error'); return; }
-        showAlert('Route assigned!', 'success');
+        filterJobs();
     }
 
     function showAlert(message, type = 'info') {
@@ -1600,8 +1145,6 @@
 
     const expDateEl = document.getElementById('expenseDate');
     if (expDateEl) expDateEl.valueAsDate = new Date();
-    const matDateEl = document.getElementById('matDate');
-    if (matDateEl) matDateEl.valueAsDate = new Date();
     initSystem();
 </script>
 ```
