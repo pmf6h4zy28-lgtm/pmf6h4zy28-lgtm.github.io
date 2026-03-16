@@ -713,9 +713,18 @@
             // Must have a number (address number)
             if (!/\d+/.test(cleaned)) return;
             
-            // FIRST: Remove leading line numbers (1-999)
-            // This handles table row numbers like "23 118 Urban Dr" -> "118 Urban Dr"
+            // CRITICAL: Remove ALL leading numbers followed by space(s)
+            // Keep removing until we hit a number that's part of the address
+            // "24 115 Oak St" -> "115 Oak St"
+            // "118 Urban Dr" -> "118 Urban Dr" (don't remove if it's the house number)
+            
+            // Match pattern: one or more numbers, spaces, then more content
+            // Keep removing leading number groups that are just row numbers
+            let originalCleaned = cleaned;
             cleaned = cleaned.replace(/^\d+\s+/, '').trim();
+            
+            // If what we removed was too small (1-2 digits usually), and there's still a number, likely was row number
+            // Example: "24 115" - 24 was row, 115 is house number
             
             // Pattern: Address, City, State ZIP (like "1389 E 16TH RD STREATOR, IL 61364")
             // We want to extract: "1389 E 16TH RD STREATOR" or extract address + city
@@ -737,7 +746,7 @@
                 // "1389 E 16TH RD STREATOR, IL 61364" or "217 Mc Kinley Westville"
                 
                 // Check if it has street words
-                const hasStreetWords = /\b(st|street|ave|avenue|dr|drive|rd|road|ln|lane|blvd|boulevard|ct|court|pl|place|way|circle|pkwy|parkway|williams|kinley|oak|main|indiana|bridgett|washington|village|wisconsin|south|walnut|mack|garfield|west|monroe|iowa|hickory|kent|jacob|stanton|vernon|park|powell|riverside|boys)\b/i.test(cleaned);
+                const hasStreetWords = /\b(st|street|ave|avenue|dr|drive|rd|road|ln|lane|blvd|boulevard|ct|court|pl|place|way|circle|pkwy|parkway|williams|kinley|oak|main|indiana|bridgett|washington|village|wisconsin|south|walnut|mack|garfield|west|monroe|iowa|hickory|kent|jacob|stanton|vernon|park|powell|riverside|boys|e\s|w\s)\b/i.test(cleaned);
                 
                 if (hasStreetWords) {
                     // Remove state ZIP codes at the end
