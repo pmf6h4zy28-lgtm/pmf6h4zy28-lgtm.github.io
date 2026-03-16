@@ -301,13 +301,8 @@
         <div class="card">
             <div class="card-title">📸 Extract Addresses from Image</div>
             <p style="margin-bottom: 1.5rem; color: var(--text-light);">
-                Take a screenshot of your address list and upload it. The app will extract just the addresses!
+                Take a screenshot of your address list and upload it. The app will automatically extract addresses and towns!
             </p>
-            
-            <div class="input-group">
-                <label>Select Location</label>
-                <select id="uploadLocation"></select>
-            </div>
 
             <div class="file-input-wrapper">
                 <label for="imageInput" class="file-input-label" id="dragDropZone">
@@ -608,7 +603,7 @@
     });
 
     function updateLocationSelectors() {
-        ['uploadLocation', 'entryLocation', 'routeLocation'].forEach(id => {
+        ['entryLocation', 'routeLocation'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.innerHTML = data.locations.map(l => `<option value="${l}">${l}</option>`).join('');
@@ -779,45 +774,71 @@
     }
 
     function confirmAddresses() {
-        const location = document.getElementById('uploadLocation').value;
-        if (!location) {
-            showAlert('Select a location', 'error');
-            return;
-        }
-
         const addressItems = document.querySelectorAll('#addressesList .address-item');
         let count = 0;
+        const townCounts = {}; // Track which towns have addresses
 
         addressItems.forEach((item) => {
             const checkbox = item.querySelector('input[type="checkbox"]');
             const addressText = item.querySelector('span');
             
             if (checkbox && checkbox.checked && addressText) {
-                const addr = addressText.textContent.trim();
+                const fullAddr = addressText.textContent.trim();
                 
-                if (addr.length > 5) {
-                    if (!data.addressesByLocation[location].includes(addr)) {
-                        data.addressesByLocation[location].push(addr);
-                        data.jobs[addr] = {
-                            status: 'todo',
-                            location: location,
-                            createdAt: new Date().toISOString()
-                        };
-                        count++;
+                if (fullAddr.length > 5) {
+                    // Extract town from address
+                    // Addresses look like: "115 Oak St Westville" or "1389 E 16TH RD STREATOR, IL 61364"
+                    let town = '';
+                    
+                    if (fullAddr.includes(',')) {
+                        // Format: "1389 E 16TH RD STREATOR, IL 61364"
+                        // Extract the part before comma
+                        const beforeComma = fullAddr.split(',')[0];
+                        // Get the last word(s) before the address number part
+                        const parts = beforeComma.trim().split(/\s+/);
+                        // Usually format is: NUMBER STREET TOWN
+                        // Get last meaningful word(s) that look like a town
+                        if (parts.length > 2) {
+                            town = parts[parts.length - 1]; // Last word is usually town
+                        }
+                    } else {
+                        // Format: "115 Oak St Westville" or "217 Mc Kinley Westville"
+                        // Get the last word (should be town)
+                        const parts = fullAddr.trim().split(/\s+/);
+                        if (parts.length > 0) {
+                            town = parts[parts.length - 1];
+                        }
+                    }
+                    
+                    // Validate town (should be letters, not a street abbrev)
+                    if (town && /^[A-Za-z]+$/.test(town) && !['St', 'Ave', 'Dr', 'Rd', 'Ln', 'Blvd'].includes(town)) {
+                        // Add town to locations if it doesn't exist
+                        if (!data.locations.includes(town)) {
+                            data.locations.push(town);
+                            data.addressesByLocation[town] = [];
+                        }
+                        
+                        // Add address to the town
+                        if (!data.addressesByLocation[town].includes(fullAddr)) {
+                            data.addressesByLocation[town].push(fullAddr);
+                            data.jobs[fullAddr] = {
+                                status: 'todo',
+                                location: town,
+                                createdAt: new Date().toISOString()
+                            };
+                            count++;
+                            townCounts[town] = (townCounts[town] || 0) + 1;
+                        }
                     }
                 }
             }
         });
 
         if (count > 0) {
-            // Auto-add the location/town if it doesn't exist
-            if (!data.locations.includes(location)) {
-                data.locations.push(location);
-            }
-            
             saveToStorage();
             updateAllUI();
-            showAlert(`Added ${count} addresses to ${location}!`, 'success');
+            const townList = Object.keys(townCounts).join(', ');
+            showAlert(`Added ${count} addresses to ${townList}!`, 'success');
             document.getElementById('addressesList').innerHTML = '';
             document.getElementById('extractedAddresses').style.display = 'none';
             document.getElementById('previewContainer').style.display = 'none';
