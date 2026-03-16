@@ -1021,56 +1021,43 @@
             return;
         }
 
-        // Extract all addresses from the displayed route
-        const addresses = [];
-        const routeItems = document.querySelectorAll('.route-item');
+        // Get the location to access the actual stored addresses
+        const loc = document.getElementById('routeLocation').value;
+        if (!loc) {
+            showAlert('Select a location first', 'error');
+            return;
+        }
         
-        routeItems.forEach(item => {
-            // Get the div with font-size that contains the numbered addresses
-            const addressDiv = item.querySelector('div[style*="font-size: 0.9rem"]');
-            if (addressDiv) {
-                const htmlContent = addressDiv.innerHTML;
-                // Split by <br> tags to get individual addresses
-                const parts = htmlContent.split('<br>');
-                parts.forEach(part => {
-                    // Remove HTML tags and trim
-                    const text = part.replace(/<[^>]*>/g, '').trim();
-                    // Match "1. Address" format
-                    const match = text.match(/^\d+\.\s+(.+)$/);
-                    if (match) {
-                        const addr = match[1].trim();
-                        if (addr.length > 10) {
-                            addresses.push(addr);
-                        }
-                    }
-                });
-            }
-        });
-
-        console.log('Extracted addresses from route:', addresses);
+        // Get addresses from the data (these are already properly formatted)
+        const addresses = data.addressesByLocation[loc] || [];
+        
+        console.log('Addresses for location:', loc, addresses);
 
         if (addresses.length === 0) {
-            showAlert('No addresses found in route display', 'error');
+            showAlert('No addresses stored for ' + loc, 'error');
             return;
         }
 
-        // Build Apple Maps URL
+        // Build Apple Maps URL with all stored addresses
         try {
             let mapsUrl = `https://maps.apple.com/?dirflags=d`;
             
             // Add each address as a destination
             addresses.forEach(addr => {
-                mapsUrl += `&daddr=${encodeURIComponent(addr)}`;
+                // Clean up the address - remove extra newlines
+                const cleanAddr = addr.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+                mapsUrl += `&daddr=${encodeURIComponent(cleanAddr)}`;
             });
             
             console.log('Opening Maps with', addresses.length, 'addresses');
+            console.log('Maps URL:', mapsUrl);
             
             // Open maps
             window.location.href = mapsUrl;
             showAlert('Opening Apple Maps with ' + addresses.length + ' stops!', 'success');
         } catch (error) {
             console.error('Error:', error);
-            showAlert('Error opening maps', 'error');
+            showAlert('Error opening maps: ' + error.message, 'error');
         }
     }
 
