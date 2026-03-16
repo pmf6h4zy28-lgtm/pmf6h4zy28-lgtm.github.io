@@ -750,30 +750,34 @@
                 if (fullAddr.length > 5) {
                     let town = '';
                     
+                    // Extract town from full address
                     if (fullAddr.includes(',')) {
-                        const beforeComma = fullAddr.split(',')[0];
-                        const parts = beforeComma.trim().split(/\s+/);
-                        
-                        for (let i = parts.length - 1; i >= 0; i--) {
-                            const word = parts[i];
-                            if (!/^(st|ave|dr|rd|ln|blvd|ct|pl|pkwy|e|w|n|s)$/i.test(word) && word.length > 1) {
-                                town = word;
-                                break;
-                            }
+                        // Format: "1389 E 16TH RD STREATOR, IL 61364"
+                        // Town is the word before the comma
+                        const beforeComma = fullAddr.split(',')[0].trim();
+                        const parts = beforeComma.split(/\s+/);
+                        // Last word before comma is usually the town
+                        if (parts.length > 0) {
+                            town = parts[parts.length - 1];
                         }
                     } else {
+                        // Format: "115 Oak St Westville"
+                        // Last word is the town
                         const parts = fullAddr.trim().split(/\s+/);
                         if (parts.length > 0) {
                             town = parts[parts.length - 1];
                         }
                     }
                     
+                    // Validate town
                     if (town && town.length > 1 && /^[A-Za-z]+$/.test(town)) {
+                        // Add town to locations if it doesn't exist
                         if (!data.locations.includes(town)) {
                             data.locations.push(town);
                             data.addressesByLocation[town] = [];
                         }
                         
+                        // Store the FULL address (with state/zip if present)
                         if (!data.addressesByLocation[town].includes(fullAddr)) {
                             data.addressesByLocation[town].push(fullAddr);
                             data.jobs[fullAddr] = {
