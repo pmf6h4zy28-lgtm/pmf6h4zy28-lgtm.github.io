@@ -523,7 +523,7 @@
 
 <script>
     let data = {
-        locations: ['Georgetown', 'Westville'],
+        locations: [],
         addressesByLocation: {},
         crewMembers: [],
         jobs: {},
@@ -810,9 +810,14 @@
         });
 
         if (count > 0) {
+            // Auto-add the location/town if it doesn't exist
+            if (!data.locations.includes(location)) {
+                data.locations.push(location);
+            }
+            
             saveToStorage();
             updateAllUI();
-            showAlert(`Added ${count} addresses!`, 'success');
+            showAlert(`Added ${count} addresses to ${location}!`, 'success');
             document.getElementById('addressesList').innerHTML = '';
             document.getElementById('extractedAddresses').style.display = 'none';
             document.getElementById('previewContainer').style.display = 'none';
@@ -848,10 +853,15 @@
         });
 
         if (count > 0) {
+            // Auto-add the location/town if it doesn't exist
+            if (!data.locations.includes(loc)) {
+                data.locations.push(loc);
+            }
+            
             document.getElementById('addressInput').value = '';
             saveToStorage();
             updateAllUI();
-            showAlert(`Added ${count} addresses!`, 'success');
+            showAlert(`Added ${count} addresses to ${loc}!`, 'success');
         } else {
             showAlert('No valid addresses added', 'error');
         }
@@ -1129,8 +1139,8 @@
     function clearData() {
         if (!confirm('Clear ALL data? This cannot be undone!')) return;
         data = {
-            locations: ['Georgetown', 'Westville'],
-            addressesByLocation: { 'Georgetown': [], 'Westville': [] },
+            locations: [],
+            addressesByLocation: {},
             crewMembers: [],
             jobs: {},
             expenses: [],
