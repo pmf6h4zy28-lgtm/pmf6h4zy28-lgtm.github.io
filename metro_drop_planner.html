@@ -533,6 +533,10 @@
     };
 
     function initSystem() {
+        // Clear old localStorage data
+        localStorage.removeItem('metroData');
+        localStorage.removeItem('hildData');
+        
         loadFromStorage();
         data.locations.forEach(loc => {
             data.addressesByLocation[loc] = data.addressesByLocation[loc] || [];
@@ -783,12 +787,15 @@
             return;
         }
 
-        const checkboxes = document.querySelectorAll('#addressesList input[type="checkbox"]');
+        const addressItems = document.querySelectorAll('#addressesList .address-item');
         let count = 0;
 
-        checkboxes.forEach((checkbox) => {
-            if (checkbox.checked) {
-                const addr = checkbox.nextElementSibling.textContent.trim();
+        addressItems.forEach((item) => {
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            const addressText = item.querySelector('span');
+            
+            if (checkbox && checkbox.checked && addressText) {
+                const addr = addressText.textContent.trim();
                 
                 if (addr.length > 5) {
                     if (!data.addressesByLocation[location].includes(addr)) {
@@ -1205,4 +1212,4 @@
 ```
 
 </body>
-</html> 
+</html>
