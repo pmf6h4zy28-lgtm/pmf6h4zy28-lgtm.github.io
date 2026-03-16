@@ -318,9 +318,12 @@
             </div>
 
             <div class="extracted-addresses" id="extractedAddresses">
-                <div style="font-weight: 600; margin-bottom: 1rem;">✅ Found Addresses:</div>
+                <div style="font-weight: 600; margin-bottom: 1rem;">✅ Found Addresses (uncheck to exclude):</div>
                 <div id="addressesList"></div>
-                <button class="btn btn-secondary btn-block mt-2" onclick="confirmAddresses()">✔️ Add All</button>
+                <div style="display: flex; gap: 0.75rem; margin-top: 1rem;">
+                    <button class="btn btn-secondary btn-block" onclick="confirmAddresses()">✔️ Confirm & Add</button>
+                    <button class="btn btn-primary btn-block" onclick="cancelAddresses()" style="background: #6b7280;">✕ Cancel</button>
+                </div>
             </div>
         </div>
     </div>
@@ -431,6 +434,7 @@
                 </div>
                 
                 <button class="btn btn-secondary btn-block" onclick="saveJobDetails()">💾 Save Changes</button>
+                <button class="btn btn-primary btn-block mt-2" style="background: #ef4444;" onclick="deleteJobWithConfirm()">🗑️ Delete This Drop</button>
             </div>
         </div>
 
@@ -860,6 +864,14 @@
                                     location: town,
                                     createdAt: new Date().toISOString()
                                 };
+                                // Initialize notes storage for this address
+                                if (!data.jobNotes[fullAddr]) {
+                                    data.jobNotes[fullAddr] = {
+                                        dropLength: '',
+                                        footage: '',
+                                        notes: ''
+                                    };
+                                }
                                 count++;
                                 townCounts[town] = (townCounts[town] || 0) + 1;
                             }
@@ -873,14 +885,22 @@
             saveToStorage();
             updateAllUI();
             const townList = Object.keys(townCounts).join(', ');
-            showAlert(`Added ${count} addresses to ${townList}!`, 'success');
+            showAlert(`✅ Added ${count} addresses to ${townList}!`, 'success');
             document.getElementById('addressesList').innerHTML = '';
             document.getElementById('extractedAddresses').style.display = 'none';
             document.getElementById('previewContainer').style.display = 'none';
             imageInput.value = '';
         } else {
-            showAlert('No addresses selected', 'error');
+            showAlert('❌ No addresses selected to add', 'error');
         }
+    }
+
+    function cancelAddresses() {
+        document.getElementById('addressesList').innerHTML = '';
+        document.getElementById('extractedAddresses').style.display = 'none';
+        document.getElementById('previewContainer').style.display = 'none';
+        imageInput.value = '';
+        showAlert('Address upload cancelled', 'info');
     }
 
     function addAddresses() {
@@ -1147,7 +1167,44 @@
         saveToStorage();
         updateAllUI();
         closeJobModal();
-        showAlert('Job details saved!', 'success');
+        showAlert('✅ Job details saved!', 'success');
+    }
+
+    function deleteJobWithConfirm() {
+        if (!window.currentJobAddress) return;
+        
+        if (!confirm('Are you sure you want to delete this drop? This cannot be undone.')) return;
+        
+        const address = window.currentJobAddress;
+        const location = data.jobs[address]?.location;
+        
+        // Remove from jobs
+        delete data.jobs[address];
+        
+        // Remove from addressesByLocation
+        if (location && data.addressesByLocation[location]) {
+            const idx = data.addressesByLocation[location].indexOf(address);
+            if (idx > -1) {
+                data.addressesByLocation[location].splice(idx, 1);
+            }
+            
+            // If location is now empty, remove it from locations
+            if (data.addressesByLocation[location].length === 0) {
+                delete data.addressesByLocation[location];
+                const locIdx = data.locations.indexOf(location);
+                if (locIdx > -1) {
+                    data.locations.splice(locIdx, 1);
+                }
+            }
+        }
+        
+        // Remove notes
+        delete data.jobNotes[address];
+        
+        saveToStorage();
+        updateAllUI();
+        closeJobModal();
+        showAlert('🗑️ Drop deleted successfully!', 'success');
     }
 
     function updateJobStats() {
