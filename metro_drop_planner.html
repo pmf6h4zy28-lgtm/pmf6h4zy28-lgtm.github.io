@@ -133,7 +133,7 @@
         .job-card.done { border-left-color: var(--success); }
         .job-card.inprogress { border-left-color: var(--warning); }
         .job-card.todo { border-left-color: var(--error); }
-        .job-card-address { font-weight: 700; margin-bottom: 0.25rem; }
+        .job-card-address { font-weight: 700; margin-bottom: 0.25rem; word-break: break-word; }
         .job-card-meta { font-size: 0.85rem; color: var(--text-light); }
         .route-item {
             padding: 1rem;
@@ -205,7 +205,7 @@
             align-items: center;
             gap: 0.5rem;
         }
-        .address-item input { width: 20px; height: 20px; }
+        .address-item input { width: 20px; height: 20px; flex-shrink: 0; }
         .section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text); }
         .hidden { display: none !important; }
         .text-muted { color: var(--text-light); }
@@ -398,13 +398,13 @@
 
         <!-- JOB DETAILS MODAL -->
         <div id="jobDetailsModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; z-index: 1000; align-items: center; justify-content: center;" onclick="closeJobModal()">
-            <div style="background: white; border-radius: 12px; padding: 2rem; max-width: 500px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2);" onclick="event.stopPropagation()">
+            <div style="background: white; border-radius: 12px; padding: 2rem; max-width: 500px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto;" onclick="event.stopPropagation()">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                     <h3 id="modalTitle" style="margin: 0; font-size: 1.3rem; color: var(--primary);">Drop Details</h3>
                     <button onclick="closeJobModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">✕</button>
                 </div>
                 
-                <div id="modalAddress" style="font-weight: 700; margin-bottom: 1rem; word-break: break-word; font-size: 0.95rem;"></div>
+                <div id="modalAddress" style="font-weight: 700; margin-bottom: 1rem; word-break: break-word; font-size: 0.95rem; white-space: pre-wrap;"></div>
                 
                 <div class="input-group">
                     <label>Status</label>
@@ -549,7 +549,7 @@
         jobs: {},
         expenses: [],
         jobFilter: 'all',
-        jobNotes: {} // Add notes storage
+        jobNotes: {}
     };
 
     function initSystem() {
@@ -591,7 +591,6 @@
 
     window.addEventListener('beforeunload', saveToStorage);
 
-    // Town to state/zip mapping - MUST BE BEFORE displayExtractedAddresses
     const townDatabase = {
         'Westville': { state: 'IL', zip: '61883' },
         'Georgetown': { state: 'IL', zip: '61846' },
@@ -614,7 +613,6 @@
         document.getElementById('weatherIcon').textContent = weather.icon;
     }
 
-    // TAB NAVIGATION
     document.querySelectorAll('.tab').forEach(tab => {
         tab.addEventListener('click', () => {
             const tabName = tab.dataset.tab;
@@ -636,7 +634,6 @@
         }
     }
 
-    // IMAGE UPLOAD HANDLING
     const dragDropZone = document.getElementById('dragDropZone');
     const imageInput = document.getElementById('imageInput');
 
@@ -678,7 +675,6 @@
         reader.readAsDataURL(file);
     }
 
-    // TESSERACT OCR PROCESSING
     async function processImage() {
         const btn = event.target;
         btn.disabled = true;
@@ -734,7 +730,6 @@
             
             if (!/\d+/.test(cleaned)) return;
             
-            // Remove leading row numbers smartly
             const leadingNumberMatch = cleaned.match(/^(\d+)\s+(\d+)/);
             if (leadingNumberMatch) {
                 const firstNum = leadingNumberMatch[1];
@@ -745,21 +740,14 @@
                 }
             }
             
-            // KEEP THE FULL ADDRESS including state and ZIP if present
-            // This is for Apple Maps accuracy
             if (cleaned.includes(',')) {
-                // Format: "1389 E 16TH RD STREATOR, IL 61364"
-                // Keep it as-is - full address with state and zip
                 if (cleaned.length > 15) {
                     addresses.push(cleaned);
                 }
             } else {
-                // Format: "115 Oak St Westville"
-                // Check if it has street words
                 const hasStreetWords = /\b(st|street|ave|avenue|dr|drive|rd|road|ln|lane|blvd|boulevard|ct|court|pl|place|way|circle|pkwy|parkway|williams|kinley|oak|main|indiana|bridgett|washington|village|wisconsin|south|walnut|mack|garfield|west|monroe|iowa|hickory|kent|jacob|stanton|vernon|park|powell|riverside|boys)\b/i.test(cleaned);
                 
                 if (hasStreetWords) {
-                    // Remove location markers but KEEP the town
                     let addr = cleaned.replace(/\s+(locate|poe).*/gi, '').trim();
                     
                     if (addr.length > 8) {
@@ -775,14 +763,10 @@
     function displayExtractedAddresses(addresses) {
         let html = '';
         
-        // Find towns from addresses and format them automatically
-        const formattedAddresses = [];
-        
         addresses.forEach((addr) => {
             let town = '';
             let streetAddr = addr;
             
-            // Extract town
             if (addr.includes(',')) {
                 const beforeComma = addr.split(',')[0].trim();
                 const parts = beforeComma.split(/\s+/);
@@ -794,13 +778,10 @@
                 streetAddr = parts.slice(0, -1).join(' ');
             }
             
-            // Format to USPS automatically
             let formatted = addr;
             if (town && /^[A-Za-z]+$/.test(town)) {
                 formatted = formatAddressToUSPS(streetAddr, town);
             }
-            
-            formattedAddresses.push(formatted);
             
             html += `<div class="address-item">
                 <input type="checkbox" checked> <span>${formatted}</span>
@@ -812,52 +793,32 @@
     }
 
     function formatAddressToUSPS(shortAddr, town) {
-        // Input: "319 Bridgett St" or "115 Oak St" or "1389 E 16TH RD"
-        // Output: "319 S Bridgett St\nWestville, IL 61883\nUnited States"
-        
         let street = shortAddr;
         let state = 'IL';
         let zip = '61883';
         
-        // Get state and zip from town database
         if (townDatabase[town]) {
             state = townDatabase[town].state;
             zip = townDatabase[town].zip;
         }
         
-        // Clean up street name - add common directional prefixes if missing
-        // "Bridgett St" -> "S Bridgett St" (South is common for secondary streets)
-        // But only if it doesn't already have a direction
         if (!street.match(/\s[NSEW]\s/i)) {
-            // Check if it's a numbered street (like "16TH")
             if (street.match(/\d+(ST|ND|RD|TH)\b/i)) {
-                // Numbered streets usually have East/West
                 if (!street.match(/^[EW]\s/i)) {
-                    street = 'E ' + street; // Default to East for numbered streets
+                    street = 'E ' + street;
                 }
             } else {
-                // Named streets usually have North/South
                 if (!street.match(/^[NS]\s/i)) {
-                    street = 'S ' + street; // Default to South for named streets
+                    street = 'S ' + street;
                 }
             }
         }
         
-        // Format as proper USPS address
         return `${street}\n${town}, ${state} ${zip}\nUnited States`;
     }
 
     function confirmAddresses() {
-        console.log('=== CONFIRM ADDRESSES CALLED ===');
-        
         const checkboxes = document.querySelectorAll('#addressesList input[type="checkbox"]');
-        console.log('Checkboxes found:', checkboxes.length);
-        
-        // Log each checkbox status
-        checkboxes.forEach((cb, idx) => {
-            console.log(`Checkbox ${idx}: checked=${cb.checked}, nextSibling=${cb.nextElementSibling?.textContent?.substring(0, 50)}`);
-        });
-        
         let count = 0;
         const townCounts = {};
 
@@ -866,7 +827,6 @@
                 const span = checkbox.nextElementSibling;
                 if (span && span.textContent) {
                     const fullAddr = span.textContent.trim();
-                    console.log('Processing CHECKED address:', fullAddr.substring(0, 50));
                     
                     if (fullAddr.length > 5) {
                         let town = '';
@@ -887,8 +847,6 @@
                             town = parts[parts.length - 1];
                         }
                         
-                        console.log('Extracted town:', town);
-                        
                         if (town && town.length > 1 && /^[A-Za-z]+$/.test(town)) {
                             if (!data.locations.includes(town)) {
                                 data.locations.push(town);
@@ -902,21 +860,14 @@
                                     location: town,
                                     createdAt: new Date().toISOString()
                                 };
-                                console.log('✅ Added job:', fullAddr.substring(0, 40));
                                 count++;
                                 townCounts[town] = (townCounts[town] || 0) + 1;
                             }
-                        } else {
-                            console.log('❌ Town validation failed. Town:', town);
                         }
                     }
                 }
             }
         });
-
-        console.log('=== FINAL RESULT ===');
-        console.log('Total addresses added:', count);
-        console.log('data.jobs now has', Object.keys(data.jobs).length, 'items');
 
         if (count > 0) {
             saveToStorage();
@@ -928,12 +879,10 @@
             document.getElementById('previewContainer').style.display = 'none';
             imageInput.value = '';
         } else {
-            console.log('NO ADDRESSES WERE ADDED');
             showAlert('No addresses selected', 'error');
         }
     }
 
-    // MANUAL ADDRESS ENTRY
     function addAddresses() {
         const input = document.getElementById('addressInput').value;
         const loc = document.getElementById('entryLocation').value.trim();
@@ -974,7 +923,6 @@
         }
     }
 
-    // ROUTE OPTIMIZER
     function generateOptimalRoutes() {
         const loc = document.getElementById('routeLocation').value;
         if (!loc) { showAlert('Select location', 'error'); return; }
@@ -1076,38 +1024,27 @@
             return;
         }
 
-        // Get the location to access the actual stored addresses
         const loc = document.getElementById('routeLocation').value;
         if (!loc) {
             showAlert('Select a location first', 'error');
             return;
         }
         
-        // Get addresses from the data (these are already properly formatted)
         const addresses = data.addressesByLocation[loc] || [];
         
-        console.log('Addresses for location:', loc, addresses);
-
         if (addresses.length === 0) {
             showAlert('No addresses stored for ' + loc, 'error');
             return;
         }
 
-        // Build Apple Maps URL with all stored addresses
         try {
             let mapsUrl = `https://maps.apple.com/?dirflags=d`;
             
-            // Add each address as a destination
             addresses.forEach(addr => {
-                // Clean up the address - remove extra newlines
                 const cleanAddr = addr.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
                 mapsUrl += `&daddr=${encodeURIComponent(cleanAddr)}`;
             });
             
-            console.log('Opening Maps with', addresses.length, 'addresses');
-            console.log('Maps URL:', mapsUrl);
-            
-            // Open maps
             window.location.href = mapsUrl;
             showAlert('Opening Apple Maps with ' + addresses.length + ' stops!', 'success');
         } catch (error) {
@@ -1116,7 +1053,6 @@
         }
     }
 
-    // JOB FILTERING
     function filterJobs(filter) {
         if (filter) data.jobFilter = filter;
 
@@ -1144,12 +1080,12 @@
         if (jobs.length === 0) {
             html = '<p class="text-muted">No drops found</p>';
         } else {
-            html = jobs.map(([addr, job]) => {
+            html = jobs.map(([addr, job], idx) => {
                 const notes = data.jobNotes[addr] || {};
                 const footageDisplay = notes.footage ? ` (${notes.footage}ft)` : '';
                 const hasNotes = notes.notes || notes.dropLength;
                 
-                return `<div class="job-card ${job.status}" onclick="openJobModal('${addr.replace(/'/g, "\\'")}', '${job.status}')" style="cursor: pointer; transition: all 0.2s;">
+                return `<div class="job-card ${job.status}" data-addr-key="${idx}" style="cursor: pointer; transition: all 0.2s;" onclick="openJobModalByKey(this.dataset.addrKey)">
                     <div class="job-card-address">${addr}${footageDisplay}</div>
                     <div class="job-card-meta">${job.location}</div>
                     ${hasNotes ? `<div style="font-size: 0.8rem; color: var(--primary); margin-top: 0.5rem;">📝 Has notes</div>` : ''}
@@ -1157,6 +1093,14 @@
             }).join('');
         }
         document.getElementById('jobsList').innerHTML = html;
+    }
+
+    function openJobModalByKey(key) {
+        const jobsArray = Object.entries(data.jobs);
+        if (jobsArray[key]) {
+            const [address, job] = jobsArray[key];
+            openJobModal(address, job.status);
+        }
     }
 
     function openJobModal(address, status) {
@@ -1169,10 +1113,8 @@
         document.getElementById('modalFootage').value = notes.footage || '';
         document.getElementById('modalNotes').value = notes.notes || '';
         
-        // Store current address being edited
         window.currentJobAddress = address;
         
-        // Show modal
         const modal = document.getElementById('jobDetailsModal');
         modal.style.display = 'flex';
     }
@@ -1192,12 +1134,10 @@
         const footage = document.getElementById('modalFootage').value;
         const notes = document.getElementById('modalNotes').value;
         
-        // Update job status
         if (data.jobs[address]) {
             data.jobs[address].status = status;
         }
         
-        // Store notes and details
         data.jobNotes[address] = {
             dropLength: dropLength ? parseInt(dropLength) : '',
             footage: footage,
@@ -1226,7 +1166,6 @@
         document.getElementById('statCompletion').textContent = total > 0 ? Math.round((done / total) * 100) + '%' : '0%';
     }
 
-    // CREW
     function addCrewMember() {
         const name = document.getElementById('crewName').value.trim();
         const phone = document.getElementById('crewPhone').value.trim();
@@ -1244,7 +1183,6 @@
         showAlert(`${name} added!`, 'success');
     }
 
-    // EXPENSES
     function addExpense() {
         const date = document.getElementById('expenseDate').value;
         const type = document.getElementById('expenseType').value;
@@ -1264,7 +1202,6 @@
         showAlert('Expense logged!', 'success');
     }
 
-    // ADMIN
     function exportData() {
         const json = JSON.stringify(data, null, 2);
         const blob = new Blob([json], { type: 'application/json' });
@@ -1310,14 +1247,14 @@
             crewMembers: [],
             jobs: {},
             expenses: [],
-            jobFilter: 'all'
+            jobFilter: 'all',
+            jobNotes: {}
         };
         localStorage.removeItem('metroData');
         initSystem();
         showAlert('All data cleared', 'info');
     }
 
-    // UI UPDATES
     function updateAllUI() {
         updateLocationSelectors();
 
