@@ -697,19 +697,22 @@
                 }
             }
             
+            // KEEP THE FULL ADDRESS including state and ZIP if present
+            // This is for Apple Maps accuracy
             if (cleaned.includes(',')) {
-                let addr = cleaned.split(',')[0].trim();
-                addr = addr.replace(/\s+[A-Z]{2}\s+\d{5}.*$/i, '').trim();
-                
-                if (addr.length > 8) {
-                    addresses.push(addr);
+                // Format: "1389 E 16TH RD STREATOR, IL 61364"
+                // Keep it as-is - full address with state and zip
+                if (cleaned.length > 15) {
+                    addresses.push(cleaned);
                 }
             } else {
+                // Format: "115 Oak St Westville"
+                // Check if it has street words
                 const hasStreetWords = /\b(st|street|ave|avenue|dr|drive|rd|road|ln|lane|blvd|boulevard|ct|court|pl|place|way|circle|pkwy|parkway|williams|kinley|oak|main|indiana|bridgett|washington|village|wisconsin|south|walnut|mack|garfield|west|monroe|iowa|hickory|kent|jacob|stanton|vernon|park|powell|riverside|boys)\b/i.test(cleaned);
                 
                 if (hasStreetWords) {
-                    let addr = cleaned.replace(/\s+[A-Z]{2}\s+\d{5}.*$/i, '').trim();
-                    addr = addr.replace(/\s+(locate|poe).*/gi, '').trim();
+                    // Remove location markers but KEEP the town
+                    let addr = cleaned.replace(/\s+(locate|poe).*/gi, '').trim();
                     
                     if (addr.length > 8) {
                         addresses.push(addr);
@@ -941,24 +944,49 @@
         if (routeItems.length === 0) { showAlert('Generate route first', 'error'); return; }
 
         const addresses = [];
-        document.querySelectorAll('.route-item').forEach(item => {
-            const lines = item.innerText.split('\n');
-            lines.forEach((line, idx) => {
-                if (idx > 1 && line.trim() && /^\d+\./.test(line)) {
-                    const addr = line.trim().replace(/^\d+\.\s+/, '');
-                    addresses.push(addr);
+        
+        // Extract addresses from the displayed route
+        routeItems.forEach(item => {
+            // Get all text content
+            const content = item.textContent;
+            const lines = content.split('\n');
+            
+            // Find lines that look like addresses (start with number and contain dots)
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                // Match "1. Address, City, State ZIP" or "1. Address City"
+                const match = trimmed.match(/^\d+\.\s+(.+)$/);
+                if (match) {
+                    const addr = match[1].trim();
+                    // Only add if it looks like a real address
+                    if (addr.length > 10 && /\d+/.test(addr)) {
+                        addresses.push(addr);
+                    }
                 }
             });
         });
 
         if (addresses.length > 0) {
-            let mapsUrl = `https://maps.apple.com/?dirflags=d`;
-            addresses.forEach(addr => {
-                mapsUrl += `&daddr=${encodeURIComponent(addr)}`;
-            });
+            // Build proper Apple Maps URL
+            // Format: maps://maps.apple.com/?address=&daddr=&daddr=
+            let mapsUrl = `https://maps.apple.com/?`;
             
+            // Add first address as starting point
+            mapsUrl += `saddr=${encodeURIComponent(addresses[0])}`;
+            
+            // Add rest as destinations
+            for (let i = 1; i < addresses.length; i++) {
+                mapsUrl += `&daddr=${encodeURIComponent(addresses[i])}`;
+            }
+            
+            // Add dirflags for driving directions
+            mapsUrl += `&dirflags=d`;
+            
+            console.log('Opening Maps URL:', mapsUrl);
             window.open(mapsUrl, '_blank');
-            showAlert('Opening Apple Maps with route!', 'success');
+            showAlert('Opening Apple Maps with optimized route!', 'success');
+        } else {
+            showAlert('No addresses found in route', 'error');
         }
     }
 
