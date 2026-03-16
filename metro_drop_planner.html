@@ -697,41 +697,55 @@
             // Skip empty or very short lines
             if (cleaned.length < 10) return;
             
-            // Skip lines with obvious junk markers
+            // Skip header/junk lines
             const lowerCleaned = cleaned.toLowerCase();
-            if (lowerCleaned.includes('sheet') ||
+            if (lowerCleaned.includes('field service') ||
+                lowerCleaned.includes('task asset') ||
                 lowerCleaned.includes('extract') ||
-                lowerCleaned.includes('arata') ||
-                lowerCleaned.includes('\\\\w') ||
-                lowerCleaned.includes('wachiill')) {
+                lowerCleaned.includes('sheet') ||
+                lowerCleaned.includes('city') ||
+                lowerCleaned.includes('comment') ||
+                lowerCleaned.includes('conxxus') ||
+                lowerCleaned.includes('xlsx')) {
                 return;
             }
             
-            // Must have a number (line number or address)
+            // Must have a number (address number)
             if (!/\d+/.test(cleaned)) return;
             
-            // Remove leading line numbers (18, 19, 20, 21, 22, etc)
-            cleaned = cleaned.replace(/^\d+\s+/, '').trim();
+            // Pattern: Address, City, State ZIP (like "1389 E 16TH RD STREATOR, IL 61364")
+            // We want to extract: "1389 E 16TH RD STREATOR" or extract address + city
             
-            // Now must have address format: Number Street, Town
-            // Should have letters and ideally a town (but not required)
-            if (!/\d+/.test(cleaned)) return;
-            
-            // Check: must look like an address
-            // Has street abbreviations or common street words
-            const hasStreetWords = /\b(st|st\.|street|ave|ave\.|avenue|dr|dr\.|drive|rd|rd\.|road|ln|ln\.|lane|blvd|boulevard|ct|ct\.|court|pl|pl\.|place|way|circle|pkwy|parkway|williams|kinley|oak|main|indiana|bridgett|washington|village|wisconsin|south|walnut|mack|garfield|west)\b/i.test(cleaned);
-            
-            if (hasStreetWords) {
-                // Remove ALL "Locate" variations and everything after it
-                cleaned = cleaned.replace(/\s+locate.*/gi, '').trim();
+            // Look for comma separator (indicates town/city follows)
+            if (cleaned.includes(',')) {
+                // Has comma: Extract address + city before ZIP code
+                // "1389 E 16TH RD STREATOR, IL 61364" -> "1389 E 16TH RD STREATOR"
+                let addr = cleaned.split(',')[0].trim(); // Get everything before first comma
                 
-                // Remove ALL "Poe" variations and everything after it
-                cleaned = cleaned.replace(/\s+poe.*/gi, '').trim();
+                // Remove state and zip if present
+                addr = addr.replace(/\s+[A-Z]{2}\s+\d{5}.*$/i, '').trim();
                 
-                // Clean up trailing spaces
-                cleaned = cleaned.replace(/\s+$/, '').trim();
+                if (addr.length > 10) {
+                    addresses.push(addr);
+                }
+            } else {
+                // No comma: this is a simple list format
+                // "1389 E 16TH RD STREATOR, IL 61364" or "217 Mc Kinley Westville"
                 
-                addresses.push(cleaned);
+                // Check if it has street words
+                const hasStreetWords = /\b(st|street|ave|avenue|dr|drive|rd|road|ln|lane|blvd|boulevard|ct|court|pl|place|way|circle|pkwy|parkway|williams|kinley|oak|main|indiana|bridgett|washington|village|wisconsin|south|walnut|mack|garfield|west|monroe|iowa|hickory|kent|jacob|stanton|vernon|park|powell|riverside|boys)\b/i.test(cleaned);
+                
+                if (hasStreetWords) {
+                    // Remove state ZIP codes at the end
+                    let addr = cleaned.replace(/\s+[A-Z]{2}\s+\d{5}.*$/i, '').trim();
+                    
+                    // Remove location markers (Locate, Poe, etc)
+                    addr = addr.replace(/\s+(locate|poe).*/gi, '').trim();
+                    
+                    if (addr.length > 10) {
+                        addresses.push(addr);
+                    }
+                }
             }
         });
 
