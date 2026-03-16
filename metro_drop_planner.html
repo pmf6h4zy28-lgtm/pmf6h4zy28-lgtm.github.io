@@ -848,66 +848,71 @@
     }
 
     function confirmAddresses() {
-        const addressItems = document.querySelectorAll('#addressesList .address-item');
+        const checkboxes = document.querySelectorAll('#addressesList input[type="checkbox"]');
         let count = 0;
         const townCounts = {};
 
-        addressItems.forEach((item) => {
-            const checkbox = item.querySelector('input[type="checkbox"]');
-            const addressText = item.querySelector('span');
-            
-            if (checkbox && checkbox.checked && addressText) {
-                const fullAddr = addressText.textContent.trim();
-                
-                if (fullAddr.length > 5) {
-                    let town = '';
+        checkboxes.forEach((checkbox) => {
+            if (checkbox.checked) {
+                // Get the address text from the sibling span
+                const span = checkbox.nextElementSibling;
+                if (span && span.textContent) {
+                    const fullAddr = span.textContent.trim();
                     
-                    // Extract town from formatted address
-                    // Formatted: "319 S Bridgett St\nWestville, IL 61883\nUnited States"
-                    // We need to get "Westville" from the second line
-                    const lines = fullAddr.split('\n');
-                    
-                    if (lines.length > 1) {
-                        // Has newlines - formatted address
-                        const townLine = lines[1]; // "Westville, IL 61883"
-                        const townMatch = townLine.match(/^([A-Za-z]+),/);
-                        if (townMatch) {
-                            town = townMatch[1];
-                        }
-                    } else if (fullAddr.includes(',')) {
-                        // Has comma but no newlines
-                        const beforeComma = fullAddr.split(',')[0].trim();
-                        const parts = beforeComma.split(/\s+/);
-                        town = parts[parts.length - 1];
-                    } else {
-                        // No comma - simple format
-                        const parts = fullAddr.trim().split(/\s+/);
-                        town = parts[parts.length - 1];
-                    }
-                    
-                    // Validate town
-                    if (town && town.length > 1 && /^[A-Za-z]+$/.test(town)) {
-                        // Add town to locations if it doesn't exist
-                        if (!data.locations.includes(town)) {
-                            data.locations.push(town);
-                            data.addressesByLocation[town] = [];
+                    if (fullAddr.length > 5) {
+                        let town = '';
+                        
+                        // Extract town from formatted address
+                        // Formatted: "319 S Bridgett St\nWestville, IL 61883\nUnited States"
+                        const lines = fullAddr.split('\n');
+                        
+                        if (lines.length > 1) {
+                            // Has newlines - formatted address
+                            const townLine = lines[1]; // "Westville, IL 61883"
+                            const townMatch = townLine.match(/^([A-Za-z]+),/);
+                            if (townMatch) {
+                                town = townMatch[1];
+                            }
+                        } else if (fullAddr.includes(',')) {
+                            // Has comma but no newlines
+                            const beforeComma = fullAddr.split(',')[0].trim();
+                            const parts = beforeComma.split(/\s+/);
+                            town = parts[parts.length - 1];
+                        } else {
+                            // No comma - simple format
+                            const parts = fullAddr.trim().split(/\s+/);
+                            town = parts[parts.length - 1];
                         }
                         
-                        // Store the full formatted address as-is
-                        if (!data.addressesByLocation[town].includes(fullAddr)) {
-                            data.addressesByLocation[town].push(fullAddr);
-                            data.jobs[fullAddr] = {
-                                status: 'todo',
-                                location: town,
-                                createdAt: new Date().toISOString()
-                            };
-                            count++;
-                            townCounts[town] = (townCounts[town] || 0) + 1;
+                        // Validate town
+                        if (town && town.length > 1 && /^[A-Za-z]+$/.test(town)) {
+                            console.log('Adding address:', fullAddr, 'to town:', town);
+                            
+                            // Add town to locations if it doesn't exist
+                            if (!data.locations.includes(town)) {
+                                data.locations.push(town);
+                                data.addressesByLocation[town] = [];
+                            }
+                            
+                            // Store the full formatted address as-is
+                            if (!data.addressesByLocation[town].includes(fullAddr)) {
+                                data.addressesByLocation[town].push(fullAddr);
+                                data.jobs[fullAddr] = {
+                                    status: 'todo',
+                                    location: town,
+                                    createdAt: new Date().toISOString()
+                                };
+                                count++;
+                                townCounts[town] = (townCounts[town] || 0) + 1;
+                            }
                         }
                     }
                 }
             }
         });
+
+        console.log('Total addresses added:', count);
+        console.log('Town counts:', townCounts);
 
         if (count > 0) {
             saveToStorage();
