@@ -699,7 +699,7 @@
             let cleaned = line.trim();
             
             // Skip empty or very short lines
-            if (cleaned.length < 10) return;
+            if (cleaned.length < 8) return;
             
             // Skip header/junk lines
             const lowerCleaned = cleaned.toLowerCase();
@@ -717,38 +717,36 @@
             // Must have a number (address number)
             if (!/\d+/.test(cleaned)) return;
             
-            // CRITICAL: Remove ALL leading numbers followed by space(s)
-            // Keep removing until we hit a number that's part of the address
-            // "24 115 Oak St" -> "115 Oak St"
-            // "118 Urban Dr" -> "118 Urban Dr" (don't remove if it's the house number)
+            // Smart removal of leading row numbers
+            // Pattern: if line starts with 1-4 digit number followed by space and ANOTHER number
+            // then the first is row number, the second is house number
+            // Example: "1389 E 16TH RD" - starts with number, has street words = house number, keep it
+            // Example: "24 115 Oak St" - starts with 2-digit, then space, then 3-digit = row number, remove first
             
-            // Match pattern: one or more numbers, spaces, then more content
-            // Keep removing leading number groups that are just row numbers
-            let originalCleaned = cleaned;
-            cleaned = cleaned.replace(/^\d+\s+/, '').trim();
-            
-            // If what we removed was too small (1-2 digits usually), and there's still a number, likely was row number
-            // Example: "24 115" - 24 was row, 115 is house number
-            
-            // Pattern: Address, City, State ZIP (like "1389 E 16TH RD STREATOR, IL 61364")
-            // We want to extract: "1389 E 16TH RD STREATOR" or extract address + city
-            
-            // Look for comma separator (indicates town/city follows)
-            if (cleaned.includes(',')) {
-                // Has comma: Extract address + city before ZIP code
-                // "1389 E 16TH RD STREATOR, IL 61364" -> "1389 E 16TH RD STREATOR"
-                let addr = cleaned.split(',')[0].trim(); // Get everything before first comma
+            const leadingNumberMatch = cleaned.match(/^(\d+)\s+(\d+)/);
+            if (leadingNumberMatch) {
+                const firstNum = leadingNumberMatch[1];
+                const secondNum = leadingNumberMatch[2];
                 
-                // Remove state and zip if present
+                // If first number is 1-2 digits and second is 3-5 digits, likely row + house
+                // "24 115" = row 24, house 115 - remove the 24
+                if (firstNum.length <= 2 && secondNum.length >= 3) {
+                    cleaned = cleaned.replace(/^\d+\s+/, '').trim();
+                }
+                // Otherwise keep everything (house number is first)
+            }
+            
+            // Look for comma separator (Google Sheets format with state/zip)
+            if (cleaned.includes(',')) {
+                // Has comma: Extract address before ZIP code
+                let addr = cleaned.split(',')[0].trim();
                 addr = addr.replace(/\s+[A-Z]{2}\s+\d{5}.*$/i, '').trim();
                 
-                if (addr.length > 10) {
+                if (addr.length > 8) {
                     addresses.push(addr);
                 }
             } else {
-                // No comma: this is a simple list format
-                // "1389 E 16TH RD STREATOR, IL 61364" or "217 Mc Kinley Westville"
-                
+                // No comma: Table format (address + town without comma)
                 // Check if it has street words
                 const hasStreetWords = /\b(st|street|ave|avenue|dr|drive|rd|road|ln|lane|blvd|boulevard|ct|court|pl|place|way|circle|pkwy|parkway|williams|kinley|oak|main|indiana|bridgett|washington|village|wisconsin|south|walnut|mack|garfield|west|monroe|iowa|hickory|kent|jacob|stanton|vernon|park|powell|riverside|boys|e\s|w\s)\b/i.test(cleaned);
                 
@@ -759,7 +757,7 @@
                     // Remove location markers (Locate, Poe, etc)
                     addr = addr.replace(/\s+(locate|poe).*/gi, '').trim();
                     
-                    if (addr.length > 10) {
+                    if (addr.length > 8) {
                         addresses.push(addr);
                     }
                 }
