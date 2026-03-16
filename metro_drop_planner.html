@@ -713,6 +713,10 @@
             // Must have a number (address number)
             if (!/\d+/.test(cleaned)) return;
             
+            // FIRST: Remove leading line numbers (1-999)
+            // This handles table row numbers like "23 118 Urban Dr" -> "118 Urban Dr"
+            cleaned = cleaned.replace(/^\d+\s+/, '').trim();
+            
             // Pattern: Address, City, State ZIP (like "1389 E 16TH RD STREATOR, IL 61364")
             // We want to extract: "1389 E 16TH RD STREATOR" or extract address + city
             
