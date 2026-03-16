@@ -852,49 +852,42 @@
         let count = 0;
         const townCounts = {};
 
+        console.log('Starting confirmAddresses. Checkboxes found:', checkboxes.length);
+
         checkboxes.forEach((checkbox) => {
             if (checkbox.checked) {
-                // Get the address text from the sibling span
                 const span = checkbox.nextElementSibling;
                 if (span && span.textContent) {
                     const fullAddr = span.textContent.trim();
+                    console.log('Processing address:', fullAddr);
                     
                     if (fullAddr.length > 5) {
                         let town = '';
-                        
-                        // Extract town from formatted address
-                        // Formatted: "319 S Bridgett St\nWestville, IL 61883\nUnited States"
                         const lines = fullAddr.split('\n');
                         
                         if (lines.length > 1) {
-                            // Has newlines - formatted address
-                            const townLine = lines[1]; // "Westville, IL 61883"
+                            const townLine = lines[1];
                             const townMatch = townLine.match(/^([A-Za-z]+),/);
                             if (townMatch) {
                                 town = townMatch[1];
                             }
                         } else if (fullAddr.includes(',')) {
-                            // Has comma but no newlines
                             const beforeComma = fullAddr.split(',')[0].trim();
                             const parts = beforeComma.split(/\s+/);
                             town = parts[parts.length - 1];
                         } else {
-                            // No comma - simple format
                             const parts = fullAddr.trim().split(/\s+/);
                             town = parts[parts.length - 1];
                         }
                         
-                        // Validate town
+                        console.log('Extracted town:', town);
+                        
                         if (town && town.length > 1 && /^[A-Za-z]+$/.test(town)) {
-                            console.log('Adding address:', fullAddr, 'to town:', town);
-                            
-                            // Add town to locations if it doesn't exist
                             if (!data.locations.includes(town)) {
                                 data.locations.push(town);
                                 data.addressesByLocation[town] = [];
                             }
                             
-                            // Store the full formatted address as-is
                             if (!data.addressesByLocation[town].includes(fullAddr)) {
                                 data.addressesByLocation[town].push(fullAddr);
                                 data.jobs[fullAddr] = {
@@ -902,6 +895,7 @@
                                     location: town,
                                     createdAt: new Date().toISOString()
                                 };
+                                console.log('Added job:', fullAddr, 'to town:', town);
                                 count++;
                                 townCounts[town] = (townCounts[town] || 0) + 1;
                             }
@@ -911,8 +905,8 @@
             }
         });
 
-        console.log('Total addresses added:', count);
-        console.log('Town counts:', townCounts);
+        console.log('Total addresses to add:', count);
+        console.log('Current data.jobs:', data.jobs);
 
         if (count > 0) {
             saveToStorage();
@@ -924,6 +918,7 @@
             document.getElementById('previewContainer').style.display = 'none';
             imageInput.value = '';
         } else {
+            console.log('No valid addresses found to add');
             showAlert('No addresses selected', 'error');
         }
     }
