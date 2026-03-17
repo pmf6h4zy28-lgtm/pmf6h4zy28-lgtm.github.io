@@ -950,9 +950,24 @@
     }
 
     // Initialize on page load
-    // Check for login when DOM is ready
     document.addEventListener('DOMContentLoaded', () => {
-        checkGoogleLogin();
+        // FIRST - check URL for code immediately
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        
+        if (code) {
+            console.log('Found code!');
+            localStorage.setItem('googleAccessToken', code);
+            googleAccessToken = code;
+            window.history.replaceState({}, '', window.location.pathname);
+            setTimeout(() => {
+                document.getElementById('googleLoginScreen').style.display = 'none';
+                initSystem();
+            }, 100);
+        } else {
+            // No code, check localStorage
+            checkGoogleLogin();
+        }
     });
 
     let data = {
