@@ -454,14 +454,33 @@
 
 </head>
 <body>
-    <div class="header">
-        <div class="header-content">
-            <h1>HILD</h1>
-            <p>LANDSCAPING</p>
-        </div>
-    </div>
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); display: flex; align-items: center; justify-content: center; z-index: 2000; flex-direction: column;">
+        <div style="text-align: center; color: white;">
+            <div style="font-size: 3.5rem; font-weight: 900; color: white; letter-spacing: 4px; font-family: 'Georgia', 'Garamond', serif; margin-bottom: 0.5rem;">HILD</div>
+            <div style="font-size: 1rem; font-weight: 700; color: #fbbf24; letter-spacing: 2px; margin-bottom: 3rem;">LANDSCAPING</div>
 
 ```
+        <div style="background: rgba(255,255,255,0.1); padding: 2rem; border-radius: 16px; max-width: 300px;">
+            <div style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem;">Team Login</div>
+            <div style="margin-bottom: 1rem; font-size: 0.9rem; opacity: 0.9;">Enter your crew member name:</div>
+            
+            <input type="password" id="loginPassword" placeholder="e.g., Alex" style="width: 100%; padding: 1rem; border: none; border-radius: 8px; margin-bottom: 1rem; font-size: 1rem; text-align: center;">
+            
+            <button onclick="attemptLogin()" style="width: 100%; padding: 1rem; background: #fbbf24; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; color: var(--primary);">Login</button>
+            
+            <div style="margin-top: 1rem; font-size: 0.85rem; opacity: 0.8;">Valid names: Alex, Luke, AJ, Trent, Cayden</div>
+        </div>
+    </div>
+</div>
+
+<div class="header">
+    <div class="header-content">
+        <h1>HILD</h1>
+        <p>LANDSCAPING</p>
+    </div>
+</div>
+
 <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">🌙</button>
 <button class="quick-add-button" onclick="openQuickAdd()" title="Quick Add Drop">➕</button>
 
@@ -878,6 +897,7 @@
             <button class="btn btn-primary btn-block" onclick="exportData()">📥 Export Data</button>
             <button class="btn btn-secondary btn-block mt-2" onclick="downloadReport()">📄 Download Report</button>
             <button class="btn btn-primary btn-block mt-2" style="background: #10b981;" onclick="syncWithFirebase()">☁️ Sync to Cloud</button>
+            <button class="btn btn-primary btn-block mt-2" style="background: var(--error);" onclick="logout()">🚪 Logout</button>
             <button class="btn btn-primary btn-block mt-2" style="background: var(--error);" onclick="clearData()">🗑️ Clear All Data</button>
         </div>
     </div>
@@ -888,7 +908,59 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
 
 <script>
-    // Firebase Configuration
+    // Valid crew names for login
+    const VALID_CREW = ['alex', 'luke', 'aj', 'trent', 'cayden'];
+
+    function attemptLogin() {
+        const password = document.getElementById('loginPassword').value.trim().toLowerCase();
+        
+        if (!password) {
+            alert('Please enter your crew name');
+            return;
+        }
+        
+        if (!VALID_CREW.includes(password)) {
+            alert('Invalid crew name. Try: Alex, Luke, AJ, Trent, or Cayden');
+            return;
+        }
+        
+        // Store login in sessionStorage
+        sessionStorage.setItem('crewLogin', password);
+        sessionStorage.setItem('loginTime', Date.now());
+        
+        // Hide login screen
+        document.getElementById('loginScreen').style.display = 'none';
+        
+        // Initialize app
+        initSystem();
+    }
+
+    // Check if logged in on page load
+    function checkLogin() {
+        const login = sessionStorage.getItem('crewLogin');
+        if (!login) {
+            document.getElementById('loginScreen').style.display = 'flex';
+            return false;
+        }
+        document.getElementById('loginScreen').style.display = 'none';
+        return true;
+    }
+
+    // Allow Enter key to login
+    document.addEventListener('DOMContentLoaded', () => {
+        const loginInput = document.getElementById('loginPassword');
+        if (loginInput) {
+            loginInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    attemptLogin();
+                }
+            });
+        }
+    });
+</script>
+
+<script>
+    // Firebase Configuration (Public Safe Config - API key restricted in Firebase Console)
     const firebaseConfig = {
         apiKey: "AIzaSyCwH0y4scb6Qd7dq9e3fjd6Fv91VAe--mU",
         authDomain: "hild-drops-app.firebaseapp.com",
@@ -896,16 +968,19 @@
         storageBucket: "hild-drops-app.firebasestorage.app",
         messagingSenderId: "1026064016146",
         appId: "1:1026064016146:web:8c78836eea1c135ba089cb",
-        measurementId: "G-JN49Y0WPMP"
+        databaseURL: "https://hild-drops-app-default-rtdb.firebaseio.com"
     };
 
     // Initialize Firebase
     let db = null;
     try {
-        firebase.initializeApp(firebaseConfig);
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
         db = firebase.database();
     } catch (e) {
-        console.log('Firebase initialization failed:', e);
+        console.log('Firebase init:', e.message);
+        db = null;
     }
 
     let data = {
@@ -935,6 +1010,8 @@
     ];
 
     function initSystem() {
+        if (!checkLogin()) return;
+        
         loadFromStorage();
         initDefaultCrew();
         loadDarkMode();
@@ -2394,6 +2471,13 @@
         localStorage.removeItem('metroData');
         initSystem();
         showAlert('All data cleared', 'info');
+    }
+
+    function logout() {
+        if (!confirm('Logout? You\'ll need to enter your crew name again.')) return;
+        sessionStorage.removeItem('crewLogin');
+        sessionStorage.removeItem('loginTime');
+        location.reload();
     }
 
     function updateAllUI() {
