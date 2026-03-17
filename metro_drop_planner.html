@@ -997,8 +997,29 @@
     }
 
     // Initialize on page load
-    window.addEventListener('load', () => {
-        checkGoogleLogin();
+    // Check for auth code ASAP when DOM loads
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('Checking auth...', window.location.search);
+        
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        
+        if (code) {
+            console.log('✅ Got code!');
+            localStorage.setItem('googleAccessToken', code);
+            googleAccessToken = code;
+            window.history.replaceState({}, document.title, window.location.pathname);
+            document.getElementById('googleLoginScreen').style.display = 'none';
+            initSystem();
+        } else if (localStorage.getItem('googleAccessToken')) {
+            console.log('✅ Has token');
+            googleAccessToken = localStorage.getItem('googleAccessToken');
+            document.getElementById('googleLoginScreen').style.display = 'none';
+            initSystem();
+        } else {
+            console.log('No login, showing screen');
+            document.getElementById('googleLoginScreen').style.display = 'flex';
+        }
     });
 
     let data = {
