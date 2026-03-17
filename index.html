@@ -4,72 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <title>HILD Drop Planner</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #c41e3a 0%, #d63447 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            color: white;
-        }
-        .container {
-            text-align: center;
-        }
-        .logo {
-            font-size: 3.5rem;
-            font-weight: 900;
-            letter-spacing: 4px;
-            font-family: 'Georgia', 'Garamond', serif;
-            margin-bottom: 0.5rem;
-        }
-        .subtitle {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #fbbf24;
-            letter-spacing: 2px;
-            margin-bottom: 2rem;
-        }
-        .message {
-            font-size: 1.2rem;
-            margin-top: 2rem;
-        }
-    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">HILD</div>
-        <div class="subtitle">LANDSCAPING</div>
-        <div class="message">Loading...</div>
-    </div>
+    <script>
+        // Check for OAuth code in URL
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
 
 ```
-<script>
-    console.log('INDEX.HTML LOADED');
-    console.log('Full URL:', window.location.href);
-    console.log('Search params:', window.location.search);
-    
-    // Check for OAuth code in URL
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
-    
-    console.log('Code from URL:', code);
-    
     if (code) {
-        console.log('✅ Got authorization code! Storing and redirecting...');
+        console.log('✅ Got authorization code! Storing...');
         localStorage.setItem('googleAccessToken', code);
-        console.log('Token stored:', localStorage.getItem('googleAccessToken'));
-        window.history.replaceState({}, document.title, '/');
-        console.log('Redirecting to /metro_drop_planner.html');
+        // Clean URL and redirect to app
         window.location.href = '/metro_drop_planner.html';
     } else {
-        console.log('No code in URL');
-        const token = localStorage.getItem('googleAccessToken');
-        console.log('Token in storage:', token ? 'YES' : 'NO');
-        console.log('Redirecting to /metro_drop_planner.html');
+        // No code, just go to app
         window.location.href = '/metro_drop_planner.html';
     }
 </script>
