@@ -962,7 +962,20 @@
 
     // Check if already logged in
     function checkGoogleLogin() {
-        // Check if we have a valid token
+        // First check if code is in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        
+        if (code) {
+            localStorage.setItem('googleAccessToken', code);
+            googleAccessToken = code;
+            window.history.replaceState({}, '', window.location.pathname);
+            document.getElementById('googleLoginScreen').style.display = 'none';
+            initSystem();
+            return true;
+        }
+        
+        // Then check localStorage
         const token = localStorage.getItem('googleAccessToken');
         if (token) {
             googleAccessToken = token;
@@ -970,56 +983,16 @@
             initSystem();
             return true;
         }
-
-        // Check if we just got authorization code from redirect
-        const params = new URLSearchParams(window.location.search);
-        const code = params.get('code');
-        console.log('Checking for auth code...', code ? 'Found!' : 'Not found');
         
-        if (code) {
-            console.log('✅ Got authorization code');
-            // Store code as token
-            localStorage.setItem('googleAccessToken', code);
-            googleAccessToken = code;
-            
-            // Clean URL
-            window.history.replaceState({}, document.title, window.location.pathname);
-            
-            // Show app
-            document.getElementById('googleLoginScreen').style.display = 'none';
-            initSystem();
-            return true;
-        }
-
-        // Not logged in
+        // No login
         document.getElementById('googleLoginScreen').style.display = 'flex';
         return false;
     }
 
     // Initialize on page load
-    // Check for auth code ASAP when DOM loads
+    // Check for login when DOM is ready
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('Checking auth...', window.location.search);
-        
-        const params = new URLSearchParams(window.location.search);
-        const code = params.get('code');
-        
-        if (code) {
-            console.log('✅ Got code!');
-            localStorage.setItem('googleAccessToken', code);
-            googleAccessToken = code;
-            window.history.replaceState({}, document.title, window.location.pathname);
-            document.getElementById('googleLoginScreen').style.display = 'none';
-            initSystem();
-        } else if (localStorage.getItem('googleAccessToken')) {
-            console.log('✅ Has token');
-            googleAccessToken = localStorage.getItem('googleAccessToken');
-            document.getElementById('googleLoginScreen').style.display = 'none';
-            initSystem();
-        } else {
-            console.log('No login, showing screen');
-            document.getElementById('googleLoginScreen').style.display = 'flex';
-        }
+        checkGoogleLogin();
     });
 
     let data = {
