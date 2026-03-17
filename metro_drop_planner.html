@@ -942,62 +942,22 @@
 </script>
 
 <script>
-    // Google OAuth Configuration - Redirect Based Flow
-    const GOOGLE_CLIENT_ID = '106680855644-fflm2tto6tg1ngvk82v23ms4npu02kso.apps.googleusercontent.com';
-    const REDIRECT_URI = window.location.origin + window.location.pathname;
-    const SCOPES = 'https://www.googleapis.com/auth/drive.appfolder';
-    
-    let googleAccessToken = null;
-    let hildDataFileId = null;
-    let syncInterval = null;
+    // Simple Google OAuth - just open auth URL in new tab
+    function startGoogleLogin() {
+        const authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' +
+            'client_id=106680855644-fflm2tto6tg1ngvk82v23ms4npu02kso.apps.googleusercontent.com&' +
+            'redirect_uri=https://pmf6h4zy28-lgtm.github.io/metro_drop_planner.html&' +
+            'response_type=code&' +
+            'scope=https://www.googleapis.com/auth/drive.appfolder&' +
+            'access_type=offline';
+        
+        window.open(authUrl, '_blank');
+    }
 
     // Get authorization code from URL
     function getAuthorizationCode() {
         const params = new URLSearchParams(window.location.search);
         return params.get('code');
-    }
-
-    // Build Google OAuth URL
-    function getGoogleAuthUrl() {
-        const params = new URLSearchParams({
-            client_id: GOOGLE_CLIENT_ID,
-            redirect_uri: REDIRECT_URI,
-            response_type: 'code',
-            scope: SCOPES,
-            access_type: 'offline',
-            prompt: 'consent'
-        });
-        return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
-    }
-
-    // Exchange authorization code for access token
-    async function exchangeCodeForToken(code) {
-        try {
-            // Note: In production, this exchange should happen on YOUR backend server
-            // For now, we'll use a simplified approach with localStorage
-            localStorage.setItem('authCode', code);
-            localStorage.setItem('authTime', Date.now());
-            console.log('✅ Authorization code received');
-            
-            // For this demo, we'll use the code as a pseudo-token
-            // In production, you'd exchange this on your backend
-            googleAccessToken = code;
-            localStorage.setItem('googleAccessToken', googleAccessToken);
-            
-            // Remove code from URL
-            window.history.replaceState({}, document.title, window.location.pathname);
-            
-            return true;
-        } catch (error) {
-            console.error('Token exchange error:', error);
-            return false;
-        }
-    }
-
-    // Start Google login in separate tab
-    function startGoogleLogin() {
-        const authUrl = getGoogleAuthUrl();
-        window.open(authUrl, 'googleAuth', 'width=500,height=600');
     }
 
     // Check if already logged in
@@ -1008,20 +968,22 @@
             googleAccessToken = token;
             document.getElementById('googleLoginScreen').style.display = 'none';
             initSystem();
-            startGoogleDriveSync();
             return true;
         }
 
         // Check if we just got authorization code
         const code = getAuthorizationCode();
         if (code) {
-            exchangeCodeForToken(code).then((success) => {
-                if (success) {
-                    document.getElementById('googleLoginScreen').style.display = 'none';
-                    initSystem();
-                    startGoogleDriveSync();
-                }
-            });
+            // Store code as pseudo-token
+            localStorage.setItem('googleAccessToken', code);
+            googleAccessToken = code;
+            
+            // Remove code from URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+            
+            // Hide login and show app
+            document.getElementById('googleLoginScreen').style.display = 'none';
+            initSystem();
             return true;
         }
 
@@ -1030,52 +992,8 @@
         return false;
     }
 
-    // Update sign-in button onclick
-    function updateSignInButton() {
-        const btn = document.getElementById('googleSignInBtn');
-        if (btn) {
-            btn.onclick = startGoogleLogin;
-        }
-    }
-
-    // Simplified sync without gapi (using Fetch API)
-    async function syncWithGoogleDrive() {
-        if (!googleAccessToken) {
-            console.log('No access token');
-            return;
-        }
-
-        try {
-            const fileName = 'hild-drop-data.json';
-            const fileContent = JSON.stringify(data);
-
-            // This is simplified - in production you'd need proper OAuth token exchange
-            console.log('📤 Data ready to sync: ' + fileContent.length + ' bytes');
-            showAlert('✅ Data saved locally (Drive sync ready)!', 'success');
-        } catch (error) {
-            console.error('Sync error:', error);
-        }
-    }
-
-    // Check for updates
-    async function checkGoogleDriveForUpdates() {
-        // Simplified for demo
-        return;
-    }
-
-    // Start sync loop
-    function startGoogleDriveSync() {
-        syncWithGoogleDrive();
-        
-        if (syncInterval) clearInterval(syncInterval);
-        syncInterval = setInterval(() => {
-            checkGoogleDriveForUpdates();
-        }, 10000);
-    }
-
     // Initialize on page load
     window.addEventListener('load', () => {
-        updateSignInButton();
         checkGoogleLogin();
     });
 
@@ -1210,11 +1128,11 @@
 
     // Google Drive sync
     function syncWithFirebase() {
-        syncWithGoogleDrive();
+        showAlert('✅ Data saved locally!', 'success');
     }
 
     function listenForFirebaseUpdates() {
-        // Continuous sync is handled by startGoogleDriveSync interval
+        // Local only for now
     }
 
     // TIMER FUNCTIONS
