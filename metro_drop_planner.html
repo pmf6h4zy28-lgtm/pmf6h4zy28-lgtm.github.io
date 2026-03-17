@@ -971,17 +971,21 @@
             return true;
         }
 
-        // Check if we just got authorization code
-        const code = getAuthorizationCode();
+        // Check if we just got authorization code from redirect
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        console.log('Checking for auth code...', code ? 'Found!' : 'Not found');
+        
         if (code) {
-            // Store code as pseudo-token
+            console.log('✅ Got authorization code');
+            // Store code as token
             localStorage.setItem('googleAccessToken', code);
             googleAccessToken = code;
             
-            // Remove code from URL
+            // Clean URL
             window.history.replaceState({}, document.title, window.location.pathname);
             
-            // Hide login and show app
+            // Show app
             document.getElementById('googleLoginScreen').style.display = 'none';
             initSystem();
             return true;
