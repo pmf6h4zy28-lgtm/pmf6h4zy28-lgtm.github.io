@@ -900,46 +900,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-
-<script>
-    // Google login handler
-    function handleGoogleSuccess(response) {
-        googleAccessToken = response.access_token;
-        localStorage.setItem('googleToken', googleAccessToken);
-        console.log('✅ Google authenticated');
-        
-        // Hide login screen
-        document.getElementById('googleLoginScreen').style.display = 'none';
-        
-        // Initialize app
-        initSystem();
-        
-        // Start sync
-        syncWithGoogleDrive();
-    }
-
-    // Check if already logged in
-    function checkGoogleLogin() {
-        const token = localStorage.getItem('googleToken');
-        if (token) {
-            googleAccessToken = token;
-            document.getElementById('googleLoginScreen').style.display = 'none';
-            return true;
-        }
-        document.getElementById('googleLoginScreen').style.display = 'flex';
-        return false;
-    }
-
-    // Initialize on page load
-    document.addEventListener('DOMContentLoaded', () => {
-        if (typeof gapi !== 'undefined' && typeof google !== 'undefined') {
-            initializeGoogleAPI();
-            checkGoogleLogin();
-            initSystem();
-        }
-    });
-</script>
 
 <script>
     // Simple Google OAuth - just open auth URL in new tab
