@@ -454,496 +454,510 @@
 
 </head>
 <body>
-    <!-- GOOGLE LOGIN SCREEN -->
-    <div class="header">
-        <div class="header-content">
-            <h1>HILD</h1>
-            <p>LANDSCAPING</p>
-        </div>
-    </div>
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); display: flex; align-items: center; justify-content: center; z-index: 2000; flex-direction: column;">
+        <div style="text-align: center; color: white;">
+            <div style="font-size: 3.5rem; font-weight: 900; color: white; letter-spacing: 4px; font-family: 'Georgia', 'Garamond', serif; margin-bottom: 0.5rem;">HILD</div>
+            <div style="font-size: 1rem; font-weight: 700; color: #fbbf24; letter-spacing: 2px; margin-bottom: 3rem;">LANDSCAPING</div>
 
 ```
+        <div style="background: rgba(255,255,255,0.1); padding: 2rem; border-radius: 16px; max-width: 300px;">
+            <div style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem;">Team Login</div>
+            <div style="margin-bottom: 1rem; font-size: 0.9rem; opacity: 0.9;">Enter your crew member name:</div>
+            
+            <input type="password" id="loginPassword" placeholder="e.g., Alex" style="width: 100%; padding: 1rem; border: none; border-radius: 8px; margin-bottom: 1rem; font-size: 1rem; text-align: center;">
+            
+            <button onclick="attemptLogin()" style="width: 100%; padding: 1rem; background: #fbbf24; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; color: var(--primary);">Login</button>
+            
+            <div style="margin-top: 1rem; font-size: 0.85rem; opacity: 0.8;">Valid names: Alex, Luke, AJ, Trent, Cayden</div>
+        </div>
+    </div>
+</div>
+```
+
+<div class="header">
+    <div class="header-content">
+        <h1>HILD</h1>
+        <p>LANDSCAPING</p>
+    </div>
+</div>
+
 <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">🌙</button>
 <button class="quick-add-button" onclick="openQuickAdd()" title="Quick Add Drop">➕</button>
 
 <div class="container">
     <div id="alertContainer"></div>
 
-    <div class="tabs">
-        <button class="tab active" data-tab="home">🏠 Home</button>
-        <button class="tab" data-tab="image-upload">📷 Upload</button>
-        <button class="tab" data-tab="data-entry">📝 Manual</button>
-        <button class="tab" data-tab="route-optimizer">🗺️ Routes</button>
-        <button class="tab" data-tab="jobs">✅ Jobs</button>
-        <button class="tab" data-tab="drops-map">📍 Map</button>
-        <button class="tab" data-tab="crew">👥 Crew</button>
-        <button class="tab" data-tab="messages">💬 Messages</button>
-        <button class="tab" data-tab="reports">📊 Reports</button>
-        <button class="tab" data-tab="expenses">💰 Expenses</button>
-        <button class="tab" data-tab="admin">⚙️ Admin</button>
+```
+<div class="tabs">
+    <button class="tab active" data-tab="home">🏠 Home</button>
+    <button class="tab" data-tab="image-upload">📷 Upload</button>
+    <button class="tab" data-tab="data-entry">📝 Manual</button>
+    <button class="tab" data-tab="route-optimizer">🗺️ Routes</button>
+    <button class="tab" data-tab="jobs">✅ Jobs</button>
+    <button class="tab" data-tab="drops-map">📍 Map</button>
+    <button class="tab" data-tab="crew">👥 Crew</button>
+    <button class="tab" data-tab="messages">💬 Messages</button>
+    <button class="tab" data-tab="reports">📊 Reports</button>
+    <button class="tab" data-tab="expenses">💰 Expenses</button>
+    <button class="tab" data-tab="admin">⚙️ Admin</button>
+</div>
+
+<!-- HOME TAB -->
+<div id="home" class="tab-content active">
+    <div id="accommodationSection"></div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2 class="section-title" style="margin-bottom: 0;">📊 Daily Brief</h2>
+        <button class="btn btn-secondary" onclick="generateDailyBrief()">🔄 Refresh</button>
     </div>
 
-    <!-- HOME TAB -->
-    <div id="home" class="tab-content active">
-        <div id="accommodationSection"></div>
+    <div id="briefContainer"></div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-            <h2 class="section-title" style="margin-bottom: 0;">📊 Daily Brief</h2>
-            <button class="btn btn-secondary" onclick="generateDailyBrief()">🔄 Refresh</button>
+    <h2 class="section-title">📈 Quick Stats</h2>
+    <div class="grid">
+        <div class="stat-card">
+            <div class="stat-label">Total Drops</div>
+            <div class="stat-value" id="statTotal">0</div>
         </div>
-
-        <div id="briefContainer"></div>
-
-        <h2 class="section-title">📈 Quick Stats</h2>
-        <div class="grid">
-            <div class="stat-card">
-                <div class="stat-label">Total Drops</div>
-                <div class="stat-value" id="statTotal">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Completed</div>
-                <div class="stat-value" id="statDone">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">In Progress</div>
-                <div class="stat-value" id="statInProg">0</div>
-            </div>
+        <div class="stat-card">
+            <div class="stat-label">Completed</div>
+            <div class="stat-value" id="statDone">0</div>
         </div>
-
-        <h2 class="section-title" style="margin-top: 3rem;">⏱️ Time Tracking</h2>
-        <div class="card">
-            <div class="card-title">Team Hours Today</div>
-            <div id="todayTimeSummary"></div>
+        <div class="stat-card">
+            <div class="stat-label">In Progress</div>
+            <div class="stat-value" id="statInProg">0</div>
         </div>
     </div>
 
-    <!-- IMAGE UPLOAD TAB -->
-    <div id="image-upload" class="tab-content">
-        <h2 class="section-title">📷 Upload Screenshot</h2>
-        
-        <div class="card">
-            <div class="card-title">Extract Addresses from Image</div>
-            <p style="margin-bottom: 1.5rem; color: var(--text-light); font-size: 0.95rem;">
-                Take a screenshot of your address list and upload it. We'll automatically extract and add all addresses!
-            </p>
-
-            <label for="imageInput" class="btn btn-secondary btn-block" style="justify-content: center;">
-                📤 Click to upload or drag & drop
-            </label>
-            <input type="file" id="imageInput" accept="image/*" style="display: none;">
-
-            <div class="preview-container" id="previewContainer" style="display: none; margin-top: 1.5rem;">
-                <div style="font-weight: 700; margin-bottom: 1rem; color: var(--text);">📸 Preview:</div>
-                <img id="previewImage" src="" alt="Preview" style="max-width: 100%; border-radius: 8px;">
-                <button class="btn btn-primary btn-block" onclick="processImage()" style="margin-top: 1rem;">🤖 Extract Addresses</button>
-            </div>
-
-            <div class="extracted-addresses" id="extractedAddresses" style="display: none; margin-top: 1.5rem;">
-                <div style="font-weight: 700; margin-bottom: 1rem; color: var(--text);">✅ Found Addresses:</div>
-                <div id="addressesList"></div>
-                <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
-                    <button class="btn btn-secondary btn-block" onclick="confirmAddresses()">✔️ Confirm & Add</button>
-                    <button class="btn btn-primary btn-block" onclick="cancelAddresses()" style="background: #64748b;">✕ Cancel</button>
-                </div>
-            </div>
-        </div>
+    <h2 class="section-title" style="margin-top: 3rem;">⏱️ Time Tracking</h2>
+    <div class="card">
+        <div class="card-title">Team Hours Today</div>
+        <div id="todayTimeSummary"></div>
     </div>
+</div>
 
-    <!-- MANUAL ENTRY TAB -->
-    <div id="data-entry" class="tab-content">
-        <h2 class="section-title">📝 Manual Entry</h2>
+<!-- IMAGE UPLOAD TAB -->
+<div id="image-upload" class="tab-content">
+    <h2 class="section-title">📷 Upload Screenshot</h2>
+    
+    <div class="card">
+        <div class="card-title">Extract Addresses from Image</div>
+        <p style="margin-bottom: 1.5rem; color: var(--text-light); font-size: 0.95rem;">
+            Take a screenshot of your address list and upload it. We'll automatically extract and add all addresses!
+        </p>
 
-        <div class="card">
-            <div class="card-title">Add Addresses Manually</div>
-            <div class="input-group">
-                <label>Location/Town</label>
-                <input type="text" id="entryLocation" placeholder="Georgetown, Westville, Streator...">
+        <label for="imageInput" class="btn btn-secondary btn-block" style="justify-content: center;">
+            📤 Click to upload or drag & drop
+        </label>
+        <input type="file" id="imageInput" accept="image/*" style="display: none;">
+
+        <div class="preview-container" id="previewContainer" style="display: none; margin-top: 1.5rem;">
+            <div style="font-weight: 700; margin-bottom: 1rem; color: var(--text);">📸 Preview:</div>
+            <img id="previewImage" src="" alt="Preview" style="max-width: 100%; border-radius: 8px;">
+            <button class="btn btn-primary btn-block" onclick="processImage()" style="margin-top: 1rem;">🤖 Extract Addresses</button>
+        </div>
+
+        <div class="extracted-addresses" id="extractedAddresses" style="display: none; margin-top: 1.5rem;">
+            <div style="font-weight: 700; margin-bottom: 1rem; color: var(--text);">✅ Found Addresses:</div>
+            <div id="addressesList"></div>
+            <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+                <button class="btn btn-secondary btn-block" onclick="confirmAddresses()">✔️ Confirm & Add</button>
+                <button class="btn btn-primary btn-block" onclick="cancelAddresses()" style="background: #64748b;">✕ Cancel</button>
             </div>
-            <div class="input-group">
-                <label>Paste Addresses (one per line)</label>
-                <textarea id="addressInput" placeholder="205 N Walnut St Georgetown&#10;202 Mack St Georgetown"></textarea>
-            </div>
-            <button class="btn btn-primary btn-block" onclick="addAddresses()">➕ Add Addresses</button>
-        </div>
-    </div>
-
-    <!-- ROUTE OPTIMIZER TAB -->
-    <div id="route-optimizer" class="tab-content">
-        <h2 class="section-title">🗺️ Route Optimizer</h2>
-
-        <div class="card">
-            <div class="card-title">Generate Daily Route</div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
-                <div class="input-group">
-                    <label>Select Location/Town</label>
-                    <select id="routeLocation"></select>
-                </div>
-            </div>
-            <button class="btn btn-secondary btn-block" onclick="generateOptimalRoutes()">🤖 Generate Route</button>
-            <div id="routeOptimizationStatus" class="hidden alert mt-2"></div>
-        </div>
-
-        <div id="generatedRoutes" class="hidden">
-            <div class="card">
-                <div class="card-title">Optimized Route</div>
-                <div id="routesDisplay"></div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">📍 Navigate in Apple Maps</div>
-                <button class="btn btn-secondary btn-block" onclick="navigateInMaps()">🗺️ Open in Apple Maps</button>
-                <div id="mapInfo" class="mt-2 alert alert-info"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- JOBS TAB -->
-    <div id="jobs" class="tab-content">
-        <h2 class="section-title">✅ All Drops</h2>
-
-        <div class="card">
-            <div class="card-title">Filter Drops</div>
-            <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-                <button class="btn btn-primary" onclick="filterJobs('all')" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);">All</button>
-                <button class="btn btn-primary" onclick="filterJobs('done')" style="background: var(--success);">✅ Completed</button>
-                <button class="btn btn-primary" onclick="filterJobs('inprogress')" style="background: var(--warning);">🟡 In Progress</button>
-                <button class="btn btn-primary" onclick="filterJobs('todo')" style="background: var(--error);">⏳ Todo</button>
-            </div>
-            <div class="input-group">
-                <label>Search</label>
-                <input type="text" id="jobSearch" placeholder="Search by address..." onkeyup="filterJobs()">
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-title" id="jobsTitle">All Drops</div>
-            <div id="jobsList"></div>
-        </div>
-
-        <!-- JOB DETAILS MODAL -->
-        <div id="jobDetailsModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; z-index: 1000; align-items: center; justify-content: center;" onclick="closeJobModal()">
-            <div style="background: var(--card); border-radius: 16px; padding: 2rem; max-width: 500px; width: 90%; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto;" onclick="event.stopPropagation()">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <h3 id="modalTitle" style="margin: 0; font-size: 1.3rem; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Drop Details</h3>
-                    <button onclick="closeJobModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text);">✕</button>
-                </div>
-                
-                <div id="modalAddress" style="font-weight: 700; margin-bottom: 1.5rem; word-break: break-word; font-size: 0.95rem; white-space: pre-wrap; color: var(--text);"></div>
-                
-                <div class="input-group">
-                    <label>Status</label>
-                    <select id="modalStatus" onchange="updateTicketButton()">
-                        <option value="todo">⏳ Todo</option>
-                        <option value="inprogress">🟡 In Progress</option>
-                        <option value="done">✅ Completed</option>
-                    </select>
-                </div>
-                
-                <button id="closeTicketBtn" class="btn btn-secondary btn-block" style="display: none; background: var(--info); margin-bottom: 1rem;" onclick="openTicketWebsite()">🔗 Close Ticket</button>
-
-                <div class="input-group">
-                    <label>Completion Time</label>
-                    <div style="display: flex; gap: 0.75rem; margin-top: 0.75rem;">
-                        <button class="btn btn-secondary" onclick="startTimer()" id="startTimerBtn">▶️ Start</button>
-                        <button class="btn btn-secondary" onclick="stopTimer()" id="stopTimerBtn" style="display: none;">⏹️ Stop</button>
-                        <button class="btn btn-secondary" onclick="resetTimer()" style="background: #64748b;">🔄 Reset</button>
-                    </div>
-                    <div style="font-size: 1.8rem; font-weight: 700; color: var(--primary); margin-top: 1rem; font-family: 'Courier New', monospace; text-align: center;" id="timerDisplay">00:00:00</div>
-                </div>
-
-                <div class="input-group">
-                    <label>Completed By (select all who worked)</label>
-                    <div id="modalCrewCheckboxes" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
-                </div>
-                
-                <div class="input-group">
-                    <label>Footage Needed (feet)</label>
-                    <input type="text" id="modalFootage" placeholder="e.g., 400" style="font-size: 1rem;">
-                </div>
-
-                <div class="input-group">
-                    <label>Drop Length (feet)</label>
-                    <input type="number" id="modalDropLength" placeholder="e.g., 150" min="0">
-                </div>
-
-                <div class="input-group">
-                    <label>Issues Encountered</label>
-                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
-                        <button type="button" class="issue-badge" onclick="toggleIssue(this, 'underground')" style="background: none; border: 2px solid var(--error); padding: 0.5rem 1rem; cursor: pointer;">Underground</button>
-                        <button type="button" class="issue-badge" onclick="toggleIssue(this, 'access_denied')" style="background: none; border: 2px solid var(--error); padding: 0.5rem 1rem; cursor: pointer;">Access Denied</button>
-                        <button type="button" class="issue-badge" onclick="toggleIssue(this, 'wet')" style="background: none; border: 2px solid var(--error); padding: 0.5rem 1rem; cursor: pointer;">Wet</button>
-                        <button type="button" class="issue-badge" onclick="toggleIssue(this, 'blocked')" style="background: none; border: 2px solid var(--error); padding: 0.5rem 1rem; cursor: pointer;">Blocked</button>
-                        <button type="button" class="issue-badge" onclick="toggleIssue(this, 'long')" style="background: none; border: 2px solid var(--error); padding: 0.5rem 1rem; cursor: pointer;">Long Run</button>
-                    </div>
-                    <input type="text" id="modalIssues" placeholder="Selected issues will appear here" readonly style="background: rgba(196, 30, 58, 0.05);">
-                </div>
-                
-                <div class="input-group">
-                    <label>Notes</label>
-                    <textarea id="modalNotes" placeholder="Additional notes, access codes, conditions..."></textarea>
-                </div>
-                
-                <button class="btn btn-secondary btn-block" onclick="saveJobDetails()">💾 Save Changes</button>
-                <button class="btn btn-primary btn-block mt-2" style="background: var(--error);" onclick="deleteJobWithConfirm()">🗑️ Delete This Drop</button>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">📊 Statistics</div>
-            <div class="grid">
-                <div class="stat-card">
-                    <div class="stat-label">Total Drops</div>
-                    <div class="stat-value" id="jobTotal">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Today Completed</div>
-                    <div class="stat-value" id="jobTodayCompleted">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Total Completed</div>
-                    <div class="stat-value" id="jobDone">0</div>
-                </div>
-            </div>
-
-            <div style="margin-top: 2rem;">
-                <div style="font-weight: 700; margin-bottom: 1.5rem; font-size: 1.1rem; color: var(--text);">👥 Crew Performance</div>
-                <div id="crewPerformanceStats"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- DROPS MAP TAB -->
-    <div id="drops-map" class="tab-content">
-        <div id="dropsMapInstructions" style="padding: 0 0 1.5rem 0;">
-            <div class="card" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%); border: 2px solid var(--info);">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-                    <div style="font-weight: 700; color: var(--info); font-size: 1.1rem;">📍 Enable Secondary Splitter Areas</div>
-                    <button onclick="dismissInstructions()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light);">✕</button>
-                </div>
-                <div style="font-size: 0.95rem; color: var(--text); line-height: 1.8;">
-                    <div style="margin-bottom: 1rem;">
-                        <div style="font-weight: 600; color: var(--info); margin-bottom: 0.5rem;">Step 1:</div>
-                        <div>Tap the <strong>layers icon (⊞)</strong> in the top right corner</div>
-                    </div>
-                    <div style="margin-bottom: 1rem;">
-                        <div style="font-weight: 600; color: var(--info); margin-bottom: 0.5rem;">Step 2:</div>
-                        <div>Expand <strong>Conxxus_DS_FTTH_Web_App</strong></div>
-                    </div>
-                    <div>
-                        <div style="font-weight: 600; color: var(--info); margin-bottom: 0.5rem;">Step 3:</div>
-                        <div>Check the box next to <strong>Secondary Splitter Areas</strong></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div style="padding: 0;">
-            <iframe 
-                src="https://gis.metrocomm.com/portal/apps/webappviewer/index.html?id=b67d3b74fd9149ebb70fceb1ac6f3d02" 
-                style="width: 100%; height: 400px; border: none; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: var(--shadow);"
-                allow="geolocation"
-            ></iframe>
-
-            <div class="card">
-                <div class="card-title">📍 Addresses to Measure</div>
-                
-                <div class="input-group">
-                    <label>Filter by Town</label>
-                    <select id="dropsMapTownFilter" onchange="filterDropsMapAddresses()"></select>
-                </div>
-
-                <div id="dropsMapAddressesList"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- CREW TAB -->
-    <div id="crew" class="tab-content">
-        <h2 class="section-title">👥 Team Roster</h2>
-
-        <div class="card">
-            <div class="card-title">Add Crew Member</div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
-                <div class="input-group">
-                    <label>Name</label>
-                    <input type="text" id="crewName" placeholder="Name">
-                </div>
-                <div class="input-group">
-                    <label>Phone</label>
-                    <input type="tel" id="crewPhone" placeholder="(555) 123-4567">
-                </div>
-            </div>
-            <button class="btn btn-primary btn-block" onclick="addCrewMember()">➕ Add Member</button>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Team Members</div>
-            <div id="crewRoster"></div>
-        </div>
-    </div>
-
-    <!-- MESSAGES TAB -->
-    <div id="messages" class="tab-content">
-        <h2 class="section-title">💬 Team Communication</h2>
-
-        <div class="card">
-            <div class="card-title">Send Message</div>
-            <div class="input-group">
-                <label>Your Name</label>
-                <select id="messageAuthor"></select>
-            </div>
-            <div class="input-group">
-                <label>Message</label>
-                <textarea id="messageText" placeholder="Type your message..."></textarea>
-            </div>
-            <button class="btn btn-secondary btn-block" onclick="sendMessage()">📤 Send Message</button>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Messages</div>
-            <div id="messagesList"></div>
-        </div>
-    </div>
-
-    <!-- REPORTS TAB -->
-    <div id="reports" class="tab-content">
-        <h2 class="section-title">📊 Weekly Reports</h2>
-
-        <div class="card">
-            <div class="card-title">Performance Breakdown</div>
-            <button class="btn btn-secondary btn-block" onclick="generateWeeklyReport()">📊 Generate Report</button>
-            <div id="weeklyReportContainer" style="margin-top: 2rem;"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Crew Productivity</div>
-            <div id="productivityStats"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Common Problem Areas</div>
-            <div id="problemAreasStats"></div>
-        </div>
-    </div>
-
-    <!-- EXPENSES TAB -->
-    <div id="expenses" class="tab-content">
-        <h2 class="section-title">💰 Expense Management</h2>
-
-        <div class="card">
-            <div class="card-title">Log Expense</div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
-                <div class="input-group">
-                    <label>Date</label>
-                    <input type="date" id="expenseDate">
-                </div>
-                <div class="input-group">
-                    <label>Type</label>
-                    <select id="expenseType">
-                        <option value="hotel">🏨 Hotel</option>
-                        <option value="food">🍽️ Food</option>
-                        <option value="fuel">⛽ Fuel</option>
-                        <option value="materials">🛠️ Materials</option>
-                        <option value="other">📌 Other</option>
-                    </select>
-                </div>
-            </div>
-            <div class="input-group">
-                <label>Description</label>
-                <input type="text" id="expenseDesc">
-            </div>
-            <div class="input-group">
-                <label>Amount ($)</label>
-                <input type="number" id="expenseAmount" min="0" step="0.01">
-            </div>
-            <button class="btn btn-primary btn-block" onclick="addExpense()">➕ Add</button>
-        </div>
-
-        <div class="card">
-            <div class="card-title">📊 Expense Summary</div>
-            <div id="expenseSummary"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">All Expenses</div>
-            <div id="expenseList"></div>
-        </div>
-    </div>
-
-    <!-- ADMIN TAB -->
-    <div id="admin" class="tab-content">
-        <h2 class="section-title">⚙️ Administration</h2>
-
-        <div class="card">
-            <div class="card-title">Data Management</div>
-            <button class="btn btn-primary btn-block" onclick="exportData()">📥 Export Data</button>
-            <button class="btn btn-secondary btn-block mt-2" onclick="downloadReport()">📄 Download Report</button>
-            <button class="btn btn-primary btn-block mt-2" style="background: #10b981;" onclick="syncWithFirebase()">☁️ Sync to Cloud</button>
-            <button class="btn btn-primary btn-block mt-2" style="background: #8b5cf6;" onclick="showDebugInfo()">🔍 Sync Status</button>
-            <button class="btn btn-primary btn-block mt-2" style="background: var(--error);" onclick="clearData()">🗑️ Clear All Data</button>
         </div>
     </div>
 </div>
 
+<!-- MANUAL ENTRY TAB -->
+<div id="data-entry" class="tab-content">
+    <h2 class="section-title">📝 Manual Entry</h2>
+
+    <div class="card">
+        <div class="card-title">Add Addresses Manually</div>
+        <div class="input-group">
+            <label>Location/Town</label>
+            <input type="text" id="entryLocation" placeholder="Georgetown, Westville, Streator...">
+        </div>
+        <div class="input-group">
+            <label>Paste Addresses (one per line)</label>
+            <textarea id="addressInput" placeholder="205 N Walnut St Georgetown&#10;202 Mack St Georgetown"></textarea>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="addAddresses()">➕ Add Addresses</button>
+    </div>
+</div>
+
+<!-- ROUTE OPTIMIZER TAB -->
+<div id="route-optimizer" class="tab-content">
+    <h2 class="section-title">🗺️ Route Optimizer</h2>
+
+    <div class="card">
+        <div class="card-title">Generate Daily Route</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+            <div class="input-group">
+                <label>Select Location/Town</label>
+                <select id="routeLocation"></select>
+            </div>
+        </div>
+        <button class="btn btn-secondary btn-block" onclick="generateOptimalRoutes()">🤖 Generate Route</button>
+        <div id="routeOptimizationStatus" class="hidden alert mt-2"></div>
+    </div>
+
+    <div id="generatedRoutes" class="hidden">
+        <div class="card">
+            <div class="card-title">Optimized Route</div>
+            <div id="routesDisplay"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📍 Navigate in Apple Maps</div>
+            <button class="btn btn-secondary btn-block" onclick="navigateInMaps()">🗺️ Open in Apple Maps</button>
+            <div id="mapInfo" class="mt-2 alert alert-info"></div>
+        </div>
+    </div>
+</div>
+
+<!-- JOBS TAB -->
+<div id="jobs" class="tab-content">
+    <h2 class="section-title">✅ All Drops</h2>
+
+    <div class="card">
+        <div class="card-title">Filter Drops</div>
+        <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+            <button class="btn btn-primary" onclick="filterJobs('all')" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);">All</button>
+            <button class="btn btn-primary" onclick="filterJobs('done')" style="background: var(--success);">✅ Completed</button>
+            <button class="btn btn-primary" onclick="filterJobs('inprogress')" style="background: var(--warning);">🟡 In Progress</button>
+            <button class="btn btn-primary" onclick="filterJobs('todo')" style="background: var(--error);">⏳ Todo</button>
+        </div>
+        <div class="input-group">
+            <label>Search</label>
+            <input type="text" id="jobSearch" placeholder="Search by address..." onkeyup="filterJobs()">
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title" id="jobsTitle">All Drops</div>
+        <div id="jobsList"></div>
+    </div>
+
+    <!-- JOB DETAILS MODAL -->
+    <div id="jobDetailsModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; z-index: 1000; align-items: center; justify-content: center;" onclick="closeJobModal()">
+        <div style="background: var(--card); border-radius: 16px; padding: 2rem; max-width: 500px; width: 90%; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto;" onclick="event.stopPropagation()">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 id="modalTitle" style="margin: 0; font-size: 1.3rem; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Drop Details</h3>
+                <button onclick="closeJobModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text);">✕</button>
+            </div>
+            
+            <div id="modalAddress" style="font-weight: 700; margin-bottom: 1.5rem; word-break: break-word; font-size: 0.95rem; white-space: pre-wrap; color: var(--text);"></div>
+            
+            <div class="input-group">
+                <label>Status</label>
+                <select id="modalStatus" onchange="updateTicketButton()">
+                    <option value="todo">⏳ Todo</option>
+                    <option value="inprogress">🟡 In Progress</option>
+                    <option value="done">✅ Completed</option>
+                </select>
+            </div>
+            
+            <button id="closeTicketBtn" class="btn btn-secondary btn-block" style="display: none; background: var(--info); margin-bottom: 1rem;" onclick="openTicketWebsite()">🔗 Close Ticket</button>
+
+            <div class="input-group">
+                <label>Completion Time</label>
+                <div style="display: flex; gap: 0.75rem; margin-top: 0.75rem;">
+                    <button class="btn btn-secondary" onclick="startTimer()" id="startTimerBtn">▶️ Start</button>
+                    <button class="btn btn-secondary" onclick="stopTimer()" id="stopTimerBtn" style="display: none;">⏹️ Stop</button>
+                    <button class="btn btn-secondary" onclick="resetTimer()" style="background: #64748b;">🔄 Reset</button>
+                </div>
+                <div style="font-size: 1.8rem; font-weight: 700; color: var(--primary); margin-top: 1rem; font-family: 'Courier New', monospace; text-align: center;" id="timerDisplay">00:00:00</div>
+            </div>
+
+            <div class="input-group">
+                <label>Completed By (select all who worked)</label>
+                <div id="modalCrewCheckboxes" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+            </div>
+            
+            <div class="input-group">
+                <label>Footage Needed (feet)</label>
+                <input type="text" id="modalFootage" placeholder="e.g., 400" style="font-size: 1rem;">
+            </div>
+
+            <div class="input-group">
+                <label>Drop Length (feet)</label>
+                <input type="number" id="modalDropLength" placeholder="e.g., 150" min="0">
+            </div>
+
+            <div class="input-group">
+                <label>Issues Encountered</label>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
+                    <button type="button" class="issue-badge" onclick="toggleIssue(this, 'underground')" style="background: none; border: 2px solid var(--error); padding: 0.5rem 1rem; cursor: pointer;">Underground</button>
+                    <button type="button" class="issue-badge" onclick="toggleIssue(this, 'access_denied')" style="background: none; border: 2px solid var(--error); padding: 0.5rem 1rem; cursor: pointer;">Access Denied</button>
+                    <button type="button" class="issue-badge" onclick="toggleIssue(this, 'wet')" style="background: none; border: 2px solid var(--error); padding: 0.5rem 1rem; cursor: pointer;">Wet</button>
+                    <button type="button" class="issue-badge" onclick="toggleIssue(this, 'blocked')" style="background: none; border: 2px solid var(--error); padding: 0.5rem 1rem; cursor: pointer;">Blocked</button>
+                    <button type="button" class="issue-badge" onclick="toggleIssue(this, 'long')" style="background: none; border: 2px solid var(--error); padding: 0.5rem 1rem; cursor: pointer;">Long Run</button>
+                </div>
+                <input type="text" id="modalIssues" placeholder="Selected issues will appear here" readonly style="background: rgba(196, 30, 58, 0.05);">
+            </div>
+            
+            <div class="input-group">
+                <label>Notes</label>
+                <textarea id="modalNotes" placeholder="Additional notes, access codes, conditions..."></textarea>
+            </div>
+            
+            <button class="btn btn-secondary btn-block" onclick="saveJobDetails()">💾 Save Changes</button>
+            <button class="btn btn-primary btn-block mt-2" style="background: var(--error);" onclick="deleteJobWithConfirm()">🗑️ Delete This Drop</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">📊 Statistics</div>
+        <div class="grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Drops</div>
+                <div class="stat-value" id="jobTotal">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Today Completed</div>
+                <div class="stat-value" id="jobTodayCompleted">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Completed</div>
+                <div class="stat-value" id="jobDone">0</div>
+            </div>
+        </div>
+
+        <div style="margin-top: 2rem;">
+            <div style="font-weight: 700; margin-bottom: 1.5rem; font-size: 1.1rem; color: var(--text);">👥 Crew Performance</div>
+            <div id="crewPerformanceStats"></div>
+        </div>
+    </div>
+</div>
+
+<!-- DROPS MAP TAB -->
+<div id="drops-map" class="tab-content">
+    <div id="dropsMapInstructions" style="padding: 0 0 1.5rem 0;">
+        <div class="card" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%); border: 2px solid var(--info);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                <div style="font-weight: 700; color: var(--info); font-size: 1.1rem;">📍 Enable Secondary Splitter Areas</div>
+                <button onclick="dismissInstructions()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light);">✕</button>
+            </div>
+            <div style="font-size: 0.95rem; color: var(--text); line-height: 1.8;">
+                <div style="margin-bottom: 1rem;">
+                    <div style="font-weight: 600; color: var(--info); margin-bottom: 0.5rem;">Step 1:</div>
+                    <div>Tap the <strong>layers icon (⊞)</strong> in the top right corner</div>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <div style="font-weight: 600; color: var(--info); margin-bottom: 0.5rem;">Step 2:</div>
+                    <div>Expand <strong>Conxxus_DS_FTTH_Web_App</strong></div>
+                </div>
+                <div>
+                    <div style="font-weight: 600; color: var(--info); margin-bottom: 0.5rem;">Step 3:</div>
+                    <div>Check the box next to <strong>Secondary Splitter Areas</strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="padding: 0;">
+        <iframe 
+            src="https://gis.metrocomm.com/portal/apps/webappviewer/index.html?id=b67d3b74fd9149ebb70fceb1ac6f3d02" 
+            style="width: 100%; height: 400px; border: none; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: var(--shadow);"
+            allow="geolocation"
+        ></iframe>
+
+        <div class="card">
+            <div class="card-title">📍 Addresses to Measure</div>
+            
+            <div class="input-group">
+                <label>Filter by Town</label>
+                <select id="dropsMapTownFilter" onchange="filterDropsMapAddresses()"></select>
+            </div>
+
+            <div id="dropsMapAddressesList"></div>
+        </div>
+    </div>
+</div>
+
+<!-- CREW TAB -->
+<div id="crew" class="tab-content">
+    <h2 class="section-title">👥 Team Roster</h2>
+
+    <div class="card">
+        <div class="card-title">Add Crew Member</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+            <div class="input-group">
+                <label>Name</label>
+                <input type="text" id="crewName" placeholder="Name">
+            </div>
+            <div class="input-group">
+                <label>Phone</label>
+                <input type="tel" id="crewPhone" placeholder="(555) 123-4567">
+            </div>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="addCrewMember()">➕ Add Member</button>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Team Members</div>
+        <div id="crewRoster"></div>
+    </div>
+</div>
+
+<!-- MESSAGES TAB -->
+<div id="messages" class="tab-content">
+    <h2 class="section-title">💬 Team Communication</h2>
+
+    <div class="card">
+        <div class="card-title">Send Message</div>
+        <div class="input-group">
+            <label>Your Name</label>
+            <select id="messageAuthor"></select>
+        </div>
+        <div class="input-group">
+            <label>Message</label>
+            <textarea id="messageText" placeholder="Type your message..."></textarea>
+        </div>
+        <button class="btn btn-secondary btn-block" onclick="sendMessage()">📤 Send Message</button>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Messages</div>
+        <div id="messagesList"></div>
+    </div>
+</div>
+
+<!-- REPORTS TAB -->
+<div id="reports" class="tab-content">
+    <h2 class="section-title">📊 Weekly Reports</h2>
+
+    <div class="card">
+        <div class="card-title">Performance Breakdown</div>
+        <button class="btn btn-secondary btn-block" onclick="generateWeeklyReport()">📊 Generate Report</button>
+        <div id="weeklyReportContainer" style="margin-top: 2rem;"></div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Crew Productivity</div>
+        <div id="productivityStats"></div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Common Problem Areas</div>
+        <div id="problemAreasStats"></div>
+    </div>
+</div>
+
+<!-- EXPENSES TAB -->
+<div id="expenses" class="tab-content">
+    <h2 class="section-title">💰 Expense Management</h2>
+
+    <div class="card">
+        <div class="card-title">Log Expense</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+            <div class="input-group">
+                <label>Date</label>
+                <input type="date" id="expenseDate">
+            </div>
+            <div class="input-group">
+                <label>Type</label>
+                <select id="expenseType">
+                    <option value="hotel">🏨 Hotel</option>
+                    <option value="food">🍽️ Food</option>
+                    <option value="fuel">⛽ Fuel</option>
+                    <option value="materials">🛠️ Materials</option>
+                    <option value="other">📌 Other</option>
+                </select>
+            </div>
+        </div>
+        <div class="input-group">
+            <label>Description</label>
+            <input type="text" id="expenseDesc">
+        </div>
+        <div class="input-group">
+            <label>Amount ($)</label>
+            <input type="number" id="expenseAmount" min="0" step="0.01">
+        </div>
+        <button class="btn btn-primary btn-block" onclick="addExpense()">➕ Add</button>
+    </div>
+
+    <div class="card">
+        <div class="card-title">📊 Expense Summary</div>
+        <div id="expenseSummary"></div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">All Expenses</div>
+        <div id="expenseList"></div>
+    </div>
+</div>
+
+<!-- ADMIN TAB -->
+<div id="admin" class="tab-content">
+    <h2 class="section-title">⚙️ Administration</h2>
+
+    <div class="card">
+        <div class="card-title">Data Management</div>
+        <button class="btn btn-primary btn-block" onclick="exportData()">📥 Export Data</button>
+        <button class="btn btn-secondary btn-block mt-2" onclick="downloadReport()">📄 Download Report</button>
+        <button class="btn btn-primary btn-block mt-2" style="background: var(--error);" onclick="logout()">🚪 Logout</button>
+        <button class="btn btn-primary btn-block mt-2" style="background: var(--error);" onclick="clearData()">🗑️ Clear All Data</button>
+    </div>
+</div>
+```
+
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <script>
-    // Simple password login - one time per device
-    function checkGoogleLogin() {
-        // Check for OAuth code from Google redirect
-        const params = new URLSearchParams(window.location.search);
-        const code = params.get('code');
+    // Valid crew names for login
+    const VALID_CREW = ['alex', 'luke', 'aj', 'trent', 'cayden'];
+
+    function attemptLogin() {
+        const password = document.getElementById('loginPassword').value.trim().toLowerCase();
         
-        if (code) {
-            localStorage.setItem('googleAccessToken', code);
-            window.history.replaceState({}, '', window.location.pathname);
+        if (!password) {
+            alert('Please enter your crew name');
+            return;
         }
         
-        // Check if we have a token
-        const token = localStorage.getItem('googleAccessToken');
-        
-        if (token) {
-            // Has token - start the app
-            initSystem();
-        } else {
-            // No token - show login page by redirecting to index
-            window.location.href = '/';
+        if (!VALID_CREW.includes(password)) {
+            alert('Invalid crew name. Try: Alex, Luke, AJ, Trent, or Cayden');
+            return;
         }
+        
+        // Store login in sessionStorage
+        sessionStorage.setItem('crewLogin', password);
+        sessionStorage.setItem('loginTime', Date.now());
+        
+        // Hide login screen
+        document.getElementById('loginScreen').style.display = 'none';
+        
+        // Initialize app
+        initSystem();
     }
 
-    function initSystem() {
-        loadFromStorage();
-        initDefaultCrew();
-        loadDarkMode();
-        updateAllUI();
-        generateDailyBrief();
-        listenForFirebaseUpdates();
-        showQuickAddButton();
+    // Check if logged in on page load
+    function checkLogin() {
+        const login = sessionStorage.getItem('crewLogin');
+        if (!login) {
+            document.getElementById('loginScreen').style.display = 'flex';
+            return false;
+        }
+        document.getElementById('loginScreen').style.display = 'none';
+        return true;
     }
 
-    // Check on page load
-    function checkGoogleLogin() {
-        // Check for OAuth code from Google redirect
-        const params = new URLSearchParams(window.location.search);
-        const code = params.get('code');
-        
-        if (code) {
-            localStorage.setItem('googleAccessToken', code);
-            window.history.replaceState({}, '', window.location.pathname);
+    // Allow Enter key to login
+    document.addEventListener('DOMContentLoaded', () => {
+        const loginInput = document.getElementById('loginPassword');
+        if (loginInput) {
+            loginInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    attemptLogin();
+                }
+            });
         }
-        
-        // Check if we have a token
-        const token = localStorage.getItem('googleAccessToken');
-        
-        if (token) {
-            // Has token - start the app
-            initSystem();
-        } else {
-            // No token - show login page by redirecting to index
-            window.location.href = '/';
-        }
-    }
+    });
 
     let data = {
         locations: [],
@@ -958,7 +972,28 @@
         darkMode: false
     };
 
-    let googleAccessToken = null;
+    const inspirationalQuotes = [
+        "Every drop gets you closer to the finish line! 💪",
+        "You've got this! Keep pushing forward! 🚀",
+        "Progress over perfection! Keep moving! ⚡",
+        "Your hard work is going to pay off! 💯",
+        "One drop at a time, you're building greatness! 🏗️",
+        "Success is a series of small wins! Keep going! 🎯",
+        "You're stronger than you think! 💪",
+        "Every challenge is an opportunity! 🌟",
+        "Stay focused, stay driven, stay winning! 🏆",
+        "The best time to start was yesterday. The second best is now! ⏰"
+    ];
+
+    function initSystem() {
+        if (!checkLogin()) return;
+        
+        loadFromStorage();
+        initDefaultCrew();
+        loadDarkMode();
+        updateAllUI();
+        generateDailyBrief();
+        showQuickAddButton();
     }
 
     function initDefaultCrew() {
@@ -976,7 +1011,6 @@
     function saveToStorage() {
         try {
             localStorage.setItem('metroData', JSON.stringify(data));
-            // Manual sync only - click the button to sync
         } catch(e) {
             console.log('Storage full or unavailable');
         }
@@ -1053,15 +1087,6 @@
         'Sullivan': { state: 'IL', zip: '61951' },
         'Rockford': { state: 'IL', zip: '61101' }
     };
-
-    // Google Drive sync
-    function syncWithFirebase() {
-        showAlert('✅ Data saved locally!', 'success');
-    }
-
-    function listenForFirebaseUpdates() {
-        // Local only for now
-    }
 
     // TIMER FUNCTIONS
     function startTimer() {
@@ -1978,7 +2003,6 @@
         };
         
         saveToStorage();
-        syncWithFirebase();
         updateAllUI();
         closeJobModal();
         showAlert('✅ Job details saved!', 'success');
@@ -2012,7 +2036,6 @@
         delete data.jobNotes[address];
         
         saveToStorage();
-        syncWithFirebase();
         updateAllUI();
         closeJobModal();
         showAlert('🗑️ Drop deleted successfully!', 'success');
@@ -2213,7 +2236,6 @@
         data.jobNotes[address].footage = footage;
         
         saveToStorage();
-        syncWithFirebase();
         updateAllUI();
         closeFootageModal();
         
@@ -2372,54 +2394,17 @@
     }
 
     function logout() {
-        if (!confirm('Logout? You\'ll need to sign in with Google again.')) return;
-        localStorage.removeItem('googleToken');
-        localStorage.removeItem('googleAccessToken');
-        googleAccessToken = null;
+        if (!confirm('Logout? You\'ll need to enter your crew name again.')) return;
+        sessionStorage.removeItem('crewLogin');
+        sessionStorage.removeItem('loginTime');
         location.reload();
     }
 
-    function showDebugInfo() {
-        const info = `
-```
-
-HILD DROP APP - SYNC STATUS
-
-Google Drive:
-
-- Access Token: ${googleAccessToken ? ‘✅ Connected’ : ‘❌ Not connected’}
-- File ID: ${hildDataFileId ? hildDataFileId : ‘⏳ Not yet synced’}
-
-Data Info:
-
-- Size: ${JSON.stringify(data).length} bytes
-- Last saved: Just now
-
-HOW TO VERIFY DATA IS SAVED:
-
-1. On any device, go to google.com
-1. Sign in with your Google account
-1. Go to “My Drive”
-1. Click Settings ⚙️ → “Show hidden files”
-1. Look for “Hild Drop App” folder
-1. Inside is “hild-drop-data.json” file
-
-YOUR COWORKER CAN VERIFY BY:
-
-1. Opening this app
-1. Signing in with their Google account
-1. Their phone auto-downloads your synced data
-1. They see all your drops/messages/jobs!
-   `;
-   alert(info);
-   }
-   
-   ```
     function updateAllUI() {
         updateLocationSelectors();
         populateDropsMapTownFilter();
         updateAccommodationSection();
-   
+
         // Update crew roster
         const crewRosterHtml = data.crewMembers.length > 0 ? data.crewMembers.map(c => `
             <div style="padding: 1.25rem; background: linear-gradient(135deg, rgba(196, 30, 58, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%); border-radius: 10px; margin-bottom: 1rem; border-left: 4px solid var(--primary);">
@@ -2429,13 +2414,13 @@ YOUR COWORKER CAN VERIFY BY:
         `).join('') : '<p class="text-muted">No crew members yet</p>';
         const crewRoster = document.getElementById('crewRoster');
         if (crewRoster) crewRoster.innerHTML = crewRosterHtml;
-   
+
         // Update message author dropdown
         const messageAuthor = document.getElementById('messageAuthor');
         if (messageAuthor) {
             messageAuthor.innerHTML = data.crewMembers.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
         }
-   
+
         // Update expenses
         const byType = {};
         let total = 0;
@@ -2451,7 +2436,7 @@ YOUR COWORKER CAN VERIFY BY:
                 </div>
             `).join('') + (total > 0 ? `<div style="display:flex; justify-content:space-between; padding:0.75rem; font-weight:700;"><span>TOTAL</span><strong>$${total.toFixed(2)}</strong></div>` : '<p class="text-muted">No expenses yet</p>');
         }
-   
+
         const expList = document.getElementById('expenseList');
         if (expList) {
             expList.innerHTML = data.expenses.length > 0 ? data.expenses.map(e => `
@@ -2461,7 +2446,7 @@ YOUR COWORKER CAN VERIFY BY:
                 </div>
             `).join('') : '<p class="text-muted">No expenses logged</p>';
         }
-   
+
         // Update productivity stats
         const productivityStats = document.getElementById('productivityStats');
         if (productivityStats) {
@@ -2477,7 +2462,7 @@ YOUR COWORKER CAN VERIFY BY:
                     });
                 }
             });
-   
+
             productivityStats.innerHTML = Object.entries(crewStats).length > 0 ? Object.entries(crewStats)
                 .sort((a, b) => b[1] - a[1])
                 .map(([name, count], idx) => `
@@ -2487,7 +2472,7 @@ YOUR COWORKER CAN VERIFY BY:
                     </div>
                 `).join('') : '<p class="text-muted">No completed drops yet</p>';
         }
-   
+
         // Update problem areas
         const problemAreasStats = document.getElementById('problemAreasStats');
         if (problemAreasStats) {
@@ -2499,7 +2484,7 @@ YOUR COWORKER CAN VERIFY BY:
                     problems[street] = (problems[street] || 0) + 1;
                 }
             });
-   
+
             problemAreasStats.innerHTML = Object.entries(problems).length > 0 ? Object.entries(problems)
                 .sort((a, b) => b[1] - a[1])
                 .slice(0, 5)
@@ -2510,11 +2495,11 @@ YOUR COWORKER CAN VERIFY BY:
                     </div>
                 `).join('') : '<p class="text-muted">No issues logged yet</p>';
         }
-   
+
         displayMessages();
         filterJobs();
     }
-   
+
     function showAlert(message, type = 'info') {
         const container = document.getElementById('alertContainer');
         if (!container) return;
@@ -2526,42 +2511,12 @@ YOUR COWORKER CAN VERIFY BY:
             if (alert.parentElement) alert.remove();
         }, 5000);
     }
-   
+
     const expDateEl = document.getElementById('expenseDate');
     if (expDateEl) expDateEl.valueAsDate = new Date();
-   
-    document.addEventListener('DOMContentLoaded', () => {
-        checkGoogleLogin();
-    });
-   
-    // Tab switching
-    function switchTab(tabName) {
-        document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
-        document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
-        const selected = document.getElementById(tabName);
-        if (selected) selected.style.display = 'block';
-    }
-   
-    // Setup tabs
-    document.querySelectorAll('.tab').forEach(btn => {
-        btn.addEventListener('click', function() {
-            switchTab(this.getAttribute('data-tab'));
-        });
-    });
-   
-    // CHECK LOGIN IMMEDIATELY
-    checkGoogleLogin();
-   
-    // Show home tab by default
-    document.getElementById('home').style.display = 'block';
-   
-    // Initialize the system
-    setTimeout(() => {
-        initSystem();
-    }, 500);
-   ```
-   
-    </script>
+
+    initSystem();
+</script>
 
 </body>
-</html>l
+</html>
