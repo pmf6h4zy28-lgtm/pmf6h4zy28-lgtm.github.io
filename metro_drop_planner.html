@@ -890,7 +890,6 @@
 
 <script>
     // Simple password login - one time per device
-    // Check if has Google access token (set by index.html)
     function checkGoogleLogin() {
         const token = localStorage.getItem('googleAccessToken');
         if (token) {
@@ -900,6 +899,16 @@
             // No token, redirect to index.html to login
             window.location.href = '/';
         }
+    }
+
+    function initSystem() {
+        loadFromStorage();
+        initDefaultCrew();
+        loadDarkMode();
+        updateAllUI();
+        generateDailyBrief();
+        listenForFirebaseUpdates();
+        showQuickAddButton();
     }
 
     // Check on page load
