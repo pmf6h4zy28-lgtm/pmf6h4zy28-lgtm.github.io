@@ -960,7 +960,7 @@
 </script>
 
 <script>
-    // Firebase Configuration (Public Safe Config - API key restricted in Firebase Console)
+    // Firebase Configuration
     const firebaseConfig = {
         apiKey: "AIzaSyCwH0y4scb6Qd7dq9e3fjd6Fv91VAe--mU",
         authDomain: "hild-drops-app.firebaseapp.com",
@@ -971,17 +971,32 @@
         databaseURL: "https://hild-drops-app-default-rtdb.firebaseio.com"
     };
 
-    // Initialize Firebase
+    // Initialize Firebase with error handling
     let db = null;
-    try {
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
+    let firebaseReady = false;
+
+    function initFirebase() {
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.database();
+                firebaseReady = true;
+                console.log('✅ Firebase initialized');
+            } else {
+                db = firebase.database();
+                firebaseReady = true;
+                console.log('✅ Firebase already initialized');
+            }
+        } catch (e) {
+            console.error('Firebase init error:', e);
+            firebaseReady = false;
+            db = null;
         }
-        db = firebase.database();
-        console.log('Firebase initialized successfully');
-    } catch (e) {
-        console.log('Firebase error:', e.message);
-        db = null;
+    }
+
+    // Initialize Firebase when scripts load
+    if (typeof firebase !== 'undefined') {
+        initFirebase();
     }
 
     let data = {
@@ -1037,10 +1052,7 @@
     function saveToStorage() {
         try {
             localStorage.setItem('metroData', JSON.stringify(data));
-            // Auto-sync to Firebase
-            if (db && sessionStorage.getItem('crewLogin')) {
-                syncWithFirebase();
-            }
+            // Manual sync only - click the button to sync
         } catch(e) {
             console.log('Storage full or unavailable');
         }
@@ -1120,59 +1132,65 @@
 
     // FIREBASE SYNC - Automatic
     function syncWithFirebase() {
-        if (!db) {
-            showAlert('Firebase not connected. Check your internet.', 'error');
+        if (!firebaseReady || !db) {
+            console.warn('Firebase not ready. Retrying...');
+            initFirebase();
+            setTimeout(() => {
+                if (!db) {
+                    showAlert('⚠️ Firebase connection failed. Using local storage.', 'warning');
+                    return;
+                }
+                attemptSync();
+            }, 1000);
             return;
         }
+        attemptSync();
+    }
 
+    function attemptSync() {
         try {
             const crew = sessionStorage.getItem('crewLogin') || 'team';
-            firebase.database().ref('teams/' + crew).set(data, (error) => {
+            const syncRef = firebase.database().ref('teams/' + crew);
+            
+            syncRef.set(data, (error) => {
                 if (error) {
-                    console.log('Sync error:', error);
+                    console.error('Sync error:', error);
                     showAlert('❌ Sync failed: ' + error.message, 'error');
                 } else {
                     console.log('✅ Data synced to cloud');
-                    showAlert('✅ Data synced to cloud!', 'success');
+                    showAlert('✅ All data synced to cloud!', 'success');
                 }
             });
         } catch (e) {
-            console.log('Firebase sync error:', e);
+            console.error('Sync exception:', e);
             showAlert('Error syncing: ' + e.message, 'error');
         }
     }
 
     function listenForFirebaseUpdates() {
-        if (!db) return;
+        if (!firebaseReady || !db) {
+            console.log('Firebase not ready for listeners');
+            return;
+        }
         
         try {
             const crew = sessionStorage.getItem('crewLogin') || 'team';
             
-            // Listen for messages
-            firebase.database().ref('messages').on('child_added', (snapshot) => {
-                const msg = snapshot.val();
-                if (msg && !data.messages.find(m => m.id === msg.id)) {
-                    data.messages.push(msg);
-                    saveToStorage();
-                    if (document.getElementById('messages').classList.contains('active')) {
-                        displayMessages();
-                    }
-                }
-            });
-
-            // Listen for team data updates from other devices
+            // Listen for team data updates
             firebase.database().ref('teams/' + crew).on('value', (snapshot) => {
                 const remoteData = snapshot.val();
-                if (remoteData && JSON.stringify(remoteData) !== JSON.stringify(data)) {
-                    // Update local data with remote changes
+                if (remoteData) {
+                    console.log('Received update from cloud');
+                    // Merge remote data with local
                     Object.assign(data, remoteData);
                     saveToStorage();
                     updateAllUI();
-                    console.log('Updated from cloud');
                 }
+            }, (error) => {
+                console.log('Firebase listen error:', error.message);
             });
         } catch (e) {
-            console.log('Firebase listen error:', e);
+            console.error('Firebase listen setup error:', e);
         }
     }
 
