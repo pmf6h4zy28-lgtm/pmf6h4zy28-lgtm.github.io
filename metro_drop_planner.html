@@ -903,39 +903,22 @@
 
 <script>
     // Simple password login - one time per device
-    function attemptLogin() {
-        const password = document.getElementById('loginPassword').value;
-        if (password === 'hild2025') {
-            localStorage.setItem('loggedIn', 'true');
-            document.getElementById('googleLoginScreen').style.display = 'none';
-            initSystem();
-        } else {
-            alert('Incorrect password');
-        }
-    }
-
+    // Check if has Google access token (set by index.html)
     function checkGoogleLogin() {
-        if (localStorage.getItem('loggedIn')) {
+        const token = localStorage.getItem('googleAccessToken');
+        if (token) {
+            // Already logged in, hide login screen and show app
             document.getElementById('googleLoginScreen').style.display = 'none';
             initSystem();
         } else {
-            document.getElementById('googleLoginScreen').style.display = 'flex';
+            // Not logged in, redirect to index.html
+            window.location.href = '/';
         }
     }
 
     // Check on page load
     document.addEventListener('DOMContentLoaded', () => {
         checkGoogleLogin();
-    });
-
-    // Allow Enter key
-    document.addEventListener('DOMContentLoaded', () => {
-        const input = document.getElementById('loginPassword');
-        if (input) {
-            input.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') attemptLogin();
-            });
-        }
     });
 
     let data = {
@@ -950,12 +933,8 @@
         timers: {},
         darkMode: false
     };
-    document.addEventListener('DOMContentLoaded', () => {
-        checkGoogleLogin();
-    });
-        generateDailyBrief();
-        listenForFirebaseUpdates();
-        showQuickAddButton();
+
+    let googleAccessToken = null;
     }
 
     function initDefaultCrew() {
