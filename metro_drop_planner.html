@@ -978,8 +978,9 @@
             firebase.initializeApp(firebaseConfig);
         }
         db = firebase.database();
+        console.log('Firebase initialized successfully');
     } catch (e) {
-        console.log('Firebase init:', e.message);
+        console.log('Firebase error:', e.message);
         db = null;
     }
 
@@ -1036,6 +1037,10 @@
     function saveToStorage() {
         try {
             localStorage.setItem('metroData', JSON.stringify(data));
+            // Auto-sync to Firebase
+            if (db && sessionStorage.getItem('crewLogin')) {
+                syncWithFirebase();
+            }
         } catch(e) {
             console.log('Storage full or unavailable');
         }
@@ -1113,18 +1118,27 @@
         'Rockford': { state: 'IL', zip: '61101' }
     };
 
-    // FIREBASE SYNC
+    // FIREBASE SYNC - Automatic
     function syncWithFirebase() {
         if (!db) {
-            showAlert('Firebase not available. Check your connection.', 'error');
+            showAlert('Firebase not connected. Check your internet.', 'error');
             return;
         }
 
         try {
-            firebase.database().ref('users/' + generateUserId()).set(data);
-            showAlert('✅ Data synced to cloud!', 'success');
+            const crew = sessionStorage.getItem('crewLogin') || 'team';
+            firebase.database().ref('teams/' + crew).set(data, (error) => {
+                if (error) {
+                    console.log('Sync error:', error);
+                    showAlert('❌ Sync failed: ' + error.message, 'error');
+                } else {
+                    console.log('✅ Data synced to cloud');
+                    showAlert('✅ Data synced to cloud!', 'success');
+                }
+            });
         } catch (e) {
-            showAlert('Error syncing data: ' + e.message, 'error');
+            console.log('Firebase sync error:', e);
+            showAlert('Error syncing: ' + e.message, 'error');
         }
     }
 
@@ -1132,9 +1146,12 @@
         if (!db) return;
         
         try {
+            const crew = sessionStorage.getItem('crewLogin') || 'team';
+            
+            // Listen for messages
             firebase.database().ref('messages').on('child_added', (snapshot) => {
                 const msg = snapshot.val();
-                if (!data.messages.find(m => m.timestamp === msg.timestamp)) {
+                if (msg && !data.messages.find(m => m.id === msg.id)) {
                     data.messages.push(msg);
                     saveToStorage();
                     if (document.getElementById('messages').classList.contains('active')) {
@@ -1142,18 +1159,21 @@
                     }
                 }
             });
+
+            // Listen for team data updates from other devices
+            firebase.database().ref('teams/' + crew).on('value', (snapshot) => {
+                const remoteData = snapshot.val();
+                if (remoteData && JSON.stringify(remoteData) !== JSON.stringify(data)) {
+                    // Update local data with remote changes
+                    Object.assign(data, remoteData);
+                    saveToStorage();
+                    updateAllUI();
+                    console.log('Updated from cloud');
+                }
+            });
         } catch (e) {
             console.log('Firebase listen error:', e);
         }
-    }
-
-    function generateUserId() {
-        let userId = localStorage.getItem('userId');
-        if (!userId) {
-            userId = 'user_' + Date.now();
-            localStorage.setItem('userId', userId);
-        }
-        return userId;
     }
 
     // TIMER FUNCTIONS
