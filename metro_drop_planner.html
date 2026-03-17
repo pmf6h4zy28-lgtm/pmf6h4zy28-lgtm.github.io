@@ -904,6 +904,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+<script src="https://apis.google.com/js/api.js"></script>
 
 <script>
     // Valid crew names for login
@@ -958,7 +959,147 @@
 </script>
 
 <script>
-    // Local storage only - no cloud sync
+    // Google Drive Configuration
+    const GOOGLE_CLIENT_ID = '106680855644-fflm2tto6tg1ngvk82v23ms4npu02kso.apps.googleusercontent.com';
+    const SCOPES = 'https://www.googleapis.com/auth/drive.appfolder';
+    
+    let gapiInited = false;
+    let gisInited = false;
+    let tokenClient;
+    let googleAccessToken = null;
+    let hildDataFileId = null;
+
+    // Initialize Google API
+    function initializeGoogleAPI() {
+        gapi.load('client', async () => {
+            await gapi.client.init({
+                apiKey: 'AIzaSyCwH0y4scb6Qd7dq9e3fjd6Fv91VAe--mU',
+                discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+            });
+            gapiInited = true;
+            console.log('✅ Google API initialized');
+        });
+
+        tokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: GOOGLE_CLIENT_ID,
+            scope: SCOPES,
+            callback: (response) => {
+                googleAccessToken = response.access_token;
+                console.log('✅ Google authenticated');
+                syncWithGoogleDrive();
+            },
+        });
+        gisInited = true;
+    }
+
+    // Request Google authentication
+    function requestGoogleAuth() {
+        if (gisInited && gapiInited) {
+            tokenClient.requestAccessToken({ prompt: 'consent' });
+        }
+    }
+
+    // Sync data to Google Drive
+    async function syncWithGoogleDrive() {
+        if (!googleAccessToken || !gapiInited) {
+            showAlert('Google Drive not connected. Trying to authenticate...', 'warning');
+            requestGoogleAuth();
+            return;
+        }
+
+        try {
+            const fileName = 'hild-drop-data.json';
+            const fileContent = JSON.stringify(data);
+            const blob = new Blob([fileContent], { type: 'application/json' });
+
+            // Search for existing file
+            const response = await gapi.client.drive.files.list({
+                q: `name='${fileName}' and trashed=false`,
+                spaces: 'appDataFolder',
+                fields: 'files(id, name)',
+                pageSize: 1,
+            });
+
+            if (response.result.files && response.result.files.length > 0) {
+                // Update existing file
+                hildDataFileId = response.result.files[0].id;
+                const updateResponse = await gapi.client.drive.files.update({
+                    fileId: hildDataFileId,
+                    resource: {
+                        name: fileName,
+                    },
+                    media: new gapi.client.drive.HttpRequest({
+                        body: blob,
+                        headers: { 'Content-Type': 'application/json' }
+                    }),
+                });
+                console.log('✅ File updated');
+                showAlert('✅ Data synced to Google Drive!', 'success');
+            } else {
+                // Create new file
+                const createResponse = await gapi.client.drive.files.create({
+                    resource: {
+                        name: fileName,
+                        parents: ['appDataFolder'],
+                    },
+                    media: new gapi.client.drive.HttpRequest({
+                        body: blob,
+                        headers: { 'Content-Type': 'application/json' }
+                    }),
+                    fields: 'id',
+                });
+                hildDataFileId = createResponse.result.id;
+                console.log('✅ File created');
+                showAlert('✅ Data synced to Google Drive!', 'success');
+            }
+        } catch (error) {
+            console.error('Sync error:', error);
+            showAlert('Sync failed: ' + error.message, 'error');
+        }
+    }
+
+    // Listen for Google Drive updates
+    async function listenForGoogleDriveUpdates() {
+        if (!googleAccessToken || !gapiInited || !hildDataFileId) {
+            return;
+        }
+
+        try {
+            const response = await gapi.client.drive.files.get({
+                fileId: hildDataFileId,
+                alt: 'media',
+            });
+
+            if (response.result) {
+                const remoteData = typeof response.result === 'string' ? JSON.parse(response.result) : response.result;
+                if (JSON.stringify(remoteData) !== JSON.stringify(data)) {
+                    Object.assign(data, remoteData);
+                    saveToStorage();
+                    updateAllUI();
+                    console.log('📥 Updated from Google Drive');
+                }
+            }
+        } catch (error) {
+            console.log('Drive listener error:', error.message);
+        }
+    }
+
+    // Start sync loop when authenticated
+    function startGoogleDriveSync() {
+        if (googleAccessToken) {
+            syncWithGoogleDrive();
+            setInterval(() => {
+                listenForGoogleDriveUpdates();
+            }, 10000); // Check every 10 seconds
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof gapi !== 'undefined') {
+            initializeGoogleAPI();
+        }
+    });
 
     let data = {
         locations: [],
@@ -1091,13 +1232,21 @@
         'Rockford': { state: 'IL', zip: '61101' }
     };
 
-    // Local storage only
+    // Google Drive sync
     function syncWithFirebase() {
-        showAlert('✅ Data saved locally!', 'success');
+        if (!googleAccessToken) {
+            showAlert('Authenticating with Google...', 'info');
+            requestGoogleAuth();
+            setTimeout(() => {
+                syncWithGoogleDrive();
+            }, 1500);
+            return;
+        }
+        syncWithGoogleDrive();
     }
 
     function listenForFirebaseUpdates() {
-        // Local storage only - no cloud listeners
+        startGoogleDriveSync();
     }
 
     // TIMER FUNCTIONS
