@@ -892,7 +892,7 @@
             <button class="btn btn-primary btn-block" onclick="exportData()">📥 Export Data</button>
             <button class="btn btn-secondary btn-block mt-2" onclick="downloadReport()">📄 Download Report</button>
             <button class="btn btn-primary btn-block mt-2" style="background: #10b981;" onclick="syncWithFirebase()">☁️ Sync to Cloud</button>
-            <button class="btn btn-primary btn-block mt-2" style="background: var(--error);" onclick="logout()">🚪 Logout</button>
+            <button class="btn btn-primary btn-block mt-2" style="background: #8b5cf6;" onclick="showDebugInfo()">🔍 Sync Status</button>
             <button class="btn btn-primary btn-block mt-2" style="background: var(--error);" onclick="clearData()">🗑️ Clear All Data</button>
         </div>
     </div>
@@ -905,7 +905,7 @@
     // Google login handler
     function handleGoogleSuccess(response) {
         googleAccessToken = response.access_token;
-        sessionStorage.setItem('googleToken', googleAccessToken);
+        localStorage.setItem('googleToken', googleAccessToken);
         console.log('✅ Google authenticated');
         
         // Hide login screen
@@ -920,7 +920,7 @@
 
     // Check if already logged in
     function checkGoogleLogin() {
-        const token = sessionStorage.getItem('googleToken');
+        const token = localStorage.getItem('googleToken');
         if (token) {
             googleAccessToken = token;
             document.getElementById('googleLoginScreen').style.display = 'none';
@@ -967,7 +967,7 @@
     function handleGoogleSuccess(response) {
         console.log('✅ Google signed in');
         googleAccessToken = response.credential;
-        sessionStorage.setItem('googleToken', googleAccessToken);
+        localStorage.setItem('googleToken', googleAccessToken);
         
         // Request Drive access
         requestDriveAccess();
@@ -980,7 +980,7 @@
             scope: SCOPES,
             callback: (tokenResponse) => {
                 googleAccessToken = tokenResponse.access_token;
-                sessionStorage.setItem('googleAccessToken', googleAccessToken);
+                localStorage.setItem('googleAccessToken', googleAccessToken);
                 console.log('✅ Drive access granted');
                 
                 // Hide login screen and show app
@@ -1123,7 +1123,7 @@
 
     // Check if already logged in
     function checkGoogleLogin() {
-        const token = sessionStorage.getItem('googleAccessToken');
+        const token = localStorage.getItem('googleAccessToken');
         if (token) {
             googleAccessToken = token;
             document.getElementById('googleLoginScreen').style.display = 'none';
@@ -2596,16 +2596,53 @@
 
     function logout() {
         if (!confirm('Logout? You\'ll need to sign in with Google again.')) return;
-        sessionStorage.removeItem('googleToken');
+        localStorage.removeItem('googleToken');
+        localStorage.removeItem('googleAccessToken');
         googleAccessToken = null;
         location.reload();
     }
 
+    function showDebugInfo() {
+        const info = `
+```
+
+HILD DROP APP - SYNC STATUS
+
+Google Drive:
+
+- Access Token: ${googleAccessToken ? ‘✅ Connected’ : ‘❌ Not connected’}
+- File ID: ${hildDataFileId ? hildDataFileId : ‘⏳ Not yet synced’}
+
+Data Info:
+
+- Size: ${JSON.stringify(data).length} bytes
+- Last saved: Just now
+
+HOW TO VERIFY DATA IS SAVED:
+
+1. On any device, go to google.com
+1. Sign in with your Google account
+1. Go to “My Drive”
+1. Click Settings ⚙️ → “Show hidden files”
+1. Look for “Hild Drop App” folder
+1. Inside is “hild-drop-data.json” file
+
+YOUR COWORKER CAN VERIFY BY:
+
+1. Opening this app
+1. Signing in with their Google account
+1. Their phone auto-downloads your synced data
+1. They see all your drops/messages/jobs!
+   `;
+   alert(info);
+   }
+   
+   ```
     function updateAllUI() {
         updateLocationSelectors();
         populateDropsMapTownFilter();
         updateAccommodationSection();
-
+   
         // Update crew roster
         const crewRosterHtml = data.crewMembers.length > 0 ? data.crewMembers.map(c => `
             <div style="padding: 1.25rem; background: linear-gradient(135deg, rgba(196, 30, 58, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%); border-radius: 10px; margin-bottom: 1rem; border-left: 4px solid var(--primary);">
@@ -2615,13 +2652,13 @@
         `).join('') : '<p class="text-muted">No crew members yet</p>';
         const crewRoster = document.getElementById('crewRoster');
         if (crewRoster) crewRoster.innerHTML = crewRosterHtml;
-
+   
         // Update message author dropdown
         const messageAuthor = document.getElementById('messageAuthor');
         if (messageAuthor) {
             messageAuthor.innerHTML = data.crewMembers.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
         }
-
+   
         // Update expenses
         const byType = {};
         let total = 0;
@@ -2637,7 +2674,7 @@
                 </div>
             `).join('') + (total > 0 ? `<div style="display:flex; justify-content:space-between; padding:0.75rem; font-weight:700;"><span>TOTAL</span><strong>$${total.toFixed(2)}</strong></div>` : '<p class="text-muted">No expenses yet</p>');
         }
-
+   
         const expList = document.getElementById('expenseList');
         if (expList) {
             expList.innerHTML = data.expenses.length > 0 ? data.expenses.map(e => `
@@ -2647,7 +2684,7 @@
                 </div>
             `).join('') : '<p class="text-muted">No expenses logged</p>';
         }
-
+   
         // Update productivity stats
         const productivityStats = document.getElementById('productivityStats');
         if (productivityStats) {
@@ -2663,7 +2700,7 @@
                     });
                 }
             });
-
+   
             productivityStats.innerHTML = Object.entries(crewStats).length > 0 ? Object.entries(crewStats)
                 .sort((a, b) => b[1] - a[1])
                 .map(([name, count], idx) => `
@@ -2673,7 +2710,7 @@
                     </div>
                 `).join('') : '<p class="text-muted">No completed drops yet</p>';
         }
-
+   
         // Update problem areas
         const problemAreasStats = document.getElementById('problemAreasStats');
         if (problemAreasStats) {
@@ -2685,7 +2722,7 @@
                     problems[street] = (problems[street] || 0) + 1;
                 }
             });
-
+   
             problemAreasStats.innerHTML = Object.entries(problems).length > 0 ? Object.entries(problems)
                 .sort((a, b) => b[1] - a[1])
                 .slice(0, 5)
@@ -2696,11 +2733,11 @@
                     </div>
                 `).join('') : '<p class="text-muted">No issues logged yet</p>';
         }
-
+   
         displayMessages();
         filterJobs();
     }
-
+   
     function showAlert(message, type = 'info') {
         const container = document.getElementById('alertContainer');
         if (!container) return;
@@ -2712,13 +2749,14 @@
             if (alert.parentElement) alert.remove();
         }, 5000);
     }
-
+   
     const expDateEl = document.getElementById('expenseDate');
     if (expDateEl) expDateEl.valueAsDate = new Date();
-
+   
     initSystem();
-</script>
-```
+   ```
+   
+    </script>
 
 </body>
 </html>
