@@ -978,14 +978,21 @@
         try {
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
-                db = firebase.firestore();
-                firebaseReady = true;
-                console.log('✅ Firestore initialized');
-            } else {
-                db = firebase.firestore();
-                firebaseReady = true;
-                console.log('✅ Firestore already initialized');
             }
+            db = firebase.firestore();
+            
+            // Set persistence to allow offline mode
+            db.enablePersistence()
+                .catch((err) => {
+                    if (err.code === 'failed-precondition') {
+                        console.log('Multiple tabs open, persistence disabled');
+                    } else if (err.code === 'unimplemented') {
+                        console.log('Browser does not support persistence');
+                    }
+                });
+            
+            firebaseReady = true;
+            console.log('✅ Firestore initialized successfully');
         } catch (e) {
             console.error('Firebase init error:', e);
             firebaseReady = false;
@@ -994,9 +1001,11 @@
     }
 
     // Initialize Firebase when scripts load
-    if (typeof firebase !== 'undefined') {
-        initFirebase();
-    }
+    setTimeout(() => {
+        if (typeof firebase !== 'undefined') {
+            initFirebase();
+        }
+    }, 500);
 
     let data = {
         locations: [],
@@ -1129,20 +1138,21 @@
         'Rockford': { state: 'IL', zip: '61101' }
     };
 
-    // FIRESTORE SYNC - Real-time
+    // FIRESTORE SYNC - Real-time with better error handling
     function syncWithFirebase() {
-        if (!firebaseReady || !db) {
-            console.warn('Firestore not ready. Retrying...');
+        if (!firebaseReady) {
+            console.warn('Firestore not ready yet, initializing...');
             initFirebase();
-            setTimeout(() => {
-                if (!db) {
-                    showAlert('⚠️ Firestore connection failed. Using local storage.', 'warning');
-                    return;
-                }
-                attemptSync();
-            }, 1000);
+            setTimeout(syncWithFirebase, 1500);
             return;
         }
+        
+        if (!db) {
+            showAlert('⚠️ Firestore not available. Retrying...', 'warning');
+            setTimeout(syncWithFirebase, 2000);
+            return;
+        }
+
         attemptSync();
     }
 
@@ -1154,61 +1164,40 @@
             docRef.set(data, { merge: true })
                 .then(() => {
                     console.log('✅ Data synced to Firestore');
-                    showAlert('✅ All data synced to cloud!', 'success');
+                    showAlert('✅ Data synced to cloud!', 'success');
                 })
                 .catch((error) => {
-                    console.error('Sync error:', error);
+                    console.error('Firestore sync error:', error.code, error.message);
                     showAlert('❌ Sync failed: ' + error.message, 'error');
                 });
         } catch (e) {
             console.error('Sync exception:', e);
-            showAlert('Error syncing: ' + e.message, 'error');
+            showAlert('Error: ' + e.message, 'error');
         }
     }
 
     function listenForFirebaseUpdates() {
         if (!firebaseReady || !db) {
-            console.log('Firestore not ready for listeners');
+            console.log('Firestore not ready for listeners, retrying...');
+            setTimeout(listenForFirebaseUpdates, 2000);
             return;
         }
         
         try {
             const crew = sessionStorage.getItem('crewLogin') || 'team';
             
-            // Listen for messages in real-time
-            firebase.firestore().collection('messages')
-                .where('crew', '==', crew)
-                .orderBy('timestamp', 'asc')
-                .onSnapshot((snapshot) => {
-                    snapshot.docChanges().forEach((change) => {
-                        if (change.type === 'added') {
-                            const msg = { id: change.doc.id, ...change.doc.data() };
-                            if (!data.messages.find(m => m.id === msg.id)) {
-                                data.messages.push(msg);
-                                saveToStorage();
-                                if (document.getElementById('messages') && document.getElementById('messages').classList.contains('active')) {
-                                    displayMessages();
-                                }
-                            }
-                        }
-                    });
-                }, (error) => {
-                    console.log('Message listener error:', error.message);
-                });
-
-            // Listen for team data updates in real-time
+            // Listen for team data updates
             firebase.firestore().collection('teams').doc(crew)
                 .onSnapshot((doc) => {
                     if (doc.exists) {
                         const remoteData = doc.data();
-                        console.log('Received update from Firestore');
-                        // Merge remote data with local
+                        console.log('📥 Update from Firestore');
                         Object.assign(data, remoteData);
                         saveToStorage();
                         updateAllUI();
                     }
                 }, (error) => {
-                    console.log('Team listener error:', error.message);
+                    console.log('Firestore listener error:', error.message);
                 });
         } catch (e) {
             console.error('Firestore listen setup error:', e);
