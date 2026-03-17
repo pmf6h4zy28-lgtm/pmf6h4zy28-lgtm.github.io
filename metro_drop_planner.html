@@ -8,8 +8,8 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --primary: #0f766e;
-            --primary-light: #14b8a6;
+            --primary: #c41e3a;
+            --primary-light: #d63447;
             --accent: #f97316;
             --accent-light: #fb923c;
             --success: #10b981;
@@ -532,8 +532,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>🌐 Metro Drop Planner</h1>
-        <p>Efficient Fiber Drop Route Management</p>
+        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwwUAxMTAwMRDAwMDA0MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDD/2wBDAQICAgMDAwYDAwYMCAcIDAwIDAwIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDD/wAARCAAwAMgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWm5ybnJ2eoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD5/oooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/2Q==" style="width: 100%; height: auto; max-height: 70px; object-fit: contain;" alt="HILD Landscaping">
     </div>
 
 ```
@@ -574,10 +573,6 @@
             <div class="stat-card">
                 <div class="stat-label">In Progress</div>
                 <div class="stat-value" id="statInProg">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Completion %</div>
-                <div class="stat-value" id="statCompletion">0%</div>
             </div>
         </div>
     </div>
@@ -710,6 +705,13 @@
                 <button id="closeTicketBtn" class="btn btn-secondary btn-block" style="display: none; background: var(--info);" onclick="openTicketWebsite()">🔗 Close Ticket</button>
                 
                 <div class="input-group">
+                    <label>Completed By (for payment tracking)</label>
+                    <select id="modalCrewMember">
+                        <option value="">-- Select crew member --</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
                     <label>Footage Needed (feet)</label>
                     <input type="text" id="modalFootage" placeholder="e.g., 400" style="font-size: 1rem;">
                 </div>
@@ -733,21 +735,22 @@
             <div class="card-title">📊 Statistics</div>
             <div class="grid">
                 <div class="stat-card">
-                    <div class="stat-label">Total</div>
+                    <div class="stat-label">Total Drops</div>
                     <div class="stat-value" id="jobTotal">0</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Completed</div>
+                    <div class="stat-label">Today Completed</div>
+                    <div class="stat-value" id="jobTodayCompleted">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Completed</div>
                     <div class="stat-value" id="jobDone">0</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">In Progress</div>
-                    <div class="stat-value" id="jobInProg">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Rate</div>
-                    <div class="stat-value" id="jobRate">0%</div>
-                </div>
+            </div>
+
+            <div style="margin-top: 2rem;">
+                <div style="font-weight: 700; margin-bottom: 1.5rem; font-size: 1.1rem; color: var(--text);">👥 Crew Performance</div>
+                <div id="crewPerformanceStats"></div>
             </div>
         </div>
     </div>
@@ -908,7 +911,7 @@
         jobs: {},
         expenses: [],
         jobFilter: 'all',
-        jobNotes: {}
+        jobNotes: {} // {footage, dropLength, notes, crewMember}
     };
 
     const inspirationalQuotes = [
@@ -937,7 +940,8 @@
                 { name: 'You', phone: '', performance: { completed: 0, total: 0 } },
                 { name: 'Luke', phone: '', performance: { completed: 0, total: 0 } },
                 { name: 'AJ', phone: '', performance: { completed: 0, total: 0 } },
-                { name: 'Trent', phone: '', performance: { completed: 0, total: 0 } }
+                { name: 'Trent', phone: '', performance: { completed: 0, total: 0 } },
+                { name: 'Cayden', phone: '', performance: { completed: 0, total: 0 } }
             ];
         }
     }
@@ -1702,7 +1706,7 @@
     }
 
     function openJobModal(address, status) {
-        const notes = data.jobNotes[address] || { dropLength: '', footage: '', notes: '' };
+        const notes = data.jobNotes[address] || { dropLength: '', footage: '', notes: '', crewMember: '' };
         
         document.getElementById('modalTitle').textContent = 'Drop Details';
         document.getElementById('modalAddress').textContent = address;
@@ -1710,6 +1714,18 @@
         document.getElementById('modalDropLength').value = notes.dropLength || '';
         document.getElementById('modalFootage').value = notes.footage || '';
         document.getElementById('modalNotes').value = notes.notes || '';
+        document.getElementById('modalCrewMember').value = notes.crewMember || '';
+        
+        // Populate crew member dropdown
+        const crewSelect = document.getElementById('modalCrewMember');
+        crewSelect.innerHTML = '<option value="">-- Select crew member --</option>';
+        data.crewMembers.forEach(member => {
+            const option = document.createElement('option');
+            option.value = member.name;
+            option.textContent = member.name;
+            crewSelect.appendChild(option);
+        });
+        crewSelect.value = notes.crewMember || '';
         
         window.currentJobAddress = address;
         
@@ -1750,6 +1766,7 @@
         const dropLength = document.getElementById('modalDropLength').value;
         const footage = document.getElementById('modalFootage').value;
         const notes = document.getElementById('modalNotes').value;
+        const crewMember = document.getElementById('modalCrewMember').value;
         
         if (data.jobs[address]) {
             data.jobs[address].status = status;
@@ -1758,7 +1775,8 @@
         data.jobNotes[address] = {
             dropLength: dropLength ? parseInt(dropLength) : '',
             footage: footage,
-            notes: notes
+            notes: notes,
+            crewMember: crewMember
         };
         
         saveToStorage();
@@ -1803,17 +1821,51 @@
     function updateJobStats() {
         const total = Object.keys(data.jobs).length;
         const done = Object.values(data.jobs).filter(j => j.status === 'done').length;
-        const inprog = Object.values(data.jobs).filter(j => j.status === 'inprogress').length;
+        
+        // Count today's completed (jobs with crew member assigned and done status)
+        const todayCompleted = Object.entries(data.jobs).filter(([addr, job]) => {
+            const notes = data.jobNotes[addr] || {};
+            return job.status === 'done' && notes.crewMember;
+        }).length;
+
+        // Calculate crew performance
+        const crewStats = {};
+        Object.entries(data.jobs).forEach(([addr, job]) => {
+            const notes = data.jobNotes[addr] || {};
+            if (job.status === 'done' && notes.crewMember) {
+                if (!crewStats[notes.crewMember]) {
+                    crewStats[notes.crewMember] = 0;
+                }
+                crewStats[notes.crewMember]++;
+            }
+        });
 
         document.getElementById('jobTotal').textContent = total;
         document.getElementById('jobDone').textContent = done;
-        document.getElementById('jobInProg').textContent = inprog;
-        document.getElementById('jobRate').textContent = total > 0 ? Math.round((done / total) * 100) + '%' : '0%';
+        document.getElementById('jobTodayCompleted').textContent = todayCompleted;
+        
+        // Render crew performance with rankings
+        const crewPerf = document.getElementById('crewPerformanceStats');
+        if (Object.keys(crewStats).length > 0) {
+            const rankings = ['🥇 1st Place', '🥈 2nd Place', '🥉 3rd Place'];
+            crewPerf.innerHTML = Object.entries(crewStats)
+                .sort((a, b) => b[1] - a[1])
+                .map(([name, count], idx) => `
+                    <div style="padding: 1rem; background: linear-gradient(135deg, rgba(196, 30, 58, 0.05) 0%, rgba(214, 52, 71, 0.05) 100%); border-radius: 10px; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--primary);">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <span style="font-size: 1.5rem;">${rankings[idx] || '⭐'}</span>
+                            <span style="font-weight: 600;">${name}</span>
+                        </div>
+                        <span style="font-size: 1.8rem; font-weight: 800; color: var(--primary);">${count}</span>
+                    </div>
+                `).join('');
+        } else {
+            crewPerf.innerHTML = '<p class="text-muted">No completed drops with crew assignments yet</p>';
+        }
         
         document.getElementById('statTotal').textContent = total;
         document.getElementById('statDone').textContent = done;
-        document.getElementById('statInProg').textContent = inprog;
-        document.getElementById('statCompletion').textContent = total > 0 ? Math.round((done / total) * 100) + '%' : '0%';
+        document.getElementById('statInProg').textContent = Object.values(data.jobs).filter(j => j.status === 'inprogress').length;
     }
 
     function filterDropsMapAddresses() {
