@@ -28,35 +28,111 @@
         }
 
 ```
+    body.dark-mode {
+        --bg: #0f172a;
+        --card: #1e293b;
+        --text: #f1f5f9;
+        --text-light: #cbd5e1;
+        --border: #334155;
+        --shadow: 0 2px 8px rgba(0,0,0,0.3);
+        --shadow-md: 0 8px 24px rgba(0,0,0,0.4);
+        --shadow-lg: 0 16px 40px rgba(0,0,0,0.5);
+    }
+    
     body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
         background: linear-gradient(135deg, var(--bg) 0%, #f8fafc 100%);
         color: var(--text);
         line-height: 1.6;
-        padding-bottom: 2rem;
+        padding-bottom: 80px;
+        transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark-mode {
+        background: linear-gradient(135deg, #0f172a 0%, #1a1f35 100%);
     }
 
     .header {
         background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
         color: white;
-        padding: 2.5rem 2rem;
+        padding: 0.75rem 0;
         box-shadow: var(--shadow-lg);
         position: sticky;
         top: 0;
         z-index: 100;
     }
 
+    .header-content {
+        text-align: center;
+        padding: 0.75rem 0;
+    }
+
     .header h1 { 
-        font-size: 2rem; 
-        font-weight: 800; 
-        margin-bottom: 0.5rem;
-        letter-spacing: -0.5px;
+        font-size: 3.5rem; 
+        font-weight: 900; 
+        color: white; 
+        letter-spacing: 4px; 
+        font-family: 'Georgia', 'Garamond', serif;
+        margin: 0;
     }
 
     .header p { 
         font-size: 1rem; 
-        opacity: 0.95;
-        font-weight: 500;
+        font-weight: 700; 
+        color: #fbbf24; 
+        letter-spacing: 2px; 
+        margin-top: 0.25rem;
+        font-family: 'Georgia', 'Garamond', serif;
+    }
+
+    .dark-mode-toggle {
+        position: fixed;
+        bottom: 100px;
+        right: 20px;
+        z-index: 999;
+        background: var(--primary);
+        border: none;
+        color: white;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        font-size: 1.8rem;
+        cursor: pointer;
+        box-shadow: var(--shadow-lg);
+        transition: all 0.3s;
+    }
+
+    .dark-mode-toggle:hover {
+        transform: scale(1.1);
+    }
+
+    .quick-add-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 999;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        border: none;
+        color: white;
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        font-size: 2rem;
+        cursor: pointer;
+        box-shadow: var(--shadow-lg);
+        transition: all 0.3s;
+        display: none;
+    }
+
+    .quick-add-button:hover {
+        transform: scale(1.15);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .quick-add-button.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .container { 
@@ -91,13 +167,13 @@
 
     .tab:hover { 
         color: var(--primary); 
-        background: rgba(15, 118, 110, 0.08);
+        background: rgba(196, 30, 58, 0.08);
     }
 
     .tab.active { 
         color: white; 
         background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-        box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+        box-shadow: 0 4px 12px rgba(196, 30, 58, 0.3);
     }
 
     .tab-content { display: none; }
@@ -150,14 +226,14 @@
         font-family: inherit; 
         font-size: 1rem;
         transition: all 0.3s ease;
-        background: white;
+        background: var(--card);
+        color: var(--text);
     }
 
     input:focus, textarea:focus, select:focus { 
         outline: none; 
         border-color: var(--primary); 
-        box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
-        background: #f8fdfc;
+        box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.1);
     }
 
     textarea { min-height: 120px; resize: vertical; }
@@ -179,12 +255,12 @@
     .btn-primary { 
         background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
         color: white;
-        box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+        box-shadow: 0 4px 12px rgba(196, 30, 58, 0.3);
     }
 
     .btn-primary:hover { 
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4);
+        box-shadow: 0 6px 20px rgba(196, 30, 58, 0.4);
     }
 
     .btn-secondary { 
@@ -201,13 +277,12 @@
     .btn-block { width: 100%; }
 
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
-    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
 
     .stat-card {
-        background: linear-gradient(135deg, rgba(15, 118, 110, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%);
+        background: linear-gradient(135deg, rgba(196, 30, 58, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%);
         padding: 1.75rem;
         border-radius: 12px;
-        border: 2px solid rgba(15, 118, 110, 0.1);
+        border: 2px solid rgba(196, 30, 58, 0.1);
         box-shadow: var(--shadow);
         transition: all 0.3s ease;
     }
@@ -276,8 +351,6 @@
         color: #854d0e;
     }
 
-    .alert-close { cursor: pointer; font-weight: 700; margin-left: auto; opacity: 0.7; }
-
     .job-card {
         padding: 1.25rem;
         background: linear-gradient(135deg, rgba(240, 253, 250, 0.5) 0%, rgba(240, 249, 255, 0.5) 100%);
@@ -309,170 +382,8 @@
         color: var(--text-light);
         display: flex;
         gap: 0.75rem;
-    }
-
-    .route-item {
-        padding: 1.25rem;
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(15, 118, 110, 0.05) 100%);
-        border-radius: 10px;
-        margin-bottom: 1rem;
-        border-left: 5px solid var(--info);
-        transition: all 0.3s ease;
-    }
-
-    .route-item:hover {
-        box-shadow: var(--shadow-md);
-    }
-
-    .route-header { 
-        font-weight: 700; 
-        color: var(--primary); 
-        margin-bottom: 0.75rem;
-        font-size: 1.05rem;
-    }
-
-    .route-stops { 
-        font-size: 0.9rem; 
-        color: var(--text-light); 
-        margin-bottom: 0.75rem;
-        display: flex;
-        gap: 1rem;
         flex-wrap: wrap;
     }
-
-    .brief-card {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-        color: white;
-        border-radius: 12px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        box-shadow: var(--shadow-lg);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .brief-card::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-        animation: float 6s ease-in-out infinite;
-    }
-
-    @keyframes float {
-        0%, 100% { transform: translate(0, 0); }
-        50% { transform: translate(20px, -20px); }
-    }
-
-    .brief-content {
-        position: relative;
-        z-index: 1;
-    }
-
-    .brief-title {
-        font-size: 1.5rem;
-        font-weight: 800;
-        margin-bottom: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .brief-section {
-        margin-bottom: 1.5rem;
-        padding-bottom: 1.5rem;
-        border-bottom: 1px solid rgba(255,255,255,0.2);
-    }
-
-    .brief-section:last-child {
-        border-bottom: none;
-        margin-bottom: 0;
-        padding-bottom: 0;
-    }
-
-    .brief-label {
-        font-weight: 700;
-        font-size: 0.9rem;
-        opacity: 0.9;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 0.5rem;
-    }
-
-    .brief-value {
-        font-size: 1.1rem;
-        font-weight: 600;
-    }
-
-    .weather-icon {
-        font-size: 3rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .file-input-label {
-        display: block;
-        padding: 2.5rem;
-        border: 3px dashed var(--primary);
-        border-radius: 10px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s;
-        background: linear-gradient(135deg, rgba(15, 118, 110, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%);
-    }
-
-    .file-input-label:hover {
-        background: linear-gradient(135deg, rgba(15, 118, 110, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
-        border-color: var(--primary-light);
-        transform: translateY(-2px);
-    }
-
-    .file-input-label.dragover {
-        background: linear-gradient(135deg, rgba(15, 118, 110, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%);
-        border-color: var(--primary-light);
-    }
-
-    #imageInput { display: none; }
-
-    .preview-container {
-        margin-top: 1.5rem;
-        padding: 1.5rem;
-        background: var(--bg);
-        border-radius: 10px;
-        display: none;
-    }
-
-    .preview-container img {
-        max-width: 100%;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-    }
-
-    .extracted-addresses {
-        background: var(--bg);
-        padding: 1.5rem;
-        border-radius: 10px;
-        margin-top: 1.5rem;
-        display: none;
-        max-height: 350px;
-        overflow-y: auto;
-    }
-
-    .address-item {
-        padding: 0.875rem;
-        background: white;
-        border-left: 4px solid var(--success);
-        margin-bottom: 0.75rem;
-        border-radius: 6px;
-        font-size: 0.9rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .address-item input { width: 20px; height: 20px; flex-shrink: 0; }
 
     .section-title { 
         font-size: 1.4rem; 
@@ -489,42 +400,54 @@
     .text-muted { color: var(--text-light); }
     .mt-2 { margin-top: 1rem; }
 
-    .job-filter-tabs {
-        display: flex;
-        gap: 0.75rem;
-        margin-bottom: 1.5rem;
-        flex-wrap: wrap;
-    }
-
-    .job-filter-btn {
-        padding: 0.625rem 1.25rem;
-        border: 2px solid var(--border);
-        background: white;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.3s;
-        font-size: 0.9rem;
-    }
-
-    .job-filter-btn:hover {
-        border-color: var(--primary);
+    .timer-display {
+        font-size: 1.5rem;
+        font-weight: 700;
         color: var(--primary);
+        font-family: 'Courier New', monospace;
     }
 
-    .job-filter-btn.active {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-        color: white;
-        border-color: var(--primary);
+    .issue-badge {
+        display: inline-block;
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--error);
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin: 0.25rem;
+    }
+
+    .message-item {
+        padding: 1rem;
+        background: linear-gradient(135deg, rgba(196, 30, 58, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%);
+        border-radius: 8px;
+        margin-bottom: 0.75rem;
+        border-left: 4px solid var(--primary);
+    }
+
+    .message-author {
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .message-text {
+        color: var(--text);
+        margin-bottom: 0.5rem;
+    }
+
+    .message-time {
+        font-size: 0.75rem;
+        color: var(--text-light);
     }
 
     @media (max-width: 768px) {
         .container { padding: 1rem 0.75rem; }
-        .header { padding: 2rem 1.5rem; }
-        .header h1 { font-size: 1.5rem; }
+        .header { padding: 0.5rem 0; }
+        .header h1 { font-size: 2.5rem; }
         .tab { padding: 0.625rem 1rem; font-size: 0.85rem; }
         .grid { grid-template-columns: 1fr; }
-        .brief-card { padding: 1.5rem; }
     }
 </style>
 ```
@@ -532,13 +455,16 @@
 </head>
 <body>
     <div class="header">
-        <div style="text-align: center; padding: 0.75rem 0;">
-            <div style="font-size: 3.5rem; font-weight: 900; color: white; letter-spacing: 4px; font-family: 'Georgia', 'Garamond', serif;">HILD</div>
-            <div style="font-size: 1rem; font-weight: 700; color: #fbbf24; letter-spacing: 2px; margin-top: 0.25rem; font-family: 'Georgia', 'Garamond', serif;">LANDSCAPING</div>
+        <div class="header-content">
+            <h1>HILD</h1>
+            <p>LANDSCAPING</p>
         </div>
     </div>
 
 ```
+<button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">🌙</button>
+<button class="quick-add-button" onclick="openQuickAdd()" title="Quick Add Drop">➕</button>
+
 <div class="container">
     <div id="alertContainer"></div>
 
@@ -550,6 +476,8 @@
         <button class="tab" data-tab="jobs">✅ Jobs</button>
         <button class="tab" data-tab="drops-map">📍 Map</button>
         <button class="tab" data-tab="crew">👥 Crew</button>
+        <button class="tab" data-tab="messages">💬 Messages</button>
+        <button class="tab" data-tab="reports">📊 Reports</button>
         <button class="tab" data-tab="expenses">💰 Expenses</button>
         <button class="tab" data-tab="admin">⚙️ Admin</button>
     </div>
@@ -580,6 +508,12 @@
                 <div class="stat-value" id="statInProg">0</div>
             </div>
         </div>
+
+        <h2 class="section-title" style="margin-top: 3rem;">⏱️ Time Tracking</h2>
+        <div class="card">
+            <div class="card-title">Team Hours Today</div>
+            <div id="todayTimeSummary"></div>
+        </div>
     </div>
 
     <!-- IMAGE UPLOAD TAB -->
@@ -592,22 +526,19 @@
                 Take a screenshot of your address list and upload it. We'll automatically extract and add all addresses!
             </p>
 
-            <div class="file-input-wrapper">
-                <label for="imageInput" class="file-input-label" id="dragDropZone">
-                    📤 Click to upload or drag & drop
-                    <br><small style="color: var(--text-light); display: block; margin-top: 0.75rem; font-size: 0.85rem;">JPG, PNG, WebP</small>
-                </label>
-                <input type="file" id="imageInput" accept="image/*">
-            </div>
+            <label for="imageInput" class="btn btn-secondary btn-block" style="justify-content: center;">
+                📤 Click to upload or drag & drop
+            </label>
+            <input type="file" id="imageInput" accept="image/*" style="display: none;">
 
-            <div class="preview-container" id="previewContainer">
+            <div class="preview-container" id="previewContainer" style="display: none; margin-top: 1.5rem;">
                 <div style="font-weight: 700; margin-bottom: 1rem; color: var(--text);">📸 Preview:</div>
-                <img id="previewImage" src="" alt="Preview">
-                <button class="btn btn-primary btn-block" onclick="processImage()">🤖 Extract Addresses</button>
+                <img id="previewImage" src="" alt="Preview" style="max-width: 100%; border-radius: 8px;">
+                <button class="btn btn-primary btn-block" onclick="processImage()" style="margin-top: 1rem;">🤖 Extract Addresses</button>
             </div>
 
-            <div class="extracted-addresses" id="extractedAddresses">
-                <div style="font-weight: 700; margin-bottom: 1rem; color: var(--text);">✅ Found Addresses (uncheck to exclude):</div>
+            <div class="extracted-addresses" id="extractedAddresses" style="display: none; margin-top: 1.5rem;">
+                <div style="font-weight: 700; margin-bottom: 1rem; color: var(--text);">✅ Found Addresses:</div>
                 <div id="addressesList"></div>
                 <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
                     <button class="btn btn-secondary btn-block" onclick="confirmAddresses()">✔️ Confirm & Add</button>
@@ -641,7 +572,7 @@
 
         <div class="card">
             <div class="card-title">Generate Daily Route</div>
-            <div class="grid-2">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
                 <div class="input-group">
                     <label>Select Location/Town</label>
                     <select id="routeLocation"></select>
@@ -671,11 +602,11 @@
 
         <div class="card">
             <div class="card-title">Filter Drops</div>
-            <div class="job-filter-tabs">
-                <button class="job-filter-btn active" onclick="filterJobs('all')">All</button>
-                <button class="job-filter-btn" onclick="filterJobs('done')">✅ Completed</button>
-                <button class="job-filter-btn" onclick="filterJobs('inprogress')">🟡 In Progress</button>
-                <button class="job-filter-btn" onclick="filterJobs('todo')">⏳ Todo</button>
+            <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="filterJobs('all')" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);">All</button>
+                <button class="btn btn-primary" onclick="filterJobs('done')" style="background: var(--success);">✅ Completed</button>
+                <button class="btn btn-primary" onclick="filterJobs('inprogress')" style="background: var(--warning);">🟡 In Progress</button>
+                <button class="btn btn-primary" onclick="filterJobs('todo')" style="background: var(--error);">⏳ Todo</button>
             </div>
             <div class="input-group">
                 <label>Search</label>
@@ -690,10 +621,10 @@
 
         <!-- JOB DETAILS MODAL -->
         <div id="jobDetailsModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; z-index: 1000; align-items: center; justify-content: center;" onclick="closeJobModal()">
-            <div style="background: white; border-radius: 16px; padding: 2rem; max-width: 500px; width: 90%; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto;" onclick="event.stopPropagation()">
+            <div style="background: var(--card); border-radius: 16px; padding: 2rem; max-width: 500px; width: 90%; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto;" onclick="event.stopPropagation()">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                     <h3 id="modalTitle" style="margin: 0; font-size: 1.3rem; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Drop Details</h3>
-                    <button onclick="closeJobModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">✕</button>
+                    <button onclick="closeJobModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text);">✕</button>
                 </div>
                 
                 <div id="modalAddress" style="font-weight: 700; margin-bottom: 1.5rem; word-break: break-word; font-size: 0.95rem; white-space: pre-wrap; color: var(--text);"></div>
@@ -707,10 +638,20 @@
                     </select>
                 </div>
                 
-                <button id="closeTicketBtn" class="btn btn-secondary btn-block" style="display: none; background: var(--info);" onclick="openTicketWebsite()">🔗 Close Ticket</button>
-                
+                <button id="closeTicketBtn" class="btn btn-secondary btn-block" style="display: none; background: var(--info); margin-bottom: 1rem;" onclick="openTicketWebsite()">🔗 Close Ticket</button>
+
                 <div class="input-group">
-                    <label>Completed By (select all who worked on this drop)</label>
+                    <label>Completion Time</label>
+                    <div style="display: flex; gap: 0.75rem; margin-top: 0.75rem;">
+                        <button class="btn btn-secondary" onclick="startTimer()" id="startTimerBtn">▶️ Start</button>
+                        <button class="btn btn-secondary" onclick="stopTimer()" id="stopTimerBtn" style="display: none;">⏹️ Stop</button>
+                        <button class="btn btn-secondary" onclick="resetTimer()" style="background: #64748b;">🔄 Reset</button>
+                    </div>
+                    <div style="font-size: 1.8rem; font-weight: 700; color: var(--primary); margin-top: 1rem; font-family: 'Courier New', monospace; text-align: center;" id="timerDisplay">00:00:00</div>
+                </div>
+
+                <div class="input-group">
+                    <label>Completed By (select all who worked)</label>
                     <div id="modalCrewCheckboxes" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
                 </div>
                 
@@ -718,15 +659,27 @@
                     <label>Footage Needed (feet)</label>
                     <input type="text" id="modalFootage" placeholder="e.g., 400" style="font-size: 1rem;">
                 </div>
-                
+
                 <div class="input-group">
                     <label>Drop Length (feet)</label>
                     <input type="number" id="modalDropLength" placeholder="e.g., 150" min="0">
                 </div>
+
+                <div class="input-group">
+                    <label>Issues Encountered</label>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
+                        <button type="button" class="issue-badge" onclick="toggleIssue(this, 'underground')" style="background: none; border: 2px solid var(--error); padding: 0.5rem 1rem; cursor: pointer;">Underground</button>
+                        <button type="button" class="issue-badge" onclick="toggleIssue(this, 'access_denied')" style="background: none; border: 2px solid var(--error); padding: 0.5rem 1rem; cursor: pointer;">Access Denied</button>
+                        <button type="button" class="issue-badge" onclick="toggleIssue(this, 'wet')" style="background: none; border: 2px solid var(--error); padding: 0.5rem 1rem; cursor: pointer;">Wet</button>
+                        <button type="button" class="issue-badge" onclick="toggleIssue(this, 'blocked')" style="background: none; border: 2px solid var(--error); padding: 0.5rem 1rem; cursor: pointer;">Blocked</button>
+                        <button type="button" class="issue-badge" onclick="toggleIssue(this, 'long')" style="background: none; border: 2px solid var(--error); padding: 0.5rem 1rem; cursor: pointer;">Long Run</button>
+                    </div>
+                    <input type="text" id="modalIssues" placeholder="Selected issues will appear here" readonly style="background: rgba(196, 30, 58, 0.05);">
+                </div>
                 
                 <div class="input-group">
                     <label>Notes</label>
-                    <textarea id="modalNotes" placeholder="Add notes for this drop (access codes, conditions, special instructions, etc.)"></textarea>
+                    <textarea id="modalNotes" placeholder="Additional notes, access codes, conditions..."></textarea>
                 </div>
                 
                 <button class="btn btn-secondary btn-block" onclick="saveJobDetails()">💾 Save Changes</button>
@@ -801,25 +754,6 @@
                 <div id="dropsMapAddressesList"></div>
             </div>
         </div>
-
-        <!-- Footage Update Modal -->
-        <div id="footageUpdateModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; z-index: 1000; align-items: center; justify-content: center;" onclick="closeFootageModal()">
-            <div style="background: white; border-radius: 16px; padding: 2rem; max-width: 400px; width: 90%; box-shadow: var(--shadow-lg);" onclick="event.stopPropagation()">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <h3 style="margin: 0; font-size: 1.2rem; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Update Footage</h3>
-                    <button onclick="closeFootageModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">✕</button>
-                </div>
-                
-                <div id="footageUpdateAddress" style="font-weight: 700; margin-bottom: 1.5rem; word-break: break-word; font-size: 0.9rem; color: var(--text);"></div>
-                
-                <div class="input-group">
-                    <label>Footage Needed (feet)</label>
-                    <input type="text" id="footageUpdateInput" placeholder="e.g., 400">
-                </div>
-                
-                <button class="btn btn-secondary btn-block" onclick="saveFootageUpdate()">💾 Save</button>
-            </div>
-        </div>
     </div>
 
     <!-- CREW TAB -->
@@ -828,7 +762,7 @@
 
         <div class="card">
             <div class="card-title">Add Crew Member</div>
-            <div class="grid-2">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
                 <div class="input-group">
                     <label>Name</label>
                     <input type="text" id="crewName" placeholder="Name">
@@ -847,13 +781,57 @@
         </div>
     </div>
 
+    <!-- MESSAGES TAB -->
+    <div id="messages" class="tab-content">
+        <h2 class="section-title">💬 Team Communication</h2>
+
+        <div class="card">
+            <div class="card-title">Send Message</div>
+            <div class="input-group">
+                <label>Your Name</label>
+                <select id="messageAuthor"></select>
+            </div>
+            <div class="input-group">
+                <label>Message</label>
+                <textarea id="messageText" placeholder="Type your message..."></textarea>
+            </div>
+            <button class="btn btn-secondary btn-block" onclick="sendMessage()">📤 Send Message</button>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Messages</div>
+            <div id="messagesList"></div>
+        </div>
+    </div>
+
+    <!-- REPORTS TAB -->
+    <div id="reports" class="tab-content">
+        <h2 class="section-title">📊 Weekly Reports</h2>
+
+        <div class="card">
+            <div class="card-title">Performance Breakdown</div>
+            <button class="btn btn-secondary btn-block" onclick="generateWeeklyReport()">📊 Generate Report</button>
+            <div id="weeklyReportContainer" style="margin-top: 2rem;"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Crew Productivity</div>
+            <div id="productivityStats"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Common Problem Areas</div>
+            <div id="problemAreasStats"></div>
+        </div>
+    </div>
+
     <!-- EXPENSES TAB -->
     <div id="expenses" class="tab-content">
         <h2 class="section-title">💰 Expense Management</h2>
 
         <div class="card">
             <div class="card-title">Log Expense</div>
-            <div class="grid-2">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
                 <div class="input-group">
                     <label>Date</label>
                     <input type="date" id="expenseDate">
@@ -899,14 +877,37 @@
             <div class="card-title">Data Management</div>
             <button class="btn btn-primary btn-block" onclick="exportData()">📥 Export Data</button>
             <button class="btn btn-secondary btn-block mt-2" onclick="downloadReport()">📄 Download Report</button>
+            <button class="btn btn-primary btn-block mt-2" style="background: #10b981;" onclick="syncWithFirebase()">☁️ Sync to Cloud</button>
             <button class="btn btn-primary btn-block mt-2" style="background: var(--error);" onclick="clearData()">🗑️ Clear All Data</button>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
 
 <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyCwH0y4scb6Qd7dq9e3fjd6Fv91VAe--mU",
+        authDomain: "hild-drops-app.firebaseapp.com",
+        projectId: "hild-drops-app",
+        storageBucket: "hild-drops-app.firebasestorage.app",
+        messagingSenderId: "1026064016146",
+        appId: "1:1026064016146:web:8c78836eea1c135ba089cb",
+        measurementId: "G-JN49Y0WPMP"
+    };
+
+    // Initialize Firebase
+    let db = null;
+    try {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.database();
+    } catch (e) {
+        console.log('Firebase initialization failed:', e);
+    }
+
     let data = {
         locations: [],
         addressesByLocation: {},
@@ -914,7 +915,10 @@
         jobs: {},
         expenses: [],
         jobFilter: 'all',
-        jobNotes: {} // {footage, dropLength, notes, crewMembers: []}
+        jobNotes: {},
+        messages: [],
+        timers: {},
+        darkMode: false
     };
 
     const inspirationalQuotes = [
@@ -933,8 +937,11 @@
     function initSystem() {
         loadFromStorage();
         initDefaultCrew();
+        loadDarkMode();
         updateAllUI();
         generateDailyBrief();
+        listenForFirebaseUpdates();
+        showQuickAddButton();
     }
 
     function initDefaultCrew() {
@@ -987,6 +994,38 @@
         }
     }
 
+    function toggleDarkMode() {
+        data.darkMode = !data.darkMode;
+        saveDarkMode();
+        loadDarkMode();
+    }
+
+    function saveDarkMode() {
+        localStorage.setItem('darkMode', JSON.stringify(data.darkMode));
+    }
+
+    function loadDarkMode() {
+        const saved = localStorage.getItem('darkMode');
+        data.darkMode = saved ? JSON.parse(saved) : false;
+        if (data.darkMode) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+    }
+
+    function showQuickAddButton() {
+        const btn = document.querySelector('.quick-add-button');
+        setTimeout(() => {
+            btn.classList.add('show');
+        }, 1000);
+    }
+
+    function openQuickAdd() {
+        document.querySelector('[data-tab="data-entry"]').click();
+        document.getElementById('entryLocation').focus();
+    }
+
     window.addEventListener('beforeunload', saveToStorage);
 
     const townDatabase = {
@@ -997,124 +1036,184 @@
         'Rockford': { state: 'IL', zip: '61101' }
     };
 
-    // ACCOMMODATION DISPLAY
-    function updateAccommodationSection() {
-        const accommodationSection = document.getElementById('accommodationSection');
-        
-        // Find most recent hotel or airbnb expense
-        const accommodationExpenses = data.expenses.filter(e => 
-            e.type === 'hotel' && e.desc
-        ).sort((a, b) => new Date(b.date) - new Date(a.date));
-        
-        if (accommodationExpenses.length === 0) {
-            accommodationSection.innerHTML = '';
+    // FIREBASE SYNC
+    function syncWithFirebase() {
+        if (!db) {
+            showAlert('Firebase not available. Check your connection.', 'error');
             return;
         }
-        
-        const latest = accommodationExpenses[0];
-        const address = latest.desc; // Address is stored in description
-        
-        // Create Apple Maps link
-        const mapsUrl = `https://maps.apple.com/?q=${encodeURIComponent(address)}`;
-        
-        accommodationSection.innerHTML = `
-            <div class="card" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(196, 30, 58, 0.1) 100%); border: 2px solid rgba(168, 85, 247, 0.3); margin-bottom: 2rem;">
-                <div style="display: flex; justify-content: space-between; align-items: start; gap: 1rem;">
-                    <div style="flex: 1;">
-                        <div style="font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; font-size: 1.1rem;">🏨 Current Accommodation</div>
-                        <div style="font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.75rem; word-break: break-word;">${address}</div>
-                        <div style="font-size: 0.85rem; color: var(--text-light);">Since ${latest.date}</div>
-                    </div>
-                    <a href="${mapsUrl}" target="_blank" class="btn btn-secondary" style="white-space: nowrap; text-decoration: none;">📍 Maps</a>
-                </div>
-            </div>
-        `;
+
+        try {
+            firebase.database().ref('users/' + generateUserId()).set(data);
+            showAlert('✅ Data synced to cloud!', 'success');
+        } catch (e) {
+            showAlert('Error syncing data: ' + e.message, 'error');
+        }
     }
 
-    // DAILY BRIEF SYSTEM
+    function listenForFirebaseUpdates() {
+        if (!db) return;
+        
+        try {
+            firebase.database().ref('messages').on('child_added', (snapshot) => {
+                const msg = snapshot.val();
+                if (!data.messages.find(m => m.timestamp === msg.timestamp)) {
+                    data.messages.push(msg);
+                    saveToStorage();
+                    if (document.getElementById('messages').classList.contains('active')) {
+                        displayMessages();
+                    }
+                }
+            });
+        } catch (e) {
+            console.log('Firebase listen error:', e);
+        }
+    }
+
+    function generateUserId() {
+        let userId = localStorage.getItem('userId');
+        if (!userId) {
+            userId = 'user_' + Date.now();
+            localStorage.setItem('userId', userId);
+        }
+        return userId;
+    }
+
+    // TIMER FUNCTIONS
+    function startTimer() {
+        if (!window.currentJobAddress) return;
+        const addr = window.currentJobAddress;
+        
+        if (!data.timers[addr]) {
+            data.timers[addr] = { started: Date.now(), elapsed: 0, running: false };
+        }
+        
+        data.timers[addr].running = true;
+        data.timers[addr].started = Date.now() - data.timers[addr].elapsed;
+        
+        document.getElementById('startTimerBtn').style.display = 'none';
+        document.getElementById('stopTimerBtn').style.display = 'flex';
+        
+        updateTimerDisplay();
+        window.timerInterval = setInterval(updateTimerDisplay, 100);
+    }
+
+    function stopTimer() {
+        const addr = window.currentJobAddress;
+        if (data.timers[addr]) {
+            data.timers[addr].elapsed = Date.now() - data.timers[addr].started;
+            data.timers[addr].running = false;
+        }
+        clearInterval(window.timerInterval);
+        
+        document.getElementById('startTimerBtn').style.display = 'flex';
+        document.getElementById('stopTimerBtn').style.display = 'none';
+    }
+
+    function resetTimer() {
+        const addr = window.currentJobAddress;
+        if (data.timers[addr]) {
+            data.timers[addr] = { started: 0, elapsed: 0, running: false };
+        }
+        document.getElementById('timerDisplay').textContent = '00:00:00';
+        document.getElementById('startTimerBtn').style.display = 'flex';
+        document.getElementById('stopTimerBtn').style.display = 'none';
+        clearInterval(window.timerInterval);
+    }
+
+    function updateTimerDisplay() {
+        const addr = window.currentJobAddress;
+        if (!addr || !data.timers[addr]) return;
+        
+        let elapsed = data.timers[addr].elapsed;
+        if (data.timers[addr].running) {
+            elapsed = Date.now() - data.timers[addr].started;
+        }
+        
+        const hours = Math.floor(elapsed / 3600000);
+        const minutes = Math.floor((elapsed % 3600000) / 60000);
+        const seconds = Math.floor((elapsed % 60000) / 1000);
+        
+        document.getElementById('timerDisplay').textContent = 
+            `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    // ISSUE TRACKING
+    let selectedIssues = [];
+
+    function toggleIssue(btn, issue) {
+        const idx = selectedIssues.indexOf(issue);
+        if (idx > -1) {
+            selectedIssues.splice(idx, 1);
+            btn.style.background = 'none';
+            btn.style.color = 'var(--error)';
+        } else {
+            selectedIssues.push(issue);
+            btn.style.background = 'var(--error)';
+            btn.style.color = 'white';
+        }
+        document.getElementById('modalIssues').value = selectedIssues.join(', ');
+    }
+
+    // DAILY BRIEF
     async function generateDailyBrief() {
         const briefContainer = document.getElementById('briefContainer');
         briefContainer.innerHTML = '<div class="alert alert-info">📊 Generating your daily brief...</div>';
 
         try {
-            // Get user location
             let userTown = localStorage.getItem('briefTown');
             
             if (!userTown) {
-                // Try to get location or ask user
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        position => {
-                            askForTown();
-                        },
-                        error => {
-                            askForTown();
-                        }
-                    );
-                    return;
-                } else {
-                    askForTown();
+                userTown = Object.keys(data.addressesByLocation)[0] || 'Westville';
+                if (!userTown) {
+                    briefContainer.innerHTML = '<div class="alert alert-info">Add addresses to see your brief!</div>';
                     return;
                 }
             }
 
-            // Get weather
             const weather = await getWeather(userTown);
-            
-            // Get today's jobs
             const todayJobs = getTodayJobs(userTown);
-            
-            // Get common issues from notes
             const commonIssues = getCommonIssues(userTown);
-            
-            // Calculate dynamic goal
             const dynamicGoal = calculateDynamicGoal(todayJobs);
             
-            // Build brief
-            let briefHTML = '<div class="brief-card">';
+            let briefHTML = '<div class="brief-card" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow-lg);">';
             briefHTML += '<div class="brief-content">';
-            briefHTML += `<div class="brief-title">🎯 Today's Mission - ${userTown}</div>`;
+            briefHTML += `<div style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">🎯 Today's Mission - ${userTown}</div>`;
             
-            // Weather section
-            briefHTML += '<div class="brief-section">';
-            briefHTML += `<div class="weather-icon">${weather.icon}</div>`;
-            briefHTML += `<div class="brief-label">Weather</div>`;
-            briefHTML += `<div class="brief-value">${weather.temp}°F - ${weather.description}</div>`;
+            briefHTML += '<div style="margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.2);">';
+            briefHTML += `<div style="font-weight: 700; font-size: 0.9rem; opacity: 0.9; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Weather</div>`;
+            briefHTML += `<div style="font-size: 1.1rem; font-weight: 600;">${weather.icon} ${weather.temp}°F - ${weather.description}</div>`;
             briefHTML += '</div>';
             
-            // Drops breakdown
-            briefHTML += '<div class="brief-section">';
-            briefHTML += `<div class="brief-label">Drop Breakdown</div>`;
-            briefHTML += `<div class="brief-value">${todayJobs.long} Long Drops (700+ft) | ${todayJobs.short} Short Drops (<300ft)</div>`;
+            briefHTML += '<div style="margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.2);">';
+            briefHTML += `<div style="font-weight: 700; font-size: 0.9rem; opacity: 0.9; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Drop Breakdown</div>`;
+            briefHTML += `<div style="font-size: 1.1rem; font-weight: 600;">${todayJobs.long} Long Drops (700+ft) | ${todayJobs.short} Short Drops (<300ft)</div>`;
             briefHTML += `<div style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.9;">Total: ${todayJobs.total} drops remaining</div>`;
             briefHTML += '</div>';
             
-            // Common issues
             if (commonIssues.length > 0) {
-                briefHTML += '<div class="brief-section">';
-                briefHTML += `<div class="brief-label">⚠️ Watch Out For</div>`;
-                briefHTML += `<div class="brief-value">${commonIssues.join(' • ')}</div>`;
+                briefHTML += '<div style="margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.2);">';
+                briefHTML += `<div style="font-weight: 700; font-size: 0.9rem; opacity: 0.9; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">⚠️ Watch Out For</div>`;
+                briefHTML += `<div style="font-size: 1.1rem; font-weight: 600;">${commonIssues.join(' • ')}</div>`;
                 briefHTML += '</div>';
             }
             
-            // Goal
-            briefHTML += '<div class="brief-section">';
-            briefHTML += `<div class="brief-label">Today's Goal</div>`;
-            briefHTML += `<div class="brief-value">${dynamicGoal} drops 🎯</div>`;
+            briefHTML += '<div style="margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.2);">';
+            briefHTML += `<div style="font-weight: 700; font-size: 0.9rem; opacity: 0.9; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Today's Goal</div>`;
+            briefHTML += `<div style="font-size: 1.1rem; font-weight: 600;">${dynamicGoal} drops 🎯</div>`;
             briefHTML += '</div>';
             
-            // Progress
             const completed = Object.values(data.jobs).filter(j => j.status === 'done').length;
             const percentage = Object.keys(data.jobs).length > 0 ? Math.round((completed / Object.keys(data.jobs).length) * 100) : 0;
             
-            briefHTML += '<div class="brief-section" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">';
-            briefHTML += `<div class="brief-label">Overall Progress</div>`;
+            briefHTML += '<div style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">';
+            briefHTML += `<div style="font-weight: 700; font-size: 0.9rem; opacity: 0.9; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Overall Progress</div>`;
             if (percentage >= 80) {
-                briefHTML += `<div class="brief-value">🔥 ${percentage}% - You're crushing it!</div>`;
+                briefHTML += `<div style="font-size: 1.1rem; font-weight: 600;">🔥 ${percentage}% - You're crushing it!</div>`;
             } else if (percentage >= 50) {
-                briefHTML += `<div class="brief-value">⚡ ${percentage}% - Great progress!</div>`;
+                briefHTML += `<div style="font-size: 1.1rem; font-weight: 600;">⚡ ${percentage}% - Great progress!</div>`;
             } else {
-                briefHTML += `<div class="brief-value">💪 ${percentage}% - Keep pushing!</div>`;
+                briefHTML += `<div style="font-size: 1.1rem; font-weight: 600;">💪 ${percentage}% - Keep pushing!</div>`;
             }
             briefHTML += '</div>';
             
@@ -1125,23 +1224,12 @@
         } catch (error) {
             console.error('Error generating brief:', error);
             const randomQuote = inspirationalQuotes[Math.floor(Math.random() * inspirationalQuotes.length)];
-            briefContainer.innerHTML = `<div class="brief-card"><div class="brief-content"><div class="brief-title">✨ Daily Inspiration</div><div class="brief-value">${randomQuote}</div></div></div>`;
-        }
-    }
-
-    function askForTown() {
-        const town = prompt('Which town are you working in today?', 'Westville');
-        if (town && data.locations.includes(town)) {
-            localStorage.setItem('briefTown', town);
-            generateDailyBrief();
-        } else if (town) {
-            alert('Town not found in your locations');
+            briefContainer.innerHTML = `<div style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white; border-radius: 12px; padding: 2rem; box-shadow: var(--shadow-lg);"><div style="font-size: 1.3rem; font-weight: 800;">✨ Daily Inspiration</div><div style="font-size: 1.1rem; font-weight: 600; margin-top: 1rem;">${randomQuote}</div></div>`;
         }
     }
 
     async function getWeather(town) {
         try {
-            // Using Open-Meteo free API
             const geocode = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${town}&count=1&language=en&format=json`);
             const geoData = await geocode.json();
             
@@ -1204,13 +1292,11 @@
         
         Object.entries(data.jobs).forEach(([addr, job]) => {
             if (job.location === town) {
-                const notes = data.jobNotes[addr]?.notes || '';
-                if (notes) {
-                    const keywords = ['access', 'difficult', 'underground', 'long', 'blocked', 'wet', 'tight', 'hidden', 'roof', 'wall'];
-                    keywords.forEach(keyword => {
-                        if (notes.toLowerCase().includes(keyword)) {
-                            issues[keyword] = (issues[keyword] || 0) + 1;
-                        }
+                const notes = data.jobNotes[addr] || {};
+                if (notes.issues && notes.issues.length > 0) {
+                    notes.issues.split(',').forEach(issue => {
+                        const clean = issue.trim();
+                        issues[clean] = (issues[clean] || 0) + 1;
                     });
                 }
             }
@@ -1223,17 +1309,44 @@
     }
 
     function calculateDynamicGoal(todayJobs) {
-        // Base goal is 8
         let goal = 8;
-        
-        // Adjust based on difficulty
         const avgDifficulty = (todayJobs.long * 1.5 + todayJobs.short * 0.5) / (todayJobs.total || 1);
         
         if (avgDifficulty > 1) {
             goal = Math.round(goal * (2 / avgDifficulty));
         }
         
-        return Math.max(goal, 4); // Minimum of 4
+        return Math.max(goal, 4);
+    }
+
+    function updateAccommodationSection() {
+        const accommodationSection = document.getElementById('accommodationSection');
+        
+        const accommodationExpenses = data.expenses.filter(e => 
+            e.type === 'hotel' && e.desc
+        ).sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        if (accommodationExpenses.length === 0) {
+            accommodationSection.innerHTML = '';
+            return;
+        }
+        
+        const latest = accommodationExpenses[0];
+        const address = latest.desc;
+        const mapsUrl = `https://maps.apple.com/?q=${encodeURIComponent(address)}`;
+        
+        accommodationSection.innerHTML = `
+            <div class="card" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(196, 30, 58, 0.1) 100%); border: 2px solid rgba(168, 85, 247, 0.3); margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: start; gap: 1rem;">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; font-size: 1.1rem;">🏨 Current Accommodation</div>
+                        <div style="font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.75rem; word-break: break-word;">${address}</div>
+                        <div style="font-size: 0.85rem; color: var(--text-light);">Since ${latest.date}</div>
+                    </div>
+                    <a href="${mapsUrl}" target="_blank" class="btn btn-secondary" style="white-space: nowrap; text-decoration: none;">📍 Maps</a>
+                </div>
+            </div>
+        `;
     }
 
     function dismissInstructions() {
@@ -1277,25 +1390,10 @@
     }
 
     // IMAGE UPLOAD
-    const dragDropZone = document.getElementById('dragDropZone');
     const imageInput = document.getElementById('imageInput');
 
-    dragDropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dragDropZone.classList.add('dragover');
-    });
-
-    dragDropZone.addEventListener('dragleave', () => {
-        dragDropZone.classList.remove('dragover');
-    });
-
-    dragDropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dragDropZone.classList.remove('dragover');
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            handleImageFile(files[0]);
-        }
+    document.querySelector('[for="imageInput"]').addEventListener('click', () => {
+        imageInput.click();
     });
 
     imageInput.addEventListener('change', (e) => {
@@ -1507,7 +1605,9 @@
                                     data.jobNotes[fullAddr] = {
                                         dropLength: '',
                                         footage: '',
-                                        notes: ''
+                                        notes: '',
+                                        crewMembers: [],
+                                        issues: ''
                                     };
                                 }
                                 count++;
@@ -1564,6 +1664,13 @@
                         status: 'todo',
                         location: loc,
                         createdAt: new Date().toISOString()
+                    };
+                    data.jobNotes[addr] = {
+                        dropLength: '',
+                        footage: '',
+                        notes: '',
+                        crewMembers: [],
+                        issues: ''
                     };
                     count++;
                 }
@@ -1663,9 +1770,9 @@
     function displayOptimalRoutes(routes, location) {
         let html = '';
         routes.forEach((route, idx) => {
-            html += `<div class="route-item">
-                <div class="route-header">${location} Route - ${route.stops.length} Stops</div>
-                <div class="route-stops">📏 ${route.distance} miles | ⏱️ ~${route.time} minutes</div>
+            html += `<div style="padding: 1.25rem; background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(15, 118, 110, 0.05) 100%); border-radius: 10px; margin-bottom: 1rem; border-left: 5px solid var(--info);">
+                <div style="font-weight: 700; color: var(--primary); margin-bottom: 0.75rem; font-size: 1.05rem;">${location} Route - ${route.stops.length} Stops</div>
+                <div style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 0.75rem; display: flex; gap: 1rem; flex-wrap: wrap;">📏 ${route.distance} miles | ⏱️ ~${route.time} minutes</div>
                 <div style="font-size: 0.9rem; color: var(--text-light);">
                     ${route.stops.map((s, i) => `${i+1}. ${s}`).join('<br>')}
                 </div>
@@ -1714,10 +1821,6 @@
     function filterJobs(filter) {
         if (filter) data.jobFilter = filter;
 
-        document.querySelectorAll('.job-filter-btn').forEach(btn => btn.classList.remove('active'));
-        const activeBtn = document.querySelector(`[onclick="filterJobs('${data.jobFilter}')"]`);
-        if (activeBtn) activeBtn.classList.add('active');
-
         const search = document.getElementById('jobSearch')?.value?.toLowerCase() || '';
         let filtered = Object.entries(data.jobs);
 
@@ -1742,11 +1845,13 @@
                 const notes = data.jobNotes[addr] || {};
                 const footageDisplay = notes.footage ? ` (${notes.footage}ft)` : '';
                 const hasNotes = notes.notes || notes.dropLength;
+                const hasIssues = notes.issues && notes.issues.length > 0;
                 
                 return `<div class="job-card ${job.status}" data-addr-key="${idx}" style="cursor: pointer;" onclick="openJobModalByKey(this.dataset.addrKey)">
                     <div class="job-card-address">${addr}${footageDisplay}</div>
                     <div class="job-card-meta">${job.location}</div>
                     ${hasNotes ? `<div style="font-size: 0.8rem; color: var(--primary); margin-top: 0.5rem;">📝 Has notes</div>` : ''}
+                    ${hasIssues ? `<div style="font-size: 0.8rem; margin-top: 0.5rem;">${notes.issues.split(',').map(i => `<span class="issue-badge">${i.trim()}</span>`).join('')}</div>` : ''}
                 </div>`;
             }).join('');
         }
@@ -1762,7 +1867,7 @@
     }
 
     function openJobModal(address, status) {
-        const notes = data.jobNotes[address] || { dropLength: '', footage: '', notes: '', crewMembers: [] };
+        const notes = data.jobNotes[address] || { dropLength: '', footage: '', notes: '', crewMembers: [], issues: '' };
         
         document.getElementById('modalTitle').textContent = 'Drop Details';
         document.getElementById('modalAddress').textContent = address;
@@ -1770,6 +1875,26 @@
         document.getElementById('modalDropLength').value = notes.dropLength || '';
         document.getElementById('modalFootage').value = notes.footage || '';
         document.getElementById('modalNotes').value = notes.notes || '';
+        document.getElementById('modalIssues').value = notes.issues || '';
+        
+        // Reset selected issues
+        selectedIssues = (notes.issues || '').split(',').filter(i => i.trim()).map(i => i.trim().toLowerCase().replace(/\s+/g, '_'));
+        document.querySelectorAll('#modalCrewCheckboxes input[type="checkbox"]').forEach(cb => {
+            cb.checked = false;
+        });
+        
+        // Update issue button styling
+        document.querySelectorAll('[onclick*="toggleIssue"]').forEach(btn => {
+            btn.style.background = 'none';
+            btn.style.color = 'var(--error)';
+        });
+        selectedIssues.forEach(issue => {
+            const btn = Array.from(document.querySelectorAll('[onclick*="toggleIssue"]')).find(b => b.textContent.toLowerCase().includes(issue.replace('_', ' ')));
+            if (btn) {
+                btn.style.background = 'var(--error)';
+                btn.style.color = 'white';
+            }
+        });
         
         // Populate crew member checkboxes
         const checkboxContainer = document.getElementById('modalCrewCheckboxes');
@@ -1787,7 +1912,12 @@
             checkboxContainer.appendChild(checkbox);
         });
         
+        // Reset timer
         window.currentJobAddress = address;
+        data.timers[address] = data.timers[address] || { started: 0, elapsed: 0, running: false };
+        updateTimerDisplay();
+        document.getElementById('startTimerBtn').style.display = 'flex';
+        document.getElementById('stopTimerBtn').style.display = 'none';
         
         updateTicketButton();
         
@@ -1799,6 +1929,7 @@
         const modal = document.getElementById('jobDetailsModal');
         modal.style.display = 'none';
         window.currentJobAddress = null;
+        clearInterval(window.timerInterval);
     }
 
     function updateTicketButton() {
@@ -1836,6 +1967,19 @@
             }
         });
         
+        // Get timer duration
+        let duration = '';
+        if (data.timers[address]) {
+            let elapsed = data.timers[address].elapsed;
+            if (data.timers[address].running) {
+                elapsed = Date.now() - data.timers[address].started;
+            }
+            const hours = Math.floor(elapsed / 3600000);
+            const minutes = Math.floor((elapsed % 3600000) / 60000);
+            const seconds = Math.floor((elapsed % 60000) / 1000);
+            duration = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+        
         if (data.jobs[address]) {
             data.jobs[address].status = status;
         }
@@ -1844,10 +1988,13 @@
             dropLength: dropLength ? parseInt(dropLength) : '',
             footage: footage,
             notes: notes,
-            crewMembers: crewMembers
+            crewMembers: crewMembers,
+            issues: selectedIssues.join(', '),
+            duration: duration
         };
         
         saveToStorage();
+        syncWithFirebase();
         updateAllUI();
         closeJobModal();
         showAlert('✅ Job details saved!', 'success');
@@ -1881,6 +2028,7 @@
         delete data.jobNotes[address];
         
         saveToStorage();
+        syncWithFirebase();
         updateAllUI();
         closeJobModal();
         showAlert('🗑️ Drop deleted successfully!', 'success');
@@ -1936,6 +2084,34 @@
         document.getElementById('statTotal').textContent = total;
         document.getElementById('statDone').textContent = done;
         document.getElementById('statInProg').textContent = Object.values(data.jobs).filter(j => j.status === 'inprogress').length;
+        
+        updateTodayTimeSummary();
+    }
+
+    function updateTodayTimeSummary() {
+        const summary = document.getElementById('todayTimeSummary');
+        
+        const crewTimes = {};
+        Object.entries(data.jobNotes).forEach(([addr, notes]) => {
+            if (notes.crewMembers && notes.crewMembers.length > 0 && notes.duration) {
+                notes.crewMembers.forEach(member => {
+                    crewTimes[member] = (crewTimes[member] || '00:00:00');
+                });
+            }
+        });
+        
+        if (Object.keys(crewTimes).length === 0) {
+            summary.innerHTML = '<p class="text-muted">No time tracked yet today</p>';
+            return;
+        }
+        
+        summary.innerHTML = Object.entries(crewTimes)
+            .map(([name, time]) => `
+                <div style="padding: 0.75rem; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border);">
+                    <span>${name}</span>
+                    <span style="font-weight: 700; color: var(--primary);">${time}</span>
+                </div>
+            `).join('');
     }
 
     function filterDropsMapAddresses() {
@@ -1997,14 +2173,42 @@
         window.currentFootageAddress = address;
         
         const modal = document.getElementById('footageUpdateModal');
-        modal.style.display = 'flex';
+        if (!modal) {
+            createFootageModal();
+        }
         
+        document.getElementById('footageUpdateModal').style.display = 'flex';
         document.getElementById('footageUpdateInput').focus();
+    }
+
+    function createFootageModal() {
+        const modal = document.createElement('div');
+        modal.id = 'footageUpdateModal';
+        modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; z-index: 1000; align-items: center; justify-content: center;';
+        modal.onclick = closeFootageModal;
+        modal.innerHTML = `
+            <div style="background: var(--card); border-radius: 16px; padding: 2rem; max-width: 400px; width: 90%; box-shadow: var(--shadow-lg);" onclick="event.stopPropagation()">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 style="margin: 0; font-size: 1.2rem; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Update Footage</h3>
+                    <button onclick="closeFootageModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text);">✕</button>
+                </div>
+                
+                <div id="footageUpdateAddress" style="font-weight: 700; margin-bottom: 1.5rem; word-break: break-word; font-size: 0.9rem; color: var(--text);"></div>
+                
+                <div class="input-group">
+                    <label>Footage Needed (feet)</label>
+                    <input type="text" id="footageUpdateInput" placeholder="e.g., 400">
+                </div>
+                
+                <button class="btn btn-secondary btn-block" onclick="saveFootageUpdate()">💾 Save</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
     }
 
     function closeFootageModal() {
         const modal = document.getElementById('footageUpdateModal');
-        modal.style.display = 'none';
+        if (modal) modal.style.display = 'none';
         window.currentFootageAddress = null;
     }
 
@@ -2025,6 +2229,7 @@
         data.jobNotes[address].footage = footage;
         
         saveToStorage();
+        syncWithFirebase();
         updateAllUI();
         closeFootageModal();
         
@@ -2048,6 +2253,72 @@
         saveToStorage();
         updateAllUI();
         showAlert(`${name} added!`, 'success');
+    }
+
+    function sendMessage() {
+        const author = document.getElementById('messageAuthor').value;
+        const text = document.getElementById('messageText').value.trim();
+
+        if (!author || !text) { showAlert('Fill all fields', 'error'); return; }
+
+        const message = {
+            author: author,
+            text: text,
+            timestamp: new Date().toISOString(),
+            id: Date.now()
+        };
+
+        data.messages.push(message);
+        
+        if (db) {
+            try {
+                firebase.database().ref('messages/' + message.id).set(message);
+            } catch (e) {
+                console.log('Firebase send error:', e);
+            }
+        }
+
+        document.getElementById('messageText').value = '';
+
+        saveToStorage();
+        displayMessages();
+        showAlert('✅ Message sent!', 'success');
+    }
+
+    function displayMessages() {
+        const list = document.getElementById('messagesList');
+        
+        if (data.messages.length === 0) {
+            list.innerHTML = '<p class="text-muted">No messages yet</p>';
+            return;
+        }
+
+        list.innerHTML = data.messages.slice().reverse().map(msg => {
+            const time = new Date(msg.timestamp).toLocaleTimeString();
+            return `<div class="message-item">
+                <div class="message-author">${msg.author}</div>
+                <div class="message-text">${msg.text}</div>
+                <div class="message-time">${time}</div>
+            </div>`;
+        }).join('');
+    }
+
+    function generateWeeklyReport() {
+        const container = document.getElementById('weeklyReportContainer');
+        
+        const total = Object.keys(data.jobs).length;
+        const completed = Object.values(data.jobs).filter(j => j.status === 'done').length;
+        const inProgress = Object.values(data.jobs).filter(j => j.status === 'inprogress').length;
+        const pending = total - completed - inProgress;
+
+        let html = '<div style="background: linear-gradient(135deg, rgba(196, 30, 58, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%); padding: 1.5rem; border-radius: 10px; border-left: 4px solid var(--primary);">';
+        html += '<div style="margin-bottom: 1rem;"><strong>Total Drops:</strong> ' + total + '</div>';
+        html += '<div style="margin-bottom: 1rem;"><strong>Completed:</strong> ' + completed + ' (' + (total > 0 ? Math.round((completed/total)*100) : 0) + '%)</div>';
+        html += '<div style="margin-bottom: 1rem;"><strong>In Progress:</strong> ' + inProgress + '</div>';
+        html += '<div><strong>Pending:</strong> ' + pending + '</div>';
+        html += '</div>';
+
+        container.innerHTML = html;
     }
 
     function addExpense() {
@@ -2115,7 +2386,10 @@
             jobs: {},
             expenses: [],
             jobFilter: 'all',
-            jobNotes: {}
+            jobNotes: {},
+            messages: [],
+            timers: {},
+            darkMode: false
         };
         localStorage.removeItem('metroData');
         initSystem();
@@ -2127,15 +2401,23 @@
         populateDropsMapTownFilter();
         updateAccommodationSection();
 
-        const crewHtml = data.crewMembers.length > 0 ? data.crewMembers.map(c => `
-            <div style="padding: 1.25rem; background: linear-gradient(135deg, rgba(15, 118, 110, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%); border-radius: 10px; margin-bottom: 1rem; border-left: 4px solid var(--primary);">
+        // Update crew roster
+        const crewRosterHtml = data.crewMembers.length > 0 ? data.crewMembers.map(c => `
+            <div style="padding: 1.25rem; background: linear-gradient(135deg, rgba(196, 30, 58, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%); border-radius: 10px; margin-bottom: 1rem; border-left: 4px solid var(--primary);">
                 <div><strong>${c.name}</strong></div>
                 <div style="font-size: 0.9rem; color: var(--text-light);">${c.phone || 'No phone'}</div>
             </div>
         `).join('') : '<p class="text-muted">No crew members yet</p>';
         const crewRoster = document.getElementById('crewRoster');
-        if (crewRoster) crewRoster.innerHTML = crewHtml;
+        if (crewRoster) crewRoster.innerHTML = crewRosterHtml;
 
+        // Update message author dropdown
+        const messageAuthor = document.getElementById('messageAuthor');
+        if (messageAuthor) {
+            messageAuthor.innerHTML = data.crewMembers.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+        }
+
+        // Update expenses
         const byType = {};
         let total = 0;
         data.expenses.forEach(e => {
@@ -2161,6 +2443,56 @@
             `).join('') : '<p class="text-muted">No expenses logged</p>';
         }
 
+        // Update productivity stats
+        const productivityStats = document.getElementById('productivityStats');
+        if (productivityStats) {
+            const crewStats = {};
+            Object.entries(data.jobs).forEach(([addr, job]) => {
+                const notes = data.jobNotes[addr] || {};
+                if (job.status === 'done' && notes.crewMembers) {
+                    notes.crewMembers.forEach(member => {
+                        if (!crewStats[member]) {
+                            crewStats[member] = 0;
+                        }
+                        crewStats[member]++;
+                    });
+                }
+            });
+
+            productivityStats.innerHTML = Object.entries(crewStats).length > 0 ? Object.entries(crewStats)
+                .sort((a, b) => b[1] - a[1])
+                .map(([name, count], idx) => `
+                    <div style="padding: 1rem; background: linear-gradient(135deg, rgba(196, 30, 58, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%); border-radius: 10px; margin-bottom: 0.75rem; display: flex; justify-content: space-between; border-left: 4px solid var(--primary);">
+                        <span><strong>${idx + 1}. ${name}</strong></span>
+                        <span style="font-weight: 700; color: var(--primary);">${count} drops</span>
+                    </div>
+                `).join('') : '<p class="text-muted">No completed drops yet</p>';
+        }
+
+        // Update problem areas
+        const problemAreasStats = document.getElementById('problemAreasStats');
+        if (problemAreasStats) {
+            const problems = {};
+            Object.entries(data.jobs).forEach(([addr, job]) => {
+                const notes = data.jobNotes[addr] || {};
+                if (notes.issues) {
+                    const street = addr.split('\n')[0];
+                    problems[street] = (problems[street] || 0) + 1;
+                }
+            });
+
+            problemAreasStats.innerHTML = Object.entries(problems).length > 0 ? Object.entries(problems)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5)
+                .map(([street, count]) => `
+                    <div style="padding: 0.75rem; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border);">
+                        <span>${street}</span>
+                        <span style="font-weight: 700; color: var(--error);">${count} issues</span>
+                    </div>
+                `).join('') : '<p class="text-muted">No issues logged yet</p>';
+        }
+
+        displayMessages();
         filterJobs();
     }
 
@@ -2169,7 +2501,7 @@
         if (!container) return;
         const alert = document.createElement('div');
         alert.className = `alert alert-${type}`;
-        alert.innerHTML = `<div style="flex:1;">${message}</div><div class="alert-close" onclick="this.parentElement.remove()">✕</div>`;
+        alert.innerHTML = `<div style="flex:1;">${message}</div><div class="alert-close" onclick="this.parentElement.remove()" style="cursor: pointer; font-weight: 700; margin-left: auto; opacity: 0.7;">✕</div>`;
         container.insertBefore(alert, container.firstChild);
         setTimeout(() => {
             if (alert.parentElement) alert.remove();
@@ -2178,6 +2510,7 @@
 
     const expDateEl = document.getElementById('expenseDate');
     if (expDateEl) expDateEl.valueAsDate = new Date();
+
     initSystem();
 </script>
 ```
