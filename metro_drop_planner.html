@@ -904,8 +904,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
 
 <script>
     // Valid crew names for login
@@ -960,40 +958,7 @@
 </script>
 
 <script>
-    // Firebase Configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyCwH0y4scb6Qd7dq9e3fjd6Fv91VAe--mU",
-        authDomain: "hild-drops-app.firebaseapp.com",
-        projectId: "hild-drops-app",
-        storageBucket: "hild-drops-app.firebasestorage.app",
-        messagingSenderId: "1026064016146",
-        appId: "1:1026064016146:web:8c78836eea1c135ba089cb"
-    };
-
-    // Initialize Firebase with Firestore
-    let db = null;
-    let firebaseReady = false;
-
-    function initFirebase() {
-        try {
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
-            db = firebase.firestore();
-            firebaseReady = true;
-            console.log('✅ Firestore ready');
-        } catch (e) {
-            console.error('Firebase error:', e.message);
-            firebaseReady = false;
-        }
-    }
-
-    // Initialize when page loads
-    document.addEventListener('DOMContentLoaded', () => {
-        if (typeof firebase !== 'undefined') {
-            initFirebase();
-        }
-    });
+    // Local storage only - no cloud sync
 
     let data = {
         locations: [],
@@ -1126,44 +1091,13 @@
         'Rockford': { state: 'IL', zip: '61101' }
     };
 
-    // FIRESTORE SYNC
+    // Local storage only
     function syncWithFirebase() {
-        if (!firebaseReady || !db) {
-            showAlert('Firestore not ready. Using local storage.', 'warning');
-            return;
-        }
-
-        try {
-            const crew = sessionStorage.getItem('crewLogin') || 'team';
-            firebase.firestore().collection('teams').doc(crew).set(data, { merge: true })
-                .then(() => {
-                    showAlert('✅ Data synced to cloud!', 'success');
-                })
-                .catch((error) => {
-                    showAlert('Sync error: ' + error.message, 'error');
-                });
-        } catch (e) {
-            showAlert('Error: ' + e.message, 'error');
-        }
+        showAlert('✅ Data saved locally!', 'success');
     }
 
     function listenForFirebaseUpdates() {
-        if (!firebaseReady || !db) {
-            return;
-        }
-        
-        try {
-            const crew = sessionStorage.getItem('crewLogin') || 'team';
-            firebase.firestore().collection('teams').doc(crew).onSnapshot((doc) => {
-                if (doc.exists) {
-                    Object.assign(data, doc.data());
-                    saveToStorage();
-                    updateAllUI();
-                }
-            });
-        } catch (e) {
-            console.log('Firestore error:', e.message);
-        }
+        // Local storage only - no cloud listeners
     }
 
     // TIMER FUNCTIONS
@@ -2352,28 +2286,10 @@
             author: author,
             text: text,
             timestamp: new Date().toISOString(),
-            crew: sessionStorage.getItem('crewLogin') || 'team'
+            id: Date.now()
         };
 
-        // Save to local storage
         data.messages.push(message);
-        
-        // Save to Firestore
-        if (firebaseReady && db) {
-            try {
-                firebase.firestore().collection('messages').add(message)
-                    .then(() => {
-                        console.log('Message sent to Firestore');
-                    })
-                    .catch((error) => {
-                        console.log('Message send error:', error);
-                        showAlert('Note: Message saved locally only', 'warning');
-                    });
-            } catch (e) {
-                console.log('Message error:', e);
-            }
-        }
-
         document.getElementById('messageText').value = '';
 
         saveToStorage();
