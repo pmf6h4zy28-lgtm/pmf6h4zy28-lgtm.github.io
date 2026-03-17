@@ -48,24 +48,29 @@
 
 ```
 <script>
+    console.log('INDEX.HTML LOADED');
+    console.log('Full URL:', window.location.href);
+    console.log('Search params:', window.location.search);
+    
     // Check for OAuth code in URL
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
     
+    console.log('Code from URL:', code);
+    
     if (code) {
-        console.log('✅ Got authorization code!');
+        console.log('✅ Got authorization code! Storing and redirecting...');
         localStorage.setItem('googleAccessToken', code);
+        console.log('Token stored:', localStorage.getItem('googleAccessToken'));
         window.history.replaceState({}, document.title, '/');
+        console.log('Redirecting to /metro_drop_planner.html');
         window.location.href = '/metro_drop_planner.html';
     } else {
+        console.log('No code in URL');
         const token = localStorage.getItem('googleAccessToken');
-        if (token) {
-            console.log('✅ Already logged in');
-            window.location.href = '/metro_drop_planner.html';
-        } else {
-            console.log('Redirecting to app');
-            window.location.href = '/metro_drop_planner.html';
-        }
+        console.log('Token in storage:', token ? 'YES' : 'NO');
+        console.log('Redirecting to /metro_drop_planner.html');
+        window.location.href = '/metro_drop_planner.html';
     }
 </script>
 ```
