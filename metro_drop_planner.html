@@ -454,22 +454,17 @@
 
 </head>
 <body>
-    <!-- LOGIN SCREEN -->
-    <div id="loginScreen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); display: flex; align-items: center; justify-content: center; z-index: 2000; flex-direction: column;">
+    <!-- GOOGLE LOGIN SCREEN -->
+    <div id="googleLoginScreen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); display: flex; align-items: center; justify-content: center; z-index: 2000; flex-direction: column;">
         <div style="text-align: center; color: white;">
             <div style="font-size: 3.5rem; font-weight: 900; color: white; letter-spacing: 4px; font-family: 'Georgia', 'Garamond', serif; margin-bottom: 0.5rem;">HILD</div>
             <div style="font-size: 1rem; font-weight: 700; color: #fbbf24; letter-spacing: 2px; margin-bottom: 3rem;">LANDSCAPING</div>
 
 ```
         <div style="background: rgba(255,255,255,0.1); padding: 2rem; border-radius: 16px; max-width: 300px;">
-            <div style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem;">Team Login</div>
-            <div style="margin-bottom: 1rem; font-size: 0.9rem; opacity: 0.9;">Enter your crew member name:</div>
-            
-            <input type="password" id="loginPassword" placeholder="e.g., Alex" style="width: 100%; padding: 1rem; border: none; border-radius: 8px; margin-bottom: 1rem; font-size: 1rem; text-align: center;">
-            
-            <button onclick="attemptLogin()" style="width: 100%; padding: 1rem; background: #fbbf24; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; color: var(--primary);">Login</button>
-            
-            <div style="margin-top: 1rem; font-size: 0.85rem; opacity: 0.8;">Valid names: Alex, Luke, AJ, Trent, Cayden</div>
+            <div style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem;">Sign in with Google</div>
+            <button id="googleSignInBtn" onclick="requestGoogleAuth()" style="width: 100%; padding: 1rem; background: white; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; color: var(--primary);">Sign In</button>
+            <div style="margin-top: 1rem; font-size: 0.85rem; opacity: 0.8;">Syncs data instantly across all devices</div>
         </div>
     </div>
 </div>
@@ -907,53 +902,40 @@
 <script src="https://apis.google.com/js/api.js"></script>
 
 <script>
-    // Valid crew names for login
-    const VALID_CREW = ['alex', 'luke', 'aj', 'trent', 'cayden'];
-
-    function attemptLogin() {
-        const password = document.getElementById('loginPassword').value.trim().toLowerCase();
-        
-        if (!password) {
-            alert('Please enter your crew name');
-            return;
-        }
-        
-        if (!VALID_CREW.includes(password)) {
-            alert('Invalid crew name. Try: Alex, Luke, AJ, Trent, or Cayden');
-            return;
-        }
-        
-        // Store login in sessionStorage
-        sessionStorage.setItem('crewLogin', password);
-        sessionStorage.setItem('loginTime', Date.now());
+    // Google login handler
+    function handleGoogleSuccess(response) {
+        googleAccessToken = response.access_token;
+        sessionStorage.setItem('googleToken', googleAccessToken);
+        console.log('✅ Google authenticated');
         
         // Hide login screen
-        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('googleLoginScreen').style.display = 'none';
         
         // Initialize app
         initSystem();
+        
+        // Start sync
+        syncWithGoogleDrive();
     }
 
-    // Check if logged in on page load
-    function checkLogin() {
-        const login = sessionStorage.getItem('crewLogin');
-        if (!login) {
-            document.getElementById('loginScreen').style.display = 'flex';
-            return false;
+    // Check if already logged in
+    function checkGoogleLogin() {
+        const token = sessionStorage.getItem('googleToken');
+        if (token) {
+            googleAccessToken = token;
+            document.getElementById('googleLoginScreen').style.display = 'none';
+            return true;
         }
-        document.getElementById('loginScreen').style.display = 'none';
-        return true;
+        document.getElementById('googleLoginScreen').style.display = 'flex';
+        return false;
     }
 
-    // Allow Enter key to login
+    // Initialize on page load
     document.addEventListener('DOMContentLoaded', () => {
-        const loginInput = document.getElementById('loginPassword');
-        if (loginInput) {
-            loginInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    attemptLogin();
-                }
-            });
+        if (typeof gapi !== 'undefined' && typeof google !== 'undefined') {
+            initializeGoogleAPI();
+            checkGoogleLogin();
+            initSystem();
         }
     });
 </script>
@@ -2558,9 +2540,9 @@
     }
 
     function logout() {
-        if (!confirm('Logout? You\'ll need to enter your crew name again.')) return;
-        sessionStorage.removeItem('crewLogin');
-        sessionStorage.removeItem('loginTime');
+        if (!confirm('Logout? You\'ll need to sign in with Google again.')) return;
+        sessionStorage.removeItem('googleToken');
+        googleAccessToken = null;
         location.reload();
     }
 
