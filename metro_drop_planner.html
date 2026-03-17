@@ -940,7 +940,7 @@
     function initDefaultCrew() {
         if (data.crewMembers.length === 0) {
             data.crewMembers = [
-                { name: 'You', phone: '', performance: { completed: 0, total: 0 } },
+                { name: 'Alex', phone: '', performance: { completed: 0, total: 0 } },
                 { name: 'Luke', phone: '', performance: { completed: 0, total: 0 } },
                 { name: 'AJ', phone: '', performance: { completed: 0, total: 0 } },
                 { name: 'Trent', phone: '', performance: { completed: 0, total: 0 } },
@@ -962,6 +962,25 @@
             const stored = localStorage.getItem('metroData');
             if (stored) {
                 data = JSON.parse(stored);
+                
+                // Migrate "You" to "Alex" in crew members
+                if (data.crewMembers && data.crewMembers.length > 0) {
+                    data.crewMembers = data.crewMembers.map(member => ({
+                        ...member,
+                        name: member.name === 'You' ? 'Alex' : member.name
+                    }));
+                }
+                
+                // Migrate "You" to "Alex" in job notes
+                if (data.jobNotes) {
+                    Object.keys(data.jobNotes).forEach(addr => {
+                        if (data.jobNotes[addr].crewMembers) {
+                            data.jobNotes[addr].crewMembers = data.jobNotes[addr].crewMembers.map(name =>
+                                name === 'You' ? 'Alex' : name
+                            );
+                        }
+                    });
+                }
             }
         } catch (e) {
             console.log('Could not load from storage');
