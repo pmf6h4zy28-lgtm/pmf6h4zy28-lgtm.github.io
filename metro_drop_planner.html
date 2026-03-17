@@ -532,7 +532,10 @@
 </head>
 <body>
     <div class="header">
-        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwwUAxMTAwMRDAwMDA0MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDD/2wBDAQICAgMDAwYDAwYMCAcIDAwIDAwIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDD/wAARCAAwAMgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWm5ybnJ2eoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD5/oooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/2Q==" style="width: 100%; height: auto; max-height: 70px; object-fit: contain;" alt="HILD Landscaping">
+        <div style="text-align: center; padding: 0.75rem 0;">
+            <div style="font-size: 3.5rem; font-weight: 900; color: white; letter-spacing: 4px; font-family: 'Georgia', 'Garamond', serif;">HILD</div>
+            <div style="font-size: 1rem; font-weight: 700; color: #fbbf24; letter-spacing: 2px; margin-top: 0.25rem; font-family: 'Georgia', 'Garamond', serif;">LANDSCAPING</div>
+        </div>
     </div>
 
 ```
@@ -553,6 +556,8 @@
 
     <!-- HOME TAB -->
     <div id="home" class="tab-content active">
+        <div id="accommodationSection"></div>
+
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
             <h2 class="section-title" style="margin-bottom: 0;">📊 Daily Brief</h2>
             <button class="btn btn-secondary" onclick="generateDailyBrief()">🔄 Refresh</button>
@@ -705,10 +710,8 @@
                 <button id="closeTicketBtn" class="btn btn-secondary btn-block" style="display: none; background: var(--info);" onclick="openTicketWebsite()">🔗 Close Ticket</button>
                 
                 <div class="input-group">
-                    <label>Completed By (for payment tracking)</label>
-                    <select id="modalCrewMember">
-                        <option value="">-- Select crew member --</option>
-                    </select>
+                    <label>Completed By (select all who worked on this drop)</label>
+                    <div id="modalCrewCheckboxes" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
                 </div>
                 
                 <div class="input-group">
@@ -911,7 +914,7 @@
         jobs: {},
         expenses: [],
         jobFilter: 'all',
-        jobNotes: {} // {footage, dropLength, notes, crewMember}
+        jobNotes: {} // {footage, dropLength, notes, crewMembers: []}
     };
 
     const inspirationalQuotes = [
@@ -974,6 +977,40 @@
         'Sullivan': { state: 'IL', zip: '61951' },
         'Rockford': { state: 'IL', zip: '61101' }
     };
+
+    // ACCOMMODATION DISPLAY
+    function updateAccommodationSection() {
+        const accommodationSection = document.getElementById('accommodationSection');
+        
+        // Find most recent hotel or airbnb expense
+        const accommodationExpenses = data.expenses.filter(e => 
+            e.type === 'hotel' && e.desc
+        ).sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        if (accommodationExpenses.length === 0) {
+            accommodationSection.innerHTML = '';
+            return;
+        }
+        
+        const latest = accommodationExpenses[0];
+        const address = latest.desc; // Address is stored in description
+        
+        // Create Apple Maps link
+        const mapsUrl = `https://maps.apple.com/?q=${encodeURIComponent(address)}`;
+        
+        accommodationSection.innerHTML = `
+            <div class="card" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(196, 30, 58, 0.1) 100%); border: 2px solid rgba(168, 85, 247, 0.3); margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: start; gap: 1rem;">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; font-size: 1.1rem;">🏨 Current Accommodation</div>
+                        <div style="font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.75rem; word-break: break-word;">${address}</div>
+                        <div style="font-size: 0.85rem; color: var(--text-light);">Since ${latest.date}</div>
+                    </div>
+                    <a href="${mapsUrl}" target="_blank" class="btn btn-secondary" style="white-space: nowrap; text-decoration: none;">📍 Maps</a>
+                </div>
+            </div>
+        `;
+    }
 
     // DAILY BRIEF SYSTEM
     async function generateDailyBrief() {
@@ -1706,7 +1743,7 @@
     }
 
     function openJobModal(address, status) {
-        const notes = data.jobNotes[address] || { dropLength: '', footage: '', notes: '', crewMember: '' };
+        const notes = data.jobNotes[address] || { dropLength: '', footage: '', notes: '', crewMembers: [] };
         
         document.getElementById('modalTitle').textContent = 'Drop Details';
         document.getElementById('modalAddress').textContent = address;
@@ -1714,18 +1751,22 @@
         document.getElementById('modalDropLength').value = notes.dropLength || '';
         document.getElementById('modalFootage').value = notes.footage || '';
         document.getElementById('modalNotes').value = notes.notes || '';
-        document.getElementById('modalCrewMember').value = notes.crewMember || '';
         
-        // Populate crew member dropdown
-        const crewSelect = document.getElementById('modalCrewMember');
-        crewSelect.innerHTML = '<option value="">-- Select crew member --</option>';
+        // Populate crew member checkboxes
+        const checkboxContainer = document.getElementById('modalCrewCheckboxes');
+        checkboxContainer.innerHTML = '';
+        const selectedCrew = notes.crewMembers || [];
+        
         data.crewMembers.forEach(member => {
-            const option = document.createElement('option');
-            option.value = member.name;
-            option.textContent = member.name;
-            crewSelect.appendChild(option);
+            const isChecked = selectedCrew.includes(member.name);
+            const checkbox = document.createElement('label');
+            checkbox.style.cssText = 'display: flex; align-items: center; gap: 0.75rem; cursor: pointer; padding: 0.75rem; background: rgba(196, 30, 58, 0.05); border-radius: 6px; font-weight: 500;';
+            checkbox.innerHTML = `
+                <input type="checkbox" value="${member.name}" ${isChecked ? 'checked' : ''} style="width: 18px; height: 18px; cursor: pointer;">
+                ${member.name}
+            `;
+            checkboxContainer.appendChild(checkbox);
         });
-        crewSelect.value = notes.crewMember || '';
         
         window.currentJobAddress = address;
         
@@ -1766,7 +1807,15 @@
         const dropLength = document.getElementById('modalDropLength').value;
         const footage = document.getElementById('modalFootage').value;
         const notes = document.getElementById('modalNotes').value;
-        const crewMember = document.getElementById('modalCrewMember').value;
+        
+        // Get selected crew members
+        const crewCheckboxes = document.querySelectorAll('#modalCrewCheckboxes input[type="checkbox"]');
+        const crewMembers = [];
+        crewCheckboxes.forEach(cb => {
+            if (cb.checked) {
+                crewMembers.push(cb.value);
+            }
+        });
         
         if (data.jobs[address]) {
             data.jobs[address].status = status;
@@ -1776,7 +1825,7 @@
             dropLength: dropLength ? parseInt(dropLength) : '',
             footage: footage,
             notes: notes,
-            crewMember: crewMember
+            crewMembers: crewMembers
         };
         
         saveToStorage();
@@ -1822,21 +1871,23 @@
         const total = Object.keys(data.jobs).length;
         const done = Object.values(data.jobs).filter(j => j.status === 'done').length;
         
-        // Count today's completed (jobs with crew member assigned and done status)
+        // Count today's completed (jobs with crew members assigned and done status)
         const todayCompleted = Object.entries(data.jobs).filter(([addr, job]) => {
             const notes = data.jobNotes[addr] || {};
-            return job.status === 'done' && notes.crewMember;
+            return job.status === 'done' && notes.crewMembers && notes.crewMembers.length > 0;
         }).length;
 
-        // Calculate crew performance
+        // Calculate crew performance (each member counts once per drop they worked on)
         const crewStats = {};
         Object.entries(data.jobs).forEach(([addr, job]) => {
             const notes = data.jobNotes[addr] || {};
-            if (job.status === 'done' && notes.crewMember) {
-                if (!crewStats[notes.crewMember]) {
-                    crewStats[notes.crewMember] = 0;
-                }
-                crewStats[notes.crewMember]++;
+            if (job.status === 'done' && notes.crewMembers && notes.crewMembers.length > 0) {
+                notes.crewMembers.forEach(member => {
+                    if (!crewStats[member]) {
+                        crewStats[member] = 0;
+                    }
+                    crewStats[member]++;
+                });
             }
         });
 
@@ -2055,6 +2106,7 @@
     function updateAllUI() {
         updateLocationSelectors();
         populateDropsMapTownFilter();
+        updateAccommodationSection();
 
         const crewHtml = data.crewMembers.length > 0 ? data.crewMembers.map(c => `
             <div style="padding: 1.25rem; background: linear-gradient(135deg, rgba(15, 118, 110, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%); border-radius: 10px; margin-bottom: 1rem; border-left: 4px solid var(--primary);">
