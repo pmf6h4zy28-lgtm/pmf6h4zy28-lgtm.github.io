@@ -902,71 +902,39 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <script>
-    // Simple Google OAuth - just open auth URL in new tab
-    function startGoogleLogin() {
-        const authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' +
-            'client_id=106680855644-fflm2tto6tg1ngvk82v23ms4npu02kso.apps.googleusercontent.com&' +
-            'redirect_uri=https://pmf6h4zy28-lgtm.github.io/&' +
-            'response_type=code&' +
-            'scope=https://www.googleapis.com/auth/drive.appfolder&' +
-            'access_type=offline';
-        
-        window.open(authUrl, '_blank');
-    }
-
-    // Get authorization code from URL
-    function getAuthorizationCode() {
-        const params = new URLSearchParams(window.location.search);
-        return params.get('code');
-    }
-
-    // Check if already logged in
-    function checkGoogleLogin() {
-        // First check if code is in URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        
-        if (code) {
-            localStorage.setItem('googleAccessToken', code);
-            googleAccessToken = code;
-            window.history.replaceState({}, '', window.location.pathname);
+    // Simple password login - one time per device
+    function attemptLogin() {
+        const password = document.getElementById('loginPassword').value;
+        if (password === 'hild2025') {
+            localStorage.setItem('loggedIn', 'true');
             document.getElementById('googleLoginScreen').style.display = 'none';
             initSystem();
-            return true;
-        }
-        
-        // Then check localStorage
-        const token = localStorage.getItem('googleAccessToken');
-        if (token) {
-            googleAccessToken = token;
-            document.getElementById('googleLoginScreen').style.display = 'none';
-            initSystem();
-            return true;
-        }
-        
-        // No login
-        document.getElementById('googleLoginScreen').style.display = 'flex';
-        return false;
-    }
-
-    // Initialize on page load
-    document.addEventListener('DOMContentLoaded', () => {
-        // FIRST - check URL for code immediately
-        const params = new URLSearchParams(window.location.search);
-        const code = params.get('code');
-        
-        if (code) {
-            console.log('Found code!');
-            localStorage.setItem('googleAccessToken', code);
-            googleAccessToken = code;
-            window.history.replaceState({}, '', window.location.pathname);
-            setTimeout(() => {
-                document.getElementById('googleLoginScreen').style.display = 'none';
-                initSystem();
-            }, 100);
         } else {
-            // No code, check localStorage
-            checkGoogleLogin();
+            alert('Incorrect password');
+        }
+    }
+
+    function checkGoogleLogin() {
+        if (localStorage.getItem('loggedIn')) {
+            document.getElementById('googleLoginScreen').style.display = 'none';
+            initSystem();
+        } else {
+            document.getElementById('googleLoginScreen').style.display = 'flex';
+        }
+    }
+
+    // Check on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        checkGoogleLogin();
+    });
+
+    // Allow Enter key
+    document.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('loginPassword');
+        if (input) {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') attemptLogin();
+            });
         }
     });
 
@@ -982,25 +950,9 @@
         timers: {},
         darkMode: false
     };
-
-    const inspirationalQuotes = [
-        "Every drop gets you closer to the finish line! 💪",
-        "You've got this! Keep pushing forward! 🚀",
-        "Progress over perfection! Keep moving! ⚡",
-        "Your hard work is going to pay off! 💯",
-        "One drop at a time, you're building greatness! 🏗️",
-        "Success is a series of small wins! Keep going! 🎯",
-        "You're stronger than you think! 💪",
-        "Every challenge is an opportunity! 🌟",
-        "Stay focused, stay driven, stay winning! 🏆",
-        "The best time to start was yesterday. The second best is now! ⏰"
-    ];
-
-    function initSystem() {
-        loadFromStorage();
-        initDefaultCrew();
-        loadDarkMode();
-        updateAllUI();
+    document.addEventListener('DOMContentLoaded', () => {
+        checkGoogleLogin();
+    });
         generateDailyBrief();
         listenForFirebaseUpdates();
         showQuickAddButton();
