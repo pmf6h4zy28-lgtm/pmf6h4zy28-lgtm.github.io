@@ -909,18 +909,25 @@
         const code = params.get('code');
         
         if (code) {
+            console.log('✅ Found code!');
             localStorage.setItem('googleAccessToken', code);
             window.history.replaceState({}, '', window.location.pathname);
+            // Force hide login screen
+            setTimeout(() => {
+                document.getElementById('loginScreen').style.display = 'none';
+                initSystem();
+            }, 100);
+            return;
         }
         
         // Check if we have a token
         const token = localStorage.getItem('googleAccessToken');
         if (token) {
-            // Logged in - hide login screen and show app
+            console.log('✅ Found token!');
             document.getElementById('loginScreen').style.display = 'none';
             initSystem();
         } else {
-            // Not logged in - show login screen
+            console.log('No login, showing screen');
             document.getElementById('loginScreen').style.display = 'flex';
         }
     }
