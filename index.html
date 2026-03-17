@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>HILD Drop Planner</title>
+</head>
+<body>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        if (code) {
+            localStorage.setItem('googleAccessToken', code);
+            window.location.href = 'metro_drop_planner.html';
+        } else {
+            window.location.href = 'metro_drop_planner.html';
+        }
+    </script>
+</body>
+</html>
