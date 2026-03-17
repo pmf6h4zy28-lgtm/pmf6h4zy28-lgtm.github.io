@@ -894,11 +894,10 @@
     function checkGoogleLogin() {
         const token = localStorage.getItem('googleAccessToken');
         if (token) {
-            // Already logged in, hide login screen and show app
-            document.getElementById('googleLoginScreen').style.display = 'none';
+            // Has token, show app
             initSystem();
         } else {
-            // Not logged in, redirect to index.html
+            // No token, redirect to index.html to login
             window.location.href = '/';
         }
     }
