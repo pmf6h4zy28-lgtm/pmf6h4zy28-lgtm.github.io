@@ -455,27 +455,14 @@
 </head>
 <body>
     <!-- GOOGLE LOGIN SCREEN -->
-    <div id="googleLoginScreen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); display: flex; align-items: center; justify-content: center; z-index: 2000; flex-direction: column;">
-        <div style="text-align: center; color: white;">
-            <div style="font-size: 3.5rem; font-weight: 900; color: white; letter-spacing: 4px; font-family: 'Georgia', 'Garamond', serif; margin-bottom: 0.5rem;">HILD</div>
-            <div style="font-size: 1rem; font-weight: 700; color: #fbbf24; letter-spacing: 2px; margin-bottom: 3rem;">LANDSCAPING</div>
-
-```
-        <div style="background: rgba(255,255,255,0.1); padding: 2rem; border-radius: 16px; max-width: 300px;">
-            <div style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem;">Sign in with Google</div>
-            <a id="googleSignInBtn" href="https://accounts.google.com/o/oauth2/v2/auth?client_id=106680855644-fflm2tto6tg1ngvk82v23ms4npu02kso.apps.googleusercontent.com&redirect_uri=https://pmf6h4zy28-lgtm.github.io/metro_drop_planner.html&response_type=code&scope=https://www.googleapis.com/auth/drive.appfolder&access_type=offline&prompt=consent" target="_blank" style="width: 100%; padding: 1rem; background: white; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; color: var(--primary); display: block; text-align: center; text-decoration: none;">Sign In</a>
-            <div style="margin-top: 1rem; font-size: 0.85rem; opacity: 0.8;">Opens in new tab - sign in and you'll be redirected back</div>
+    <div class="header">
+        <div class="header-content">
+            <h1>HILD</h1>
+            <p>LANDSCAPING</p>
         </div>
     </div>
-</div>
 
-<div class="header">
-    <div class="header-content">
-        <h1>HILD</h1>
-        <p>LANDSCAPING</p>
-    </div>
-</div>
-
+```
 <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">🌙</button>
 <button class="quick-add-button" onclick="openQuickAdd()" title="Quick Add Drop">➕</button>
 
